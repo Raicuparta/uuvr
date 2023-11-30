@@ -27,4 +27,29 @@ public class UnityUniversalVrMod : BaseUnityPlugin
             Console.WriteLine("Failed to get type UnityEngine.XR.InputTracking");
         }
     }
+
+    // TODO Unusued for now
+    private static void ToggleVr()
+    {
+        Console.WriteLine("Toggling VR...");
+        
+        Type xrSettingsType = Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.XRModule");
+        if (xrSettingsType != null)
+        {
+            MethodInfo loadDeviceByNameMethod = xrSettingsType.GetMethod("LoadDeviceByName");
+            if (loadDeviceByNameMethod != null)
+            {
+                object[] parameters = { "OpenVR" };
+                loadDeviceByNameMethod.Invoke(null, parameters);
+            }
+            else
+            {
+                Console.WriteLine("Failed to get method LoadDeviceByName");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Failed to get type UnityEngine.XR.XRSettings");
+        }
+    }
 }

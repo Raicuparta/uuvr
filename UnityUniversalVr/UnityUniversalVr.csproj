@@ -11,7 +11,7 @@
         <Platforms>x64</Platforms>
         <LangVersion>10</LangVersion>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <OutputPath>$(BepInExDir)\plugin</OutputPath>
+        <OutputPath>$(BepInExDir)\plugins</OutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <DebugType>full</DebugType>
