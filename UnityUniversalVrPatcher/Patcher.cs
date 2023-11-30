@@ -9,6 +9,12 @@ using AssetsTools.NET.Extra;
 
 public static class Patcher
 {
+    private static readonly List<string> GlobalSettingsFileNames =
+        new()
+        {
+            "globalgamemanagers", "mainData", "data.unity3d"
+        };
+    
     public static IEnumerable<string> TargetDLLs { get; } = new[] {"Assembly-CSharp.dll"};
 
     public static void Patch(AssemblyDefinition assembly)
@@ -19,69 +25,82 @@ public static class Patcher
     {
         Console.WriteLine("Patching Unity Universal VR...");
         
-        var installerPath = Assembly.GetExecutingAssembly().Location;
+        string installerPath = Assembly.GetExecutingAssembly().Location;
         Console.WriteLine("installerPath " + installerPath);
 
-        var gameExePath = Process.GetCurrentProcess().MainModule.FileName;
+        string gameExePath = Process.GetCurrentProcess().MainModule.FileName;
         Console.WriteLine("gameExePath " + gameExePath);
 
-        var gamePath = Path.GetDirectoryName(gameExePath);
-        var gameName = Path.GetFileNameWithoutExtension(gameExePath);
-        var dataPath = Path.Combine(gamePath, $"{gameName}_Data/");
-        var gameManagersPath = Path.Combine(dataPath, $"globalgamemanagers");
-        var gameManagersBackupPath = CreateGameManagersBackup(gameManagersPath);
-        var patcherPath = Path.GetDirectoryName(installerPath);
-        var classDataPath = Path.Combine(patcherPath, "classdata.tpk");
+        string gamePath = Path.GetDirectoryName(gameExePath);
+        string gameName = Path.GetFileNameWithoutExtension(gameExePath);
+        string dataPath = Path.Combine(gamePath, $"{gameName}_Data/");
+        
+        string globalSettingsFilePath = GetGlobalSettingsFilePath(dataPath);
+        string globalSettingsBackupPath = CreateGlobalSettingsBackup(globalSettingsFilePath);
+        string patcherPath = Path.GetDirectoryName(installerPath);
+        string classDataPath = Path.Combine(patcherPath, "classdata.tpk");
 
         CopyPlugins(patcherPath, dataPath);
-        PatchVR(gameManagersBackupPath, gameManagersPath, classDataPath);
+        PatchVR(globalSettingsBackupPath, globalSettingsFilePath, classDataPath);
 
-        Console.WriteLine($"");
+        Console.WriteLine("");
         Console.WriteLine("Installed successfully, probably.");
     }
 
-    private static string CreateGameManagersBackup(string gameManagersPath)
+    private static string GetGlobalSettingsFilePath(string dataPath)
     {
-        Console.WriteLine($"Backing up '{gameManagersPath}'...");
-        var backupPath = gameManagersPath + ".bak";
+        foreach (string globalSettingsFielName in GlobalSettingsFileNames)
+        {
+            string path = Path.Combine(dataPath, globalSettingsFielName);
+            if (File.Exists(path))
+            {
+                return path;
+            }
+        }
+
+        throw new Exception("Failed to find global settings file path");
+    }
+
+    private static string CreateGlobalSettingsBackup(string globalSettingsFilePath)
+    {
+        Console.WriteLine($"Backing up '{globalSettingsFilePath}'...");
+        string backupPath = globalSettingsFilePath + ".bak";
         if (File.Exists(backupPath))
         {
             Console.WriteLine($"Backup already exists.");
             return backupPath;
         }
 
-        File.Copy(gameManagersPath, backupPath);
+        File.Copy(globalSettingsFilePath, backupPath);
         Console.WriteLine($"Created backup in '{backupPath}'");
         return backupPath;
     }
 
-    private static void PatchVR(string gameManagersBackupPath, string gameManagersPath, string classDataPath)
+    private static void PatchVR(string globalSettingsBackupPath, string globalSettingsFilePath, string classDataPath)
     {
         Console.WriteLine($"Using classData file from path '{classDataPath}'");
 
-        var am = new AssetsManager();
+        AssetsManager am = new();
         am.LoadClassPackage(classDataPath);
-        var ggm = am.LoadAssetsFile(gameManagersBackupPath, false);
-        var ggmFile = ggm.file;
-        var ggmTable = ggm.table;
+        AssetsFileInstance ggm = am.LoadAssetsFile(globalSettingsBackupPath, false);
+        AssetsFile ggmFile = ggm.file;
+        AssetsFileTable ggmTable = ggm.table;
         am.LoadClassDatabaseFromPackage(ggmFile.typeTree.unityVersion);
 
-        var replacers = new List<AssetsReplacer>();
+        List<AssetsReplacer> replacers = new();
 
-        var buildSettings = ggmTable.GetAssetInfo(11);
-        var buildSettingsBase = am.GetATI(ggmFile, buildSettings).GetBaseField();
-        var enabledVRDevices = buildSettingsBase.Get("enabledVRDevices").Get("Array");
-        var stringTemplate = enabledVRDevices.templateField.children[1];
-        var vrDevicesList = new[] {StringField("OpenVR", stringTemplate)};
+        AssetFileInfoEx buildSettings = ggmTable.GetAssetInfo(11);
+        AssetTypeValueField buildSettingsBase = am.GetATI(ggmFile, buildSettings).GetBaseField();
+        AssetTypeValueField enabledVRDevices = buildSettingsBase.Get("enabledVRDevices").Get("Array");
+        AssetTypeTemplateField stringTemplate = enabledVRDevices.templateField.children[1];
+        AssetTypeValueField[] vrDevicesList = {StringField("OpenVR", stringTemplate)};
         enabledVRDevices.SetChildrenList(vrDevicesList);
 
         replacers.Add(new AssetsReplacerFromMemory(0, buildSettings.index, (int) buildSettings.curFileType, 0xffff,
             buildSettingsBase.WriteToByteArray()));
 
-        using (var writer = new AssetsFileWriter(File.OpenWrite(gameManagersPath)))
-        {
-            ggmFile.Write(writer, 0, replacers, 0);
-        }
+        using AssetsFileWriter writer = new(File.OpenWrite(globalSettingsFilePath));
+        ggmFile.Write(writer, 0, replacers, 0);
     }
 
     private static AssetTypeValueField StringField(string str, AssetTypeTemplateField template)
@@ -94,20 +113,20 @@ public static class Patcher
             value = new AssetTypeValue(EnumValueTypes.ValueType_String, str)
         };
     }
-    
-    static void CopyPlugins(string patcherPath, string dataPath)
+
+    private static void CopyPlugins(string patcherPath, string dataPath)
     {
         Console.WriteLine("Copying plugins...");
 
-        var gamePluginsPath = Path.Combine(dataPath, "Plugins");
+        string gamePluginsPath = Path.Combine(dataPath, "Plugins");
         if (!Directory.Exists(gamePluginsPath))
         {
             Directory.CreateDirectory(gamePluginsPath);
         }
-        var patcherPluginsPath = Path.Combine(patcherPath, "GamePlugins");
-        var pluginFilePaths = Directory.GetFiles(patcherPluginsPath);
+        string patcherPluginsPath = Path.Combine(patcherPath, "GamePlugins");
+        string[] pluginFilePaths = Directory.GetFiles(patcherPluginsPath);
         Console.WriteLine($"Found plugins:\n {string.Join(",\n", pluginFilePaths)}");
-        foreach (var filePath in pluginFilePaths)
+        foreach (string filePath in pluginFilePaths)
         {
             File.Copy(filePath, Path.Combine(gamePluginsPath, Path.GetFileName(filePath)), true);
         }
