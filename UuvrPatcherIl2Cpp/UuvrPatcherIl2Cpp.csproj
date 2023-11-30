@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net35</TargetFramework>
-        <AssemblyTitle>UnityUniversalVrPatcher</AssemblyTitle>
-        <Product>UnityUniversalVrPatcher</Product>
-        <Copyright>Copyright © 2020</Copyright>
+        <AssemblyTitle>UuvrPatcherIl2cpp</AssemblyTitle>
+        <Product>UuvrPatcherIl2cpp</Product>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -11,17 +10,11 @@
         <Platforms>x64</Platforms>
         <LangVersion>10</LangVersion>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <OutputPath>$(BepInExDir)\Mono\mods\UnityVR\patchers</OutputPath>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <DebugType>pdbonly</DebugType>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <DebugType>none</DebugType>
+        <OutputPath>$(BepInExDir)\Il2Cpp\mods\UnityVR\patchers</OutputPath>
     </PropertyGroup>
     <ItemGroup>
-      <PackageReference Include="AssetsTools.NET" Version="2.0.9" />
-      <PackageReference Include="Mono.Cecil" Version="0.10.4" IncludeAssets="compile" />
+        <PackageReference Include="AssetsTools.NET" Version="2.0.9" />
+        <PackageReference Include="BepInEx.Unity.Mono.Preloader" Version="6.0.0-be.674" />
     </ItemGroup>
     <ItemGroup>
         <Content Include="GamePlugins\**" >
@@ -29,8 +22,16 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-      <Content Include="classdata.tpk">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+        <Content Include="classdata.tpk">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="BepInEx.Core">
+            <HintPath>lib\BepInEx.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="BepInEx.IL2CPP">
+            <HintPath>lib\BepInEx.IL2CPP.dll</HintPath>
+        </Reference>
     </ItemGroup>
 </Project>

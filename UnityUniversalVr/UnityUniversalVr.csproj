@@ -11,7 +11,7 @@
         <Platforms>x64</Platforms>
         <LangVersion>10</LangVersion>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <OutputPath>$(BepInExDir)\plugins</OutputPath>
+        <OutputPath>$(BepInExDir)\Mono\mods\UnityVR\plugins</OutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <DebugType>full</DebugType>
@@ -28,10 +28,6 @@
     <ItemGroup>
       <Reference Include="UnityEngine">
         <HintPath>lib\UnityEngine.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="UnityEngine.CoreModule">
-        <HintPath>lib\UnityEngine.CoreModule.dll</HintPath>
         <Private>False</Private>
       </Reference>
     </ItemGroup>
