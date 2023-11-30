@@ -9,7 +9,10 @@ public class UnityUniversalVrMod : BaseUnityPlugin
 {
     private void Awake()
     {
-        Type inputTrackingType = Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.XRModule");
+        Type inputTrackingType = 
+            Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.XRModule") ??
+            Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.VRModule");
+
         if (inputTrackingType != null)
         {
             PropertyInfo disablePositionalTrackingProperty = inputTrackingType.GetProperty("disablePositionalTracking");
