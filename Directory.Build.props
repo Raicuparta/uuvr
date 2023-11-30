@@ -2,7 +2,13 @@
 <Project ToolsVersion="Current"
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <PublishDir>C:\Users\rai\Repos\rai-mods-tauri\backend\target\debug\resources\bepinex\Mono\mods\UnityVR</PublishDir>
-    <BepInExDir>C:\Users\rai\Repos\rai-mods-tauri\backend\target\debug\resources\bepinex\Mono\mods\UnityVR</BepInExDir>
+    <ReleaseBepInExDir>C:\Users\rai\Repos\rai-mods-tauri\backend\resources\bepinex\Mono\mods\UnityVR</ReleaseBepInExDir>
+    <DebugBepInExDir>C:\Users\rai\Repos\rai-mods-tauri\backend\target\debug\resources\bepinex\Mono\mods\UnityVR</DebugBepInExDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <BepInExDir>$(DebugBepInExDir)</BepInExDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <BepInExDir>$(ReleaseBepInExDir)</BepInExDir>
   </PropertyGroup>
 </Project>
