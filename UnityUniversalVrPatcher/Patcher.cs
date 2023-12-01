@@ -93,7 +93,7 @@ public static class Patcher
         AssetTypeValueField buildSettingsBase = am.GetATI(ggmFile, buildSettings).GetBaseField();
         AssetTypeValueField enabledVRDevices = buildSettingsBase.Get("enabledVRDevices").Get("Array");
         AssetTypeTemplateField stringTemplate = enabledVRDevices.templateField.children[1];
-        AssetTypeValueField[] vrDevicesList = {StringField("OpenVR", stringTemplate)};
+        AssetTypeValueField[] vrDevicesList = {StringField("None", stringTemplate), StringField("OpenVR", stringTemplate)};
         enabledVRDevices.SetChildrenList(vrDevicesList);
 
         replacers.Add(new AssetsReplacerFromMemory(0, buildSettings.index, (int) buildSettings.curFileType, 0xffff,
