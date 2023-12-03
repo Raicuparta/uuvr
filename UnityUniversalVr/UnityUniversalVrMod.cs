@@ -128,26 +128,19 @@ public class UnityUniversalVrMod : BaseUnityPlugin
 
         Console.WriteLine("Reparenting Camera...");
 
-        
-        Console.WriteLine("Reparenting Camera 1");
-        Type cameraType = Type.GetType("UnityEngine.Camera, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+        Type cameraType = Type.GetType("UnityEngine.Camera, UnityEngine.CoreModule");
         object mainCamera = cameraType.GetProperty("main").GetValue(null, null);
         cameraType.GetProperty("enabled").SetValue(mainCamera, false, null);
 
-        Console.WriteLine("Reparenting Camera 2");
-        Type gameObjectType = Type.GetType("UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+        Type gameObjectType = Type.GetType("UnityEngine.GameObject, UnityEngine.CoreModule");
         object vrCameraObject = Activator.CreateInstance(gameObjectType);
         MethodInfo addComponentMethod = gameObjectType.GetMethod("AddComponent", new[] { typeof(Type) });
         object vrCamera = addComponentMethod.Invoke(vrCameraObject, new[] { cameraType });
         object mainCameraTransform = cameraType.GetProperty("transform").GetValue(mainCamera, null);
         object vrCameraTransform = cameraType.GetProperty("transform").GetValue(vrCamera, null);
-        Type transformType = Type.GetType("UnityEngine.Transform, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
-
+        Type transformType = Type.GetType("UnityEngine.Transform, UnityEngine.CoreModule");
         
-        Console.WriteLine("Reparenting Camera 3");
         transformType.GetProperty("parent").SetValue(vrCameraTransform, mainCameraTransform, null);
         transformType.GetProperty("localPosition").SetValue(vrCameraTransform, null, null);
-        
-        Console.WriteLine("Reparenting Camera end");
     }
 }
