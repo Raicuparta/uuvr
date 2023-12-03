@@ -132,7 +132,6 @@ public class UnityUniversalVrMod : BaseUnityPlugin
         Console.WriteLine("Reparenting Camera 1");
         Type cameraType = Type.GetType("UnityEngine.Camera, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         object mainCamera = cameraType.GetProperty("main").GetValue(null, null);
-        // cameraType.GetProperty("tag").SetValue(mainCamera, "", null);
         cameraType.GetProperty("enabled").SetValue(mainCamera, false, null);
 
         Console.WriteLine("Reparenting Camera 2");
@@ -147,10 +146,7 @@ public class UnityUniversalVrMod : BaseUnityPlugin
         
         Console.WriteLine("Reparenting Camera 3");
         transformType.GetProperty("parent").SetValue(vrCameraTransform, mainCameraTransform, null);
-        MethodInfo setLocalPositionMethod = transformType.GetMethod("INTERNAL_set_localPosition", BindingFlags.Instance | BindingFlags.NonPublic);
-        setLocalPositionMethod.Invoke(vrCameraTransform, new Type[] { null });
-        // cameraType.GetProperty("tag").SetValue(vrCamera, "MainCamera", null);
-        
+        transformType.GetProperty("localPosition").SetValue(vrCameraTransform, null, null);
         
         Console.WriteLine("Reparenting Camera end");
     }
