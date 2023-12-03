@@ -14,6 +14,9 @@ public class UnityUniversalVrMod : BaseUnityPlugin
     private bool _vrEnabled;
     private bool _setUpDone;
     private Type _xrSettingsType;
+    private Type _cameraType;
+    private Type _gameObjectType;
+    private Type _transformType;
     private PropertyInfo _loadedDeviceNameProperty;
     private object _mainCameraRenderTexture;
 
@@ -21,9 +24,19 @@ public class UnityUniversalVrMod : BaseUnityPlugin
     {
         _xrSettingsType =
             Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.XRModule") ??
-            Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.VRModule");
+            Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.VRModule") ??
+            Type.GetType("UnityEngine.VR.VRSettings, UnityEngine");
+        
+        _cameraType = Type.GetType("UnityEngine.Camera, UnityEngine.CoreModule") ??
+                      Type.GetType("UnityEngine.Camera, UnityEngine");
+
+        _gameObjectType = Type.GetType("UnityEngine.GameObject, UnityEngine.CoreModule") ??
+                          Type.GetType("UnityEngine.GameObject, UnityEngine");
 
         _loadedDeviceNameProperty = _xrSettingsType.GetProperty("loadedDeviceName");
+        
+        _transformType = Type.GetType("UnityEngine.Transform, UnityEngine.CoreModule") ??
+                         Type.GetType("UnityEngine.Transform, UnityEngine");
     }
 
     private void Update()
@@ -52,10 +65,16 @@ public class UnityUniversalVrMod : BaseUnityPlugin
             ReparentCamera();
         }
 
-        if (!_setUpDone && _loadedDeviceNameProperty.GetValue(null, null) != "")
+        if (!_setUpDone && IsDeviceLoaded())
         {
             FinishSetUp();
         }
+    }
+
+    private bool IsDeviceLoaded()
+    {
+        return _loadedDeviceNameProperty?.GetValue(null, null) != null &&
+               _loadedDeviceNameProperty.GetValue(null, null).ToString().Length > 0;
     }
     
     private void SetUpVr()
@@ -136,51 +155,64 @@ public class UnityUniversalVrMod : BaseUnityPlugin
 
     private void DisableRenderTexture()
     {
-        Type cameraType = Type.GetType("UnityEngine.Camera, UnityEngine.CoreModule");
-        object mainCamera = cameraType.GetProperty("main").GetValue(null, null);
-
-        if (mainCamera == null)
+        try
         {
-            Console.WriteLine("Failed to find main camera");
-            return;
-        }
+            object mainCamera = _cameraType.GetProperty("main").GetValue(null, null);
 
-        _mainCameraRenderTexture = cameraType.GetProperty("targetTexture").GetValue(mainCamera, null);
-        
-        cameraType.GetProperty("targetTexture").SetValue(mainCamera, null, null);
+            if (mainCamera == null)
+            {
+                Console.WriteLine("Failed to find main camera");
+                return;
+            }
+
+            _mainCameraRenderTexture = _cameraType.GetProperty("targetTexture").GetValue(mainCamera, null);
+
+            _cameraType.GetProperty("targetTexture").SetValue(mainCamera, null, null);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Failed to disable render texture: {e}");
+        }
     }
 
     private void EnableRenderTexture()
     {
-        Type cameraType = Type.GetType("UnityEngine.Camera, UnityEngine.CoreModule");
-        object mainCamera = cameraType.GetProperty("main").GetValue(null, null);
-
-        if (mainCamera == null)
+        try
         {
-            Console.WriteLine("Failed to find main camera");
-            return;
+            object mainCamera = _cameraType.GetProperty("main").GetValue(null, null);
+
+            if (mainCamera == null)
+            {
+                Console.WriteLine("Failed to find main camera");
+                return;
+            }
+
+            _cameraType.GetProperty("targetTexture").SetValue(mainCamera, _mainCameraRenderTexture, null);
         }
-        
-        cameraType.GetProperty("targetTexture").SetValue(mainCamera, _mainCameraRenderTexture, null);
+        catch (Exception e)
+        {
+            Console.WriteLine($"Failed to enable render texture: {e}");
+        }
     }
     
-    private static void ReparentCamera() {
+    private void ReparentCamera() {
 
         Console.WriteLine("Reparenting Camera...");
 
-        Type cameraType = Type.GetType("UnityEngine.Camera, UnityEngine.CoreModule");
-        object mainCamera = cameraType.GetProperty("main").GetValue(null, null);
-        cameraType.GetProperty("enabled").SetValue(mainCamera, false, null);
+        object mainCamera = _cameraType.GetProperty("main").GetValue(null, null);
+        _cameraType.GetProperty("enabled").SetValue(mainCamera, false, null);
 
-        Type gameObjectType = Type.GetType("UnityEngine.GameObject, UnityEngine.CoreModule");
-        object vrCameraObject = Activator.CreateInstance(gameObjectType);
-        MethodInfo addComponentMethod = gameObjectType.GetMethod("AddComponent", new[] { typeof(Type) });
-        object vrCamera = addComponentMethod.Invoke(vrCameraObject, new[] { cameraType });
-        object mainCameraTransform = cameraType.GetProperty("transform").GetValue(mainCamera, null);
-        object vrCameraTransform = cameraType.GetProperty("transform").GetValue(vrCamera, null);
-        Type transformType = Type.GetType("UnityEngine.Transform, UnityEngine.CoreModule");
+        Console.WriteLine("Reparenting Camera 1");
+        object vrCameraObject = Activator.CreateInstance(_gameObjectType);
+        MethodInfo addComponentMethod = _gameObjectType.GetMethod("AddComponent", new[] { typeof(Type) });
+        object vrCamera = addComponentMethod.Invoke(vrCameraObject, new[] { _cameraType });
+        object mainCameraTransform = _cameraType.GetProperty("transform").GetValue(mainCamera, null);
         
-        transformType.GetProperty("parent").SetValue(vrCameraTransform, mainCameraTransform, null);
-        transformType.GetProperty("localPosition").SetValue(vrCameraTransform, null, null);
+        Console.WriteLine("Reparenting Camera 2");
+        object vrCameraTransform = _cameraType.GetProperty("transform").GetValue(vrCamera, null);
+        
+        Console.WriteLine("Reparenting Camera 3");
+        _transformType.GetProperty("parent").SetValue(vrCameraTransform, mainCameraTransform, null);
+        _transformType.GetProperty("localPosition").SetValue(vrCameraTransform, null, null);
     }
 }
