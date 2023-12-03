@@ -15,6 +15,7 @@ public class UnityUniversalVrMod : BaseUnityPlugin
     private bool _setUpDone;
     private Type _xrSettingsType;
     private PropertyInfo _loadedDeviceNameProperty;
+    private object _mainCameraRenderTexture;
 
     private void Awake()
     {
@@ -121,7 +122,46 @@ public class UnityUniversalVrMod : BaseUnityPlugin
             Console.WriteLine("Failed to get property enabled");
         }
 
+        if (enabled)
+        {
+            DisableRenderTexture();
+        }
+        else
+        {
+            EnableRenderTexture();
+        }
+
         _vrEnabled = enabled;
+    }
+
+    private void DisableRenderTexture()
+    {
+        Type cameraType = Type.GetType("UnityEngine.Camera, UnityEngine.CoreModule");
+        object mainCamera = cameraType.GetProperty("main").GetValue(null, null);
+
+        if (mainCamera == null)
+        {
+            Console.WriteLine("Failed to find main camera");
+            return;
+        }
+
+        _mainCameraRenderTexture = cameraType.GetProperty("targetTexture").GetValue(mainCamera, null);
+        
+        cameraType.GetProperty("targetTexture").SetValue(mainCamera, null, null);
+    }
+
+    private void EnableRenderTexture()
+    {
+        Type cameraType = Type.GetType("UnityEngine.Camera, UnityEngine.CoreModule");
+        object mainCamera = cameraType.GetProperty("main").GetValue(null, null);
+
+        if (mainCamera == null)
+        {
+            Console.WriteLine("Failed to find main camera");
+            return;
+        }
+        
+        cameraType.GetProperty("targetTexture").SetValue(mainCamera, _mainCameraRenderTexture, null);
     }
     
     private static void ReparentCamera() {
