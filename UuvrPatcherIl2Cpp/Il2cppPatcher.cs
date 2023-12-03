@@ -125,11 +125,33 @@ public class Il2cppPatcher: BasePatcher
             Directory.CreateDirectory(gamePluginsPath);
         }
         string patcherPluginsPath = Path.Combine(patcherPath, "GamePlugins");
-        string[] pluginFilePaths = Directory.GetFiles(patcherPluginsPath);
-        Console.WriteLine($"Found plugins:\n {string.Join(",\n", pluginFilePaths)}");
-        foreach (string filePath in pluginFilePaths)
+
+        CopyDirectory(patcherPluginsPath, gamePluginsPath);
+    }
+    
+    
+
+    private static void CopyDirectory(string sourceDir, string destinationDir)
+    {
+        DirectoryInfo dir = new(sourceDir);
+
+        if (!dir.Exists)
+            throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+
+        DirectoryInfo[] dirs = dir.GetDirectories();
+
+        Directory.CreateDirectory(destinationDir);
+
+        foreach (FileInfo file in dir.GetFiles())
         {
-            File.Copy(filePath, Path.Combine(gamePluginsPath, Path.GetFileName(filePath)), true);
+            string targetFilePath = Path.Combine(destinationDir, file.Name);
+            file.CopyTo(targetFilePath);
+        }
+
+        foreach (DirectoryInfo subDir in dirs)
+        {
+            string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
+            CopyDirectory(subDir.FullName, newDestinationDir);
         }
     }
     
