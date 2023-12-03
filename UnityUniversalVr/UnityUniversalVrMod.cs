@@ -8,10 +8,11 @@ namespace UnityUniversalVr;
 [BepInPlugin("raicuparta.unityuniversalvr", "Unity Universal VR", "0.1.0")]
 public class UnityUniversalVrMod : BaseUnityPlugin
 {
+    private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
+    private readonly KeyboardKey _reparentCameraKey = new (KeyboardKey.KeyCode.F4);
+
     private bool _vrEnabled;
     private bool _setUpDone;
-    private bool _previousIsKeyPressed;
-    private bool _isKeyPressed;
     private Type _xrSettingsType;
     private PropertyInfo _loadedDeviceNameProperty;
 
@@ -26,7 +27,7 @@ public class UnityUniversalVrMod : BaseUnityPlugin
 
     private void Update()
     {
-        if (GetKeyDown())
+        if (_toggleVrKey.UpdateIsDown())
         {
             if (!_vrEnabled)
             {
@@ -45,21 +46,15 @@ public class UnityUniversalVrMod : BaseUnityPlugin
             }
         }
 
+        if (_reparentCameraKey.UpdateIsDown())
+        {
+            ReparentCamera();
+        }
+
         if (!_setUpDone && _loadedDeviceNameProperty.GetValue(null, null) != "")
         {
             FinishSetUp();
         }
-    }
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
-    private static extern short GetKeyState(int keyCode);
-
-    private bool GetKeyDown()
-    {
-        _previousIsKeyPressed = _isKeyPressed;
-        _isKeyPressed = (((ushort)GetKeyState(0x72)) & 0x8000) != 0;
-
-        return !_previousIsKeyPressed && _isKeyPressed;
     }
     
     private void SetUpVr()
@@ -127,5 +122,36 @@ public class UnityUniversalVrMod : BaseUnityPlugin
         }
 
         _vrEnabled = enabled;
+    }
+    
+    private static void ReparentCamera() {
+
+        Console.WriteLine("Reparenting Camera...");
+
+        
+        Console.WriteLine("Reparenting Camera 1");
+        Type cameraType = Type.GetType("UnityEngine.Camera, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+        object mainCamera = cameraType.GetProperty("main").GetValue(null, null);
+        // cameraType.GetProperty("tag").SetValue(mainCamera, "", null);
+        cameraType.GetProperty("enabled").SetValue(mainCamera, false, null);
+
+        Console.WriteLine("Reparenting Camera 2");
+        Type gameObjectType = Type.GetType("UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+        object vrCameraObject = Activator.CreateInstance(gameObjectType);
+        MethodInfo addComponentMethod = gameObjectType.GetMethod("AddComponent", new[] { typeof(Type) });
+        object vrCamera = addComponentMethod.Invoke(vrCameraObject, new[] { cameraType });
+        object mainCameraTransform = cameraType.GetProperty("transform").GetValue(mainCamera, null);
+        object vrCameraTransform = cameraType.GetProperty("transform").GetValue(vrCamera, null);
+        Type transformType = Type.GetType("UnityEngine.Transform, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+
+        
+        Console.WriteLine("Reparenting Camera 3");
+        transformType.GetProperty("parent").SetValue(vrCameraTransform, mainCameraTransform, null);
+        MethodInfo setLocalPositionMethod = transformType.GetMethod("INTERNAL_set_localPosition", BindingFlags.Instance | BindingFlags.NonPublic);
+        setLocalPositionMethod.Invoke(vrCameraTransform, new Type[] { null });
+        // cameraType.GetProperty("tag").SetValue(vrCamera, "MainCamera", null);
+        
+        
+        Console.WriteLine("Reparenting Camera end");
     }
 }
