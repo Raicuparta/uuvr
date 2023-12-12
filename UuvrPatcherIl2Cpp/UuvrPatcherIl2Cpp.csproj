@@ -10,7 +10,7 @@
         <Platforms>x64</Platforms>
         <LangVersion>10</LangVersion>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <OutputPath>$(BepInExDir)\Il2Cpp\mods\UnityVR\patchers</OutputPath>
+        <OutputPath>$(BepInExDir)\mods\Il2Cpp\uuvr-il2cpp\patchers</OutputPath>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="AssetsTools.NET" Version="2.0.9" />
