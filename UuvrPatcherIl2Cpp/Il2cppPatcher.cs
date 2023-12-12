@@ -10,7 +10,7 @@ using BepInEx.Preloader.Core.Patching;
 // TODO this is a separate project as a quick fix,
 // but would be easy to merge it with the Mono version with some compiler conditions.
 
-[PatcherPluginInfo("com.raicuparta.uuvr-patcher", "UUVR Patcher", "0.1.0")]
+[PatcherPluginInfo("com.raicuparta.uuvr", "UUVR", "0.1.0")]
 public class Il2cppPatcher: BasePatcher
 {
     private static readonly List<string> GlobalSettingsFileNames =
@@ -18,9 +18,8 @@ public class Il2cppPatcher: BasePatcher
         {
             "globalgamemanagers", "mainData", "data.unity3d"
         };
-    
+
     public static IEnumerable<string> TargetDLLs { get; } = new[] {"Assembly-CSharp.dll"};
-    
 
     public override void Initialize()
     {
