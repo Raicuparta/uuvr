@@ -10,7 +10,7 @@ public class UuvrIl2cppBehaviour: MonoBehaviour
     private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
     
     private Type _xrSettingsType;
-    private PropertyInfo xrEnabledProperty;
+    private PropertyInfo _xrEnabledProperty;
     
     public UuvrIl2cppBehaviour(IntPtr pointer) : base(pointer)
     {
@@ -23,7 +23,7 @@ public class UuvrIl2cppBehaviour: MonoBehaviour
             Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.VRModule") ??
             Type.GetType("UnityEngine.VR.VRSettings, UnityEngine");
         
-        xrEnabledProperty = _xrSettingsType.GetProperty("enabled");
+        _xrEnabledProperty = _xrSettingsType.GetProperty("enabled");
 
         SetXrEnabled(false);
         SetPositionTrackingEnabled(false);
@@ -31,16 +31,20 @@ public class UuvrIl2cppBehaviour: MonoBehaviour
 
     private void Update()
     {
-        if (_toggleVrKey.UpdateIsDown())
-        {
-            bool xrEnabled = (bool) xrEnabledProperty.GetValue(null);
-            SetXrEnabled(!xrEnabled);
-        }
+        if (_toggleVrKey.UpdateIsDown()) ToggleXr();
+    }
+
+    private void ToggleXr()
+    {
+        bool xrEnabled = (bool) _xrEnabledProperty.GetValue(null);
+        SetXrEnabled(!xrEnabled);
     }
 
     private void SetXrEnabled(bool enabled)
     {
-        xrEnabledProperty.SetValue(null, enabled, null);
+        Console.WriteLine($"Setting XR enabled to {enabled}");
+
+        _xrEnabledProperty.SetValue(null, enabled, null);
     }
 
     private void SetPositionTrackingEnabled(bool enabled)
