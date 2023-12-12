@@ -8,7 +8,6 @@ namespace UuvrPluginIl2Cpp;
 public class UuvrIl2cppBehaviour: MonoBehaviour
 {
     private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
-    private readonly KeyboardKey _reparentCameraKey = new (KeyboardKey.KeyCode.F4);
     
     private Type _xrSettingsType;
     private PropertyInfo xrEnabledProperty;
