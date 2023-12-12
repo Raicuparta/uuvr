@@ -5,7 +5,7 @@ using BepInEx;
 
 namespace UuvrPluginMono;
 
-[BepInPlugin("raicuparta.unityuniversalvr", "Unity Universal VR", "0.1.0")]
+[BepInPlugin("raicuparta.unityuniversalvr", "Unity Universal VR", "0.2.0")]
 public class MonoPlugin : BaseUnityPlugin
 {
     private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
