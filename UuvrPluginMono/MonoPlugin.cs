@@ -5,7 +5,6 @@ using System.Reflection;
 using BepInEx;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UI.Collections;
 
 namespace UuvrPluginMono;
 
@@ -24,6 +23,7 @@ public class MonoPlugin : BaseUnityPlugin
     private Type _transformType;
     private PropertyInfo _xrEnabledProperty;
     private object _mainCameraRenderTexture;
+    private bool _shouldPatchUi;
 
     private const string VR_UI_PARENT_NAME = "UUVR_UI_PARENT";
 
@@ -54,7 +54,13 @@ public class MonoPlugin : BaseUnityPlugin
     {
         if (_toggleVrKey.UpdateIsDown()) ToggleXr();
         if (_reparentCameraKey.UpdateIsDown()) ReparentCamera();
-        if (_vrUiKey.UpdateIsDown()) SetUpUi();
+        if (_vrUiKey.UpdateIsDown()) ToggleXrUi();
+
+        UpdateXrUi();
+    }
+    private void ToggleXrUi()
+    {
+        _shouldPatchUi = !_shouldPatchUi;
     }
 
     private void ToggleXr()
@@ -165,17 +171,21 @@ public class MonoPlugin : BaseUnityPlugin
         }
     }
 
-    private static void SetUpUi()
+    private void UpdateXrUi()
     {
-        Console.WriteLine("Setting Up VR UI...");
+        if (!_shouldPatchUi) return;
 
         List<Canvas> canvases = GraphicRegistry.instance.m_Graphics.Keys.ToList();
         
-        Console.WriteLine($"Found {canvases.Count}");
-        
         foreach (Canvas canvas in canvases)
         {
+            if (!canvas) continue;
+            
+            // World space canvases probably already work as intended in VR.
             if (canvas.renderMode == RenderMode.WorldSpace) continue;
+
+            // Screen space canvases being rendered to textures are probably already working as intended in VR.
+            if (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera?.targetTexture != null) continue;
 
             canvas.renderMode = RenderMode.ScreenSpaceCamera;
             canvas.worldCamera = Camera.main ?? Camera.current;
