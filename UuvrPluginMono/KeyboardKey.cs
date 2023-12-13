@@ -7,7 +7,8 @@ public class KeyboardKey
     public enum KeyCode
     {
         F3 = 0x72,
-        F4 = 0x73
+        F4 = 0x73,
+        F5 = 0x74,
     }
     
     private bool _previousIsKeyPressed;

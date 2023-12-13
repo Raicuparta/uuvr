@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using BepInEx;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UI.Collections;
 
 namespace UuvrPluginMono;
 
@@ -9,6 +14,7 @@ public class MonoPlugin : BaseUnityPlugin
 {
     private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
     private readonly KeyboardKey _reparentCameraKey = new (KeyboardKey.KeyCode.F4);
+    private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
 
     private bool _vrEnabled;
     private bool _setUpDone;
@@ -18,6 +24,8 @@ public class MonoPlugin : BaseUnityPlugin
     private Type _transformType;
     private PropertyInfo _xrEnabledProperty;
     private object _mainCameraRenderTexture;
+
+    private const string VR_UI_PARENT_NAME = "UUVR_UI_PARENT";
 
     private void Start()
     {
@@ -46,6 +54,7 @@ public class MonoPlugin : BaseUnityPlugin
     {
         if (_toggleVrKey.UpdateIsDown()) ToggleXr();
         if (_reparentCameraKey.UpdateIsDown()) ReparentCamera();
+        if (_vrUiKey.UpdateIsDown()) SetUpUi();
     }
 
     private void ToggleXr()
@@ -153,6 +162,43 @@ public class MonoPlugin : BaseUnityPlugin
         else
         {
             Console.WriteLine("Failed to get type UnityEngine.XR.InputTracking");
+        }
+    }
+
+    private static void SetUpUi()
+    {
+        Console.WriteLine("Setting Up VR UI...");
+
+        List<Canvas> canvases = GraphicRegistry.instance.m_Graphics.Keys.ToList();
+        
+        Console.WriteLine($"Found {canvases.Count}");
+        
+        foreach (Canvas canvas in canvases)
+        {
+            if (canvas.renderMode == RenderMode.WorldSpace) continue;
+
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.worldCamera = Camera.main ?? Camera.current;
+            canvas.planeDistance = 1;
+            canvas.sortingOrder = int.MaxValue;
+
+            Transform originalParent = canvas.transform.parent;
+            if (originalParent?.name == VR_UI_PARENT_NAME) continue;
+            
+            Transform vrUiParent = new GameObject(VR_UI_PARENT_NAME).transform;
+            vrUiParent.parent = originalParent;
+            vrUiParent.localPosition = Vector3.zero;
+            vrUiParent.localRotation = Quaternion.identity;
+            canvas.transform.parent = vrUiParent;
+
+            vrUiParent.transform.localScale = Vector3.one * 0.3f;
+
+            CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
+            if (scaler)
+            {
+                scaler.scaleFactor = 2;
+                scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
+            }
         }
     }
 }
