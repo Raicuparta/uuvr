@@ -18,11 +18,8 @@ public class MonoPlugin : BaseUnityPlugin
     private bool _vrEnabled;
     private bool _setUpDone;
     private Type _xrSettingsType;
-    private Type _cameraType;
-    private Type _gameObjectType;
-    private Type _transformType;
     private PropertyInfo _xrEnabledProperty;
-    private object _mainCameraRenderTexture;
+    private RenderTexture _mainCameraRenderTexture;
     private bool _shouldPatchUi;
 
     private const string VR_UI_PARENT_NAME = "UUVR_UI_PARENT";
@@ -36,15 +33,6 @@ public class MonoPlugin : BaseUnityPlugin
         
         
         _xrEnabledProperty = _xrSettingsType.GetProperty("enabled");
-        
-        _cameraType = Type.GetType("UnityEngine.Camera, UnityEngine.CoreModule") ??
-                      Type.GetType("UnityEngine.Camera, UnityEngine");
-
-        _gameObjectType = Type.GetType("UnityEngine.GameObject, UnityEngine.CoreModule") ??
-                          Type.GetType("UnityEngine.GameObject, UnityEngine");
-
-        _transformType = Type.GetType("UnityEngine.Transform, UnityEngine.CoreModule") ??
-                         Type.GetType("UnityEngine.Transform, UnityEngine");
         
         SetXrEnabled(false);
         SetPositionTrackingEnabled(false);
@@ -73,7 +61,7 @@ public class MonoPlugin : BaseUnityPlugin
     {
         try
         {
-            object mainCamera = _cameraType.GetProperty("main").GetValue(null, null);
+            Camera mainCamera = Camera.main ?? Camera.current;
 
             if (mainCamera == null)
             {
@@ -81,9 +69,8 @@ public class MonoPlugin : BaseUnityPlugin
                 return;
             }
 
-            _mainCameraRenderTexture = _cameraType.GetProperty("targetTexture").GetValue(mainCamera, null);
-
-            _cameraType.GetProperty("targetTexture").SetValue(mainCamera, null, null);
+            _mainCameraRenderTexture = mainCamera.targetTexture;
+            mainCamera.targetTexture = null;
         }
         catch (Exception e)
         {
@@ -95,15 +82,15 @@ public class MonoPlugin : BaseUnityPlugin
     {
         try
         {
-            object mainCamera = _cameraType.GetProperty("main").GetValue(null, null);
+            Camera mainCamera = Camera.main ?? Camera.current;
 
             if (mainCamera == null)
             {
-                Console.WriteLine("Failed to find main camera");
+                Console.WriteLine("Failed to find main camera, so not doing anything about render textures. This might be OK.");
                 return;
             }
 
-            _cameraType.GetProperty("targetTexture").SetValue(mainCamera, _mainCameraRenderTexture, null);
+            mainCamera.targetTexture = _mainCameraRenderTexture;
         }
         catch (Exception e)
         {
@@ -115,21 +102,14 @@ public class MonoPlugin : BaseUnityPlugin
 
         Console.WriteLine("Reparenting Camera...");
 
-        object mainCamera = _cameraType.GetProperty("main").GetValue(null, null);
-        _cameraType.GetProperty("enabled").SetValue(mainCamera, false, null);
+        Camera mainCamera = Camera.main ?? Camera.current;
+        mainCamera.enabled = false;
 
-        Console.WriteLine("Reparenting Camera 1");
-        object vrCameraObject = Activator.CreateInstance(_gameObjectType);
-        MethodInfo addComponentMethod = _gameObjectType.GetMethod("AddComponent", new[] { typeof(Type) });
-        object vrCamera = addComponentMethod.Invoke(vrCameraObject, new[] { _cameraType });
-        object mainCameraTransform = _cameraType.GetProperty("transform").GetValue(mainCamera, null);
-        
-        Console.WriteLine("Reparenting Camera 2");
-        object vrCameraTransform = _cameraType.GetProperty("transform").GetValue(vrCamera, null);
-        
-        Console.WriteLine("Reparenting Camera 3");
-        _transformType.GetProperty("parent").SetValue(vrCameraTransform, mainCameraTransform, null);
-        _transformType.GetProperty("localPosition").SetValue(vrCameraTransform, null, null);
+        GameObject vrCameraObject = new("VrCamera");
+        Camera vrCamera = vrCameraObject.AddComponent<Camera>();
+        vrCamera.tag = "MainCamera";
+        vrCamera.transform.parent = mainCamera.transform;
+        vrCamera.transform.localPosition = Vector3.zero;
     }
 
     private void SetXrEnabled(bool enabled)
