@@ -5,7 +5,7 @@ using UuvrPluginMono;
 
 namespace UuvrPluginIl2Cpp;
 
-[BepInPlugin("raicuparta.unityuniversalvr", "Unity Universal VR", "0.2.0")]
+[BepInPlugin("raicuparta.unityuniversalvr", "Unity Universal VR", "0.2.1")]
 public class Il2CppPlugin : BasePlugin
 {
     public override void Load()
