@@ -107,9 +107,11 @@ public class MonoPlugin : BaseUnityPlugin
 
         GameObject vrCameraObject = new("VrCamera");
         Camera vrCamera = vrCameraObject.AddComponent<Camera>();
+        vrCamera.CopyFrom(mainCamera);
         vrCamera.tag = "MainCamera";
         vrCamera.transform.parent = mainCamera.transform;
         vrCamera.transform.localPosition = Vector3.zero;
+        vrCamera.cullingMask |= 1 << LayerMask.NameToLayer("UI");
     }
 
     private void SetXrEnabled(bool enabled)
