@@ -11,9 +11,9 @@ namespace UuvrPluginMono;
 [BepInPlugin("raicuparta.unityuniversalvr", "Unity Universal VR", "0.2.1")]
 public class MonoPlugin : BaseUnityPlugin
 {
-    private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
-    private readonly KeyboardKey _reparentCameraKey = new (KeyboardKey.KeyCode.F4);
-    private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
+    private readonly KeyCode _toggleVrKey = KeyCode.F3;
+    private readonly KeyCode _reparentCameraKey = KeyCode.F4;
+    private readonly KeyCode _vrUiKey = KeyCode.F5;
 
     private bool _vrEnabled;
     private bool _setUpDone;
@@ -40,9 +40,9 @@ public class MonoPlugin : BaseUnityPlugin
 
     private void Update()
     {
-        if (_toggleVrKey.UpdateIsDown()) ToggleXr();
-        if (_reparentCameraKey.UpdateIsDown()) ReparentCamera();
-        if (_vrUiKey.UpdateIsDown()) ToggleXrUi();
+        if (Input.GetKeyDown(_toggleVrKey)) ToggleXr();
+        if (Input.GetKeyDown(_reparentCameraKey)) ReparentCamera();
+        if (Input.GetKeyDown(_vrUiKey)) ToggleXrUi();
 
         UpdateXrUi();
     }
