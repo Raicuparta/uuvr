@@ -66,6 +66,10 @@ public class VrCamera : MonoBehaviour
     private void UpdateCamera()
     {
         Camera.StereoscopicEye eye = _camera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? Camera.StereoscopicEye.Left : Camera.StereoscopicEye.Right;
+       
+        // Here we should use Camera.SetStereoViewMatrix instead of setting worldToCameraMatrix,
+        // but in Aragami that messes up the shadows for some reason.
+        // TODO: investigate this more deeply.
         _camera.worldToCameraMatrix = _trackingCamera.GetStereoViewMatrix(eye);
     }
 }
