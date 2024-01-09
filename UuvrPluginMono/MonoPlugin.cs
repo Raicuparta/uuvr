@@ -127,6 +127,16 @@ public class MonoPlugin : BaseUnityPlugin
         {
             EnableRenderTexture();
         }
+
+        // TODO verify if exists etc.
+        if (enabled)
+        {
+            Camera.main.gameObject.AddComponent<VrCamera>();
+        }
+        else
+        {
+            Destroy(Camera.main.gameObject.GetComponent<VrCamera>());
+        }
     }
 
     private void SetPositionTrackingEnabled(bool enabled)

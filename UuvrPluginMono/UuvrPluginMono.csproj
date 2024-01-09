@@ -30,9 +30,17 @@
         <HintPath>lib\UnityEngine.dll</HintPath>
         <Private>False</Private>
       </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>lib\UnityEngine.CodeModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
       <Reference Include="UnityEngine.UI">
         <HintPath>lib\UnityEngine.UI.dll</HintPath>
         <Private>False</Private>
       </Reference>
+        <Reference Include="UnityEngine.UIModule">
+            <HintPath>lib\UnityEngine.UIModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
     </ItemGroup>
 </Project>
