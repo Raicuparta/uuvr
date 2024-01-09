@@ -28,21 +28,30 @@ public class VrCamera : MonoBehaviour
         _trackingCamera.depth = -100;
         _transform = transform;
 
-        var poseDriverType = Type.GetType("UnityEngine.SpatialTracking.TrackedPoseDriver, UnityEngine.SpatialTracking");
-        var poseDriver = _camera.gameObject.AddComponent(poseDriverType);
-        poseDriverType.GetProperty("enabled").SetValue(poseDriver, false, null);
-
+        DisableTracking();
     }
 
-    // private void Update()
-    // {
-    //     UpdateCamera();
-    // }
-    //
-    // private void LateUpdate()
-    // {
-    //     UpdateCamera();
-    // }
+    // When VR is enabled, Unity auto-enables HMD tracking for the cameras, overriding the game's
+    // intended camera position. This is annoying, we want tracking relative to the intended position.
+    private void DisableTracking()
+    {
+        Type poseDriverType = Type.GetType("UnityEngine.SpatialTracking.TrackedPoseDriver, UnityEngine.SpatialTracking");
+        if (poseDriverType == null)
+        {
+            // Calling this method disables tracking for some reason.
+            // But when I tested it in Aragami, it also messed up the shadows in the right eye.
+            // Still, this method is useful for games where TrackedPoseDriver isn't available.
+            _camera.SetStereoViewMatrix(Camera.StereoscopicEye.Left, Matrix4x4.zero);
+        }
+        else
+        {
+            // Adding a TrackedPoseDriver component, and then disabling it, also disables auto-tracking.
+            // This works in Aragami since the TrackedPoseDriver component exists,
+            // and it doesn't have the same shadows bug that the SetStereoViewMatrix method caused.
+            Component poseDriver = _camera.gameObject.AddComponent(poseDriverType);
+            poseDriverType.GetProperty("enabled").SetValue(poseDriver, false, null);
+        }
+    }
 
     private void OnPreCull()
     {
@@ -56,7 +65,7 @@ public class VrCamera : MonoBehaviour
 
     private void UpdateCamera()
     {
-        var eye = _camera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? Camera.StereoscopicEye.Left : Camera.StereoscopicEye.Right;
+        Camera.StereoscopicEye eye = _camera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? Camera.StereoscopicEye.Left : Camera.StereoscopicEye.Right;
         _camera.worldToCameraMatrix = _trackingCamera.GetStereoViewMatrix(eye);
     }
 }
