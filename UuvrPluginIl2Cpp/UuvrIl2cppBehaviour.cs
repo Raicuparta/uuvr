@@ -73,6 +73,16 @@ public class UuvrIl2cppBehaviour: MonoBehaviour
         Console.WriteLine($"Setting XR enabled to {enabled}");
 
         _xrEnabledProperty.SetValue(null, enabled, null);
+        
+        // TODO verify if exists etc.
+        if (enabled)
+        {
+            Camera.main.gameObject.AddComponent<VrCamera>();
+        }
+        else
+        {
+            Destroy(Camera.main.gameObject.GetComponent<VrCamera>());
+        }
     }
 
     private void SetPositionTrackingEnabled(bool enabled)

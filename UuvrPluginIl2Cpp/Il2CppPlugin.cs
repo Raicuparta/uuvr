@@ -10,6 +10,7 @@ public class Il2CppPlugin : BasePlugin
 {
     public override void Load()
     {
+        ClassInjector.RegisterTypeInIl2Cpp<VrCamera>();
         AddComponent<UuvrIl2cppBehaviour>();
     }
 }
