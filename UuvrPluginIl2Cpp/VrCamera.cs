@@ -27,7 +27,7 @@ public class VrCamera : MonoBehaviour
         _trackingSource.localPosition = Vector3.zero;
         _trackingSource.rotation = Quaternion.identity;
         _trackingCamera = _trackingSource.gameObject.AddComponent<Camera>();
-        _trackingCamera.CopyFrom(_camera);
+        // _trackingCamera.CopyFrom(_camera);
         _trackingCamera.cullingMask = 0;
         _trackingCamera.clearFlags = CameraClearFlags.Nothing;
         _trackingCamera.depth = -100;
@@ -72,9 +72,11 @@ public class VrCamera : MonoBehaviour
     {
         Camera.StereoscopicEye eye = _camera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? Camera.StereoscopicEye.Left : Camera.StereoscopicEye.Right;
        
-        // Here we should use Camera.SetStereoViewMatrix instead of setting worldToCameraMatrix,
-        // but in Aragami that messes up the shadows for some reason.
-        // TODO: investigate this more deeply.
+        // A bit confused by this.
+        // worldToCameraMatrix by itself almost works perfectly, but it breaks culling.
+        // I expected SetStereoViewMatrix by itself to be enough, but it was even more broken (although culling did work).
+        // So I'm just doing both I guess.
         _camera.worldToCameraMatrix = _trackingCamera.GetStereoViewMatrix(eye);
+        _camera.SetStereoViewMatrix(eye, _camera.worldToCameraMatrix);
     }
 }

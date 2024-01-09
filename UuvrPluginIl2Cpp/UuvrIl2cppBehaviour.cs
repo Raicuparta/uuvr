@@ -75,13 +75,20 @@ public class UuvrIl2cppBehaviour: MonoBehaviour
         _xrEnabledProperty.SetValue(null, enabled, null);
         
         // TODO verify if exists etc.
-        if (enabled)
+        try
         {
-            Camera.main.gameObject.AddComponent<VrCamera>();
-        }
-        else
+
+            if (enabled)
+            {
+                Camera.main.gameObject.AddComponent<VrCamera>();
+            }
+            else
+            {
+                Destroy(Camera.main.gameObject.GetComponent<VrCamera>());
+            }
+        } catch
         {
-            Destroy(Camera.main.gameObject.GetComponent<VrCamera>());
+            
         }
     }
 
