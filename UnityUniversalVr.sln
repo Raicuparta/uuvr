@@ -3,14 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UuvrPluginMono", "UuvrPluginMono\UuvrPluginMono.csproj", "{4FAEDEC8-3D86-4350-B42D-DAD4414E69D1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UuvrPatcherMono", "UuvrPatcherMono\UuvrPatcherMono.csproj", "{1CF5D773-2515-4684-879F-2645FDC8DB41}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UuvrPatcherIl2Cpp", "UuvrPatcherIl2Cpp\UuvrPatcherIl2Cpp.csproj", "{6DB04013-D3A0-4877-A7DB-6DBAF0D4F790}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UuvrPluginIl2Cpp", "UuvrPluginIl2Cpp\UuvrPluginIl2Cpp.csproj", "{A9DE687E-42D4-43A6-8186-06D01632D4DE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uuvr", "Uuvr\Uuvr.csproj", "{D28B08FD-9318-42A7-A475-29001E60189D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UuvrPatcher", "UuvrPatcher\UuvrPatcher.csproj", "{7F7CF87A-01D8-417A-89BB-16C6239FF847}"
@@ -31,38 +23,6 @@ Global
 		{D28B08FD-9318-42A7-A475-29001E60189D}.legacy-mono|Any CPU.Build.0 = legacy-mono|Any CPU
 		{D28B08FD-9318-42A7-A475-29001E60189D}.modern-mono|Any CPU.ActiveCfg = modern-mono|Any CPU
 		{D28B08FD-9318-42A7-A475-29001E60189D}.modern-mono|Any CPU.Build.0 = modern-mono|Any CPU
-		{6DB04013-D3A0-4877-A7DB-6DBAF0D4F790}.modern-il2cpp|Any CPU.ActiveCfg = modern-il2cpp|Any CPU
-		{6DB04013-D3A0-4877-A7DB-6DBAF0D4F790}.modern-il2cpp|Any CPU.Build.0 = modern-il2cpp|Any CPU
-		{6DB04013-D3A0-4877-A7DB-6DBAF0D4F790}.legacy-il2cpp|Any CPU.ActiveCfg = legacy-il2cpp|Any CPU
-		{6DB04013-D3A0-4877-A7DB-6DBAF0D4F790}.legacy-il2cpp|Any CPU.Build.0 = legacy-il2cpp|Any CPU
-		{6DB04013-D3A0-4877-A7DB-6DBAF0D4F790}.legacy-mono|Any CPU.ActiveCfg = legacy-mono|Any CPU
-		{6DB04013-D3A0-4877-A7DB-6DBAF0D4F790}.legacy-mono|Any CPU.Build.0 = legacy-mono|Any CPU
-		{6DB04013-D3A0-4877-A7DB-6DBAF0D4F790}.modern-mono|Any CPU.ActiveCfg = modern-mono|Any CPU
-		{6DB04013-D3A0-4877-A7DB-6DBAF0D4F790}.modern-mono|Any CPU.Build.0 = modern-mono|Any CPU
-		{1CF5D773-2515-4684-879F-2645FDC8DB41}.modern-il2cpp|Any CPU.ActiveCfg = modern-il2cpp|Any CPU
-		{1CF5D773-2515-4684-879F-2645FDC8DB41}.modern-il2cpp|Any CPU.Build.0 = modern-il2cpp|Any CPU
-		{1CF5D773-2515-4684-879F-2645FDC8DB41}.legacy-il2cpp|Any CPU.ActiveCfg = legacy-il2cpp|Any CPU
-		{1CF5D773-2515-4684-879F-2645FDC8DB41}.legacy-il2cpp|Any CPU.Build.0 = legacy-il2cpp|Any CPU
-		{1CF5D773-2515-4684-879F-2645FDC8DB41}.legacy-mono|Any CPU.ActiveCfg = legacy-mono|Any CPU
-		{1CF5D773-2515-4684-879F-2645FDC8DB41}.legacy-mono|Any CPU.Build.0 = legacy-mono|Any CPU
-		{1CF5D773-2515-4684-879F-2645FDC8DB41}.modern-mono|Any CPU.ActiveCfg = modern-mono|Any CPU
-		{1CF5D773-2515-4684-879F-2645FDC8DB41}.modern-mono|Any CPU.Build.0 = modern-mono|Any CPU
-		{A9DE687E-42D4-43A6-8186-06D01632D4DE}.modern-il2cpp|Any CPU.ActiveCfg = modern-il2cpp|Any CPU
-		{A9DE687E-42D4-43A6-8186-06D01632D4DE}.modern-il2cpp|Any CPU.Build.0 = modern-il2cpp|Any CPU
-		{A9DE687E-42D4-43A6-8186-06D01632D4DE}.legacy-il2cpp|Any CPU.ActiveCfg = legacy-il2cpp|Any CPU
-		{A9DE687E-42D4-43A6-8186-06D01632D4DE}.legacy-il2cpp|Any CPU.Build.0 = legacy-il2cpp|Any CPU
-		{A9DE687E-42D4-43A6-8186-06D01632D4DE}.legacy-mono|Any CPU.ActiveCfg = legacy-mono|Any CPU
-		{A9DE687E-42D4-43A6-8186-06D01632D4DE}.legacy-mono|Any CPU.Build.0 = legacy-mono|Any CPU
-		{A9DE687E-42D4-43A6-8186-06D01632D4DE}.modern-mono|Any CPU.ActiveCfg = modern-mono|Any CPU
-		{A9DE687E-42D4-43A6-8186-06D01632D4DE}.modern-mono|Any CPU.Build.0 = modern-mono|Any CPU
-		{4FAEDEC8-3D86-4350-B42D-DAD4414E69D1}.modern-il2cpp|Any CPU.ActiveCfg = modern-il2cpp|Any CPU
-		{4FAEDEC8-3D86-4350-B42D-DAD4414E69D1}.modern-il2cpp|Any CPU.Build.0 = modern-il2cpp|Any CPU
-		{4FAEDEC8-3D86-4350-B42D-DAD4414E69D1}.legacy-il2cpp|Any CPU.ActiveCfg = legacy-il2cpp|Any CPU
-		{4FAEDEC8-3D86-4350-B42D-DAD4414E69D1}.legacy-il2cpp|Any CPU.Build.0 = legacy-il2cpp|Any CPU
-		{4FAEDEC8-3D86-4350-B42D-DAD4414E69D1}.legacy-mono|Any CPU.ActiveCfg = legacy-mono|Any CPU
-		{4FAEDEC8-3D86-4350-B42D-DAD4414E69D1}.legacy-mono|Any CPU.Build.0 = legacy-mono|Any CPU
-		{4FAEDEC8-3D86-4350-B42D-DAD4414E69D1}.modern-mono|Any CPU.ActiveCfg = modern-mono|Any CPU
-		{4FAEDEC8-3D86-4350-B42D-DAD4414E69D1}.modern-mono|Any CPU.Build.0 = modern-mono|Any CPU
 		{7F7CF87A-01D8-417A-89BB-16C6239FF847}.legacy-il2cpp|Any CPU.ActiveCfg = legacy-il2cpp|Any CPU
 		{7F7CF87A-01D8-417A-89BB-16C6239FF847}.legacy-il2cpp|Any CPU.Build.0 = legacy-il2cpp|Any CPU
 		{7F7CF87A-01D8-417A-89BB-16C6239FF847}.legacy-mono|Any CPU.ActiveCfg = legacy-mono|Any CPU
