@@ -50,7 +50,7 @@ public class UuvrCore: MonoBehaviour
 
     private void ToggleXr()
     {
-        bool xrEnabled = (bool) _xrEnabledProperty.GetValue(null);
+        bool xrEnabled = (bool) _xrEnabledProperty.GetValue(null, null);
         SetXrEnabled(!xrEnabled);
     }
     

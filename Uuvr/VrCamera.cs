@@ -14,10 +14,11 @@ public class VrCamera : MonoBehaviour
     private Quaternion _previousRotation;
     private bool _isRight = false;
 
-        
+#if CPP
     public VrCamera(IntPtr pointer) : base(pointer)
     {
     }
+#endif
     
     void Start()
     {

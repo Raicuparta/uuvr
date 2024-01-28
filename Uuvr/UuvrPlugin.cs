@@ -15,16 +15,20 @@ public class UuvrPlugin
 : BaseUnityPlugin
 #endif
 {
-    #if CPP
+#if CPP
     public override void Load()
-    #elif MONO
+#elif MONO
     private void Awake()
-    #endif
+#endif
     {
-        #if CPP
+#if CPP
         ClassInjector.RegisterTypeInIl2Cpp<VrCamera>();
-        #endif
+#endif
 
+#if MONO
+        gameObject.
+#endif
         AddComponent<UuvrCore>();
+        
     }
 }
