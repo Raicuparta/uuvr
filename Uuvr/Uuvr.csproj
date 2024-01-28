@@ -45,37 +45,8 @@
         <PackageReference Include="BepInEx.Core" Version="6.0.0-pre.1" />
     </ItemGroup>
     
-    <ItemGroup Condition=" '$(Configuration)' == 'legacy-il2cpp' ">
-        <Reference Include="lib\il2cpp\legacy\Il2Cppmscorlib.dll">
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="lib\il2cpp\legacy\Il2CppSystem.Core.dll">
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="lib\il2cpp\legacy\UnityEngine.dll">
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="lib\il2cpp\legacy\UnityEngine.CoreModule.dll">
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="lib\il2cpp\legacy\UnityEngine.UI.dll">
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="lib\il2cpp\legacy\UnityEngine.UIModule.dll">
-            <Private>False</Private>
-        </Reference>
-    </ItemGroup>
-
-    <ItemGroup Condition=" '$(Configuration)' == 'legacy-mono' ">
-        <Reference Include="lib\mono\legacy\UnityEngine.dll">
-        </Reference>
-        <Reference Include="lib\mono\legacy\UnityEngine.CoreModule.dll">
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="lib\mono\legacy\UnityEngine.UI.dll">
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="lib\mono\legacy\UnityEngine.UIModule.dll">
+    <ItemGroup>
+        <Reference Include="$(LibsFolder)/*.dll">
             <Private>False</Private>
         </Reference>
     </ItemGroup>
