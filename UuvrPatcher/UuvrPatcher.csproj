@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <TargetFramework>net35</TargetFramework>
         <Nullable>enable</Nullable>
         <Configurations>legacy-il2cpp;modern-il2cpp;legacy-mono;modern-mono</Configurations>
         <Platforms>AnyCPU</Platforms>
@@ -11,29 +12,36 @@
         <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
         <DebugType>none</DebugType>
     </PropertyGroup>
-
+    
     <ItemGroup>
+        <PackageReference Include="AssetsTools.NET" Version="2.0.9" />
         <Reference Include="lib\$(UnityBackend)\$(UnityGeneration)/*.dll">
             <Private>False</Private>
         </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+        <Content Include="GameDataFiles\**" >
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="classdata.tpk">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
     <!--  Il2Cpp  -->
     <PropertyGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
-        <TargetFramework>net6.0</TargetFramework>
-        <OutputPath>$(BepInExDir)\mods\Il2Cpp\uuvr-il2cpp\plugins</OutputPath>
+        <OutputPath>$(BepInExDir)\mods\Il2Cpp\uuvr-il2cpp\patchers</OutputPath>
     </PropertyGroup>
     <ItemGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
-        <PackageReference Include="BepInEx.IL2CPP" Version="6.0.0-pre.1" />
-        <PackageReference Include="BepInEx.Core" Version="6.0.0-pre.1" />
+        <PackageReference Include="BepInEx.Unity.Mono.Preloader" Version="6.0.0-be.674" />
     </ItemGroup>
 
     <!--  Mono  -->
     <PropertyGroup Condition=" '$(UnityBackend)' == 'mono' ">
-        <TargetFramework>net35</TargetFramework>
-        <OutputPath>$(BepInExDir)\mods\Mono\uuvr-mono\plugins</OutputPath>
+        <OutputPath>$(BepInExDir)\mods\Mono\uuvr-mono\patchers</OutputPath>
     </PropertyGroup>
     <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
-        <PackageReference Include="BepInEx.Core" Version="5.4.16" />
+        <PackageReference Include="Mono.Cecil" Version="0.10.4" IncludeAssets="compile" />
     </ItemGroup>
 </Project>

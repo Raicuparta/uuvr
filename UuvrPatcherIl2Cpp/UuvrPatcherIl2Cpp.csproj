@@ -26,12 +26,4 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
-    <ItemGroup>
-        <Reference Include="BepInEx.Core">
-            <HintPath>lib\BepInEx.Core.dll</HintPath>
-        </Reference>
-        <Reference Include="BepInEx.IL2CPP">
-            <HintPath>lib\BepInEx.IL2CPP.dll</HintPath>
-        </Reference>
-    </ItemGroup>
 </Project>
