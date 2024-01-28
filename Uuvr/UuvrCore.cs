@@ -15,9 +15,11 @@ public class UuvrCore: MonoBehaviour
     private bool _shouldPatchUi;
     private const string VR_UI_PARENT_NAME = "UUVR_UI_PARENT";
     
+#if CPP
     public UuvrCore(IntPtr pointer) : base(pointer)
     {
     }
+#endif
 
     private void Start()
     {
