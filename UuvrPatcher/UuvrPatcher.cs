@@ -40,7 +40,7 @@ public class UuvrPatcher: BasePatcher
         string patcherPath = Path.GetDirectoryName(installerPath);
         string classDataPath = Path.Combine(patcherPath, "classdata.tpk");
 
-        CopyPlugins(patcherPath, dataPath);
+        CopyGameDataFiles(patcherPath, dataPath);
         PatchVR(globalSettingsBackupPath, globalSettingsFilePath, classDataPath);
 
         Console.WriteLine("");
@@ -114,18 +114,11 @@ public class UuvrPatcher: BasePatcher
         };
     }
 
-    private static void CopyPlugins(string patcherPath, string dataPath)
+    private static void CopyGameDataFiles(string patcherPath, string dataPath)
     {
-        Console.WriteLine("Copying plugins...");
+        Console.WriteLine("Copying game data files...");
 
-        string gamePluginsPath = Path.Combine(dataPath, "Plugins");
-        if (!Directory.Exists(gamePluginsPath))
-        {
-            Directory.CreateDirectory(gamePluginsPath);
-        }
-        string patcherPluginsPath = Path.Combine(patcherPath, "GamePlugins");
-
-        CopyDirectory(patcherPluginsPath, gamePluginsPath);
+        CopyDirectory(Path.Combine(patcherPath, "GameDataFiles"), dataPath);
     }
     
     
