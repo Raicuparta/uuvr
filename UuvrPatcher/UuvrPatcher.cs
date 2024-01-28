@@ -5,13 +5,19 @@ using System.IO;
 using System.Reflection;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
+#if CPP
 using BepInEx.Preloader.Core.Patching;
+#elif MONO
+using Mono.Cecil;
+#endif
 
-// TODO this is a separate project as a quick fix,
-// but would be easy to merge it with the Mono version with some compiler conditions.
-
+#if CPP
 [PatcherPluginInfo("com.raicuparta.uuvr", "UUVR", "0.1.0")]
-public class UuvrPatcher: BasePatcher
+#endif
+public class Patcher
+#if CPP
+    : BasePatcher
+#endif
 {
     private static readonly List<string> GlobalSettingsFileNames =
         new()
@@ -21,7 +27,17 @@ public class UuvrPatcher: BasePatcher
 
     public static IEnumerable<string> TargetDLLs { get; } = new[] {"Assembly-CSharp.dll"};
 
+#if MONO
+    public static void Patch(AssemblyDefinition assembly)
+    {
+    }
+#endif
+    
+#if CPP
     public override void Initialize()
+#elif MONO
+    public static void Initialize()
+#endif
     {
         Console.WriteLine("Patching Unity Universal VR...");
         
@@ -147,5 +163,7 @@ public class UuvrPatcher: BasePatcher
         }
     }
     
+#if CPP
     public override void Finalizer() { }
+#endif
 }
