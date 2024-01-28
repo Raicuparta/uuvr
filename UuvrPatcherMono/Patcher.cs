@@ -40,7 +40,7 @@ public static class Patcher
         string patcherPath = Path.GetDirectoryName(installerPath);
         string classDataPath = Path.Combine(patcherPath, "classdata.tpk");
 
-        CopyPlugins(patcherPath, dataPath);
+        CopyDataFiles(patcherPath, dataPath);
         PatchVR(globalSettingsBackupPath, globalSettingsFilePath, classDataPath);
 
         Console.WriteLine("");
@@ -114,18 +114,13 @@ public static class Patcher
         };
     }
 
-    private static void CopyPlugins(string patcherPath, string dataPath)
+    private static void CopyDataFiles(string patcherPath, string dataPath)
     {
         Console.WriteLine("Copying plugins...");
+        
+        string patcherPluginsPath = Path.Combine(patcherPath, "CopyToGameData");
 
-        string gamePluginsPath = Path.Combine(dataPath, "Plugins");
-        if (!Directory.Exists(gamePluginsPath))
-        {
-            Directory.CreateDirectory(gamePluginsPath);
-        }
-        string patcherPluginsPath = Path.Combine(patcherPath, "GamePlugins");
-
-        CopyDirectory(patcherPluginsPath, gamePluginsPath);
+        CopyDirectory(patcherPluginsPath, dataPath);
     }
 
     private static void CopyDirectory(string sourceDir, string destinationDir)

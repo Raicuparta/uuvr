@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx;
+using ShipbreakerVr;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,11 +37,13 @@ public class MonoPlugin : BaseUnityPlugin
         
         SetXrEnabled(false);
         SetPositionTrackingEnabled(false);
+
+        new GameObject("ModXrManager").AddComponent<ModXrManager>();
     }
 
     private void Update()
     {
-        if (_toggleVrKey.UpdateIsDown()) ToggleXr();
+        if (_toggleVrKey.UpdateIsDown()) ToggleXrViaGlobalGameManagers();
         if (_reparentCameraKey.UpdateIsDown()) ReparentCamera();
         if (_vrUiKey.UpdateIsDown()) ToggleXrUi();
 
@@ -51,7 +54,7 @@ public class MonoPlugin : BaseUnityPlugin
         _shouldPatchUi = !_shouldPatchUi;
     }
 
-    private void ToggleXr()
+    private void ToggleXrViaGlobalGameManagers()
     {
         bool xrEnabled = (bool) _xrEnabledProperty.GetValue(null, null);
         SetXrEnabled(!xrEnabled);

@@ -26,6 +26,33 @@
       <Folder Include="lib\" />
     </ItemGroup>
     <ItemGroup>
+      <Reference Include="Unity.InputSystem">
+        <HintPath>lib\Unity.InputSystem.dll</HintPath>
+      </Reference>
+      <Reference Include="Unity.XR.Management">
+        <HintPath>lib\Unity.XR.Management.dll</HintPath>
+      </Reference>
+      <Reference Include="Unity.XR.OpenXR">
+        <HintPath>lib\Unity.XR.OpenXR.dll</HintPath>
+      </Reference>
+      <Reference Include="Unity.XR.OpenXR.Features.ConformanceAutomation">
+        <HintPath>lib\Unity.XR.OpenXR.Features.ConformanceAutomation.dll</HintPath>
+      </Reference>
+      <Reference Include="Unity.XR.OpenXR.Features.MockDriver">
+        <HintPath>lib\Unity.XR.OpenXR.Features.MockDriver.dll</HintPath>
+      </Reference>
+      <Reference Include="Unity.XR.OpenXR.Features.MockRuntime">
+        <HintPath>lib\Unity.XR.OpenXR.Features.MockRuntime.dll</HintPath>
+      </Reference>
+      <Reference Include="Unity.XR.OpenXR.Features.OculusQuestSupport">
+        <HintPath>lib\Unity.XR.OpenXR.Features.OculusQuestSupport.dll</HintPath>
+      </Reference>
+      <Reference Include="Unity.XR.OpenXR.Features.RuntimeDebugger">
+        <HintPath>lib\Unity.XR.OpenXR.Features.RuntimeDebugger.dll</HintPath>
+      </Reference>
+      <Reference Include="Unity.XR.OpenXR.TestHelpers">
+        <HintPath>lib\Unity.XR.OpenXR.TestHelpers.dll</HintPath>
+      </Reference>
       <Reference Include="UnityEngine">
         <HintPath>lib\UnityEngine.dll</HintPath>
         <Private>False</Private>
@@ -42,5 +69,40 @@
             <HintPath>lib\UnityEngine.UIModule.dll</HintPath>
             <Private>False</Private>
         </Reference>
+        <Reference Include="UnityEngine.XRModule">
+          <HintPath>lib\UnityEngine.XRModule.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+      <None Update="lib\Unity.XR.Management.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="lib\Unity.XR.OpenXR.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="lib\Unity.XR.OpenXR.Features.ConformanceAutomation.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="lib\Unity.XR.OpenXR.Features.MockDriver.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="lib\Unity.XR.OpenXR.Features.MockRuntime.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="lib\Unity.XR.OpenXR.Features.OculusQuestSupport.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="lib\Unity.XR.OpenXR.Features.RuntimeDebugger.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="lib\Unity.XR.OpenXR.TestHelpers.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="AssetBundles\xrmanager">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="AssetBundles\xrmanager.manifest">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 </Project>
