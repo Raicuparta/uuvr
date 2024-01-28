@@ -1,5 +1,0 @@
-﻿<Project>
-    <PropertyGroup>
-        <LibsFolder>$(LibsFolderBase)\legacy</LibsFolder>
-    </PropertyGroup>
-</Project>
