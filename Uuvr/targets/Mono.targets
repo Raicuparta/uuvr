@@ -1,0 +1,12 @@
+﻿<Project>
+    <PropertyGroup>
+        <TargetFramework>net35</TargetFramework>
+        <OutputPath>$(BepInExDir)\mods\Mono\uuvr-mono\plugins</OutputPath>
+        <DefineConstants>MONO</DefineConstants>
+        <LibsFolderBase>lib\mono</LibsFolderBase>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BepInEx.Core" Version="5.4.16" />
+    </ItemGroup>
+</Project>

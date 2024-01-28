@@ -1,0 +1,13 @@
+﻿<Project>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <OutputPath>$(BepInExDir)\mods\Il2Cpp\uuvr-il2cpp\plugins</OutputPath>
+        <DefineConstants>CPP</DefineConstants>
+        <LibsFolderBase>lib\il2cpp</LibsFolderBase>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BepInEx.IL2CPP" Version="6.0.0-pre.1" />
+        <PackageReference Include="BepInEx.Core" Version="6.0.0-pre.1" />
+    </ItemGroup>
+</Project>
