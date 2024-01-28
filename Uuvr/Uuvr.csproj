@@ -1,0 +1,86 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Configurations>legacy-il2cpp;modern-il2cpp;legacy-mono;modern-mono</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <LangVersion>10</LangVersion>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'legacy-il2cpp' Or '$(Configuration)' == 'modern-il2cpp'">
+        <CppBackend>true</CppBackend>
+        <OutputPath>$(BepInExDir)\mods\Il2Cpp\uuvr-il2cpp\plugins</OutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'legacy-mono' Or '$(Configuration)' == 'modern-mono'">
+        <MonoBackend>true</MonoBackend>
+        <OutputPath>$(BepInExDir)\mods\Mono\uuvr-mono\plugins</OutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="lib\il2cpp\legacy\" />
+      <Folder Include="lib\il2cpp\modern\" />
+      <Folder Include="lib\mono\legacy\" />
+      <Folder Include="lib\mono\modern\" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(Configuration)' == 'legacy-mono' ">
+        <PackageReference Include="BepInEx.Core" Version="5.4.16" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(Configuration)' == 'legacy-il2cpp' ">
+        <PackageReference Include="BepInEx.IL2CPP" Version="6.0.0-pre.1" />
+        <PackageReference Include="BepInEx.Core" Version="6.0.0-pre.1" />
+    </ItemGroup>
+    
+    <ItemGroup Condition=" '$(Configuration)' == 'legacy-il2cpp' ">
+        <Reference Include="Il2Cppmscorlib">
+            <HintPath>lib\Il2Cppmscorlib.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Il2CppSystem.Core">
+            <HintPath>lib\Il2CppSystem.Core.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine">
+            <HintPath>lib\UnityEngine.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>lib\UnityEngine.CoreModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UI">
+            <HintPath>lib\UnityEngine.UI.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UIModule">
+            <HintPath>lib\UnityEngine.UIModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(Configuration)' == 'legacy-mono' ">
+        <Reference Include="UnityEngine">
+            <HintPath>lib\UnityEngine.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>lib\UnityEngine.CodeModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UI">
+            <HintPath>lib\UnityEngine.UI.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UIModule">
+            <HintPath>lib\UnityEngine.UIModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+</Project>

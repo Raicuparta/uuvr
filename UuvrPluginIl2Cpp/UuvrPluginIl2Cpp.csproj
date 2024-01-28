@@ -17,6 +17,8 @@
     <RootNamespace>UuvrPluginIl2Cpp</RootNamespace>
     <OutputPath>$(BepInExDir)\mods\Il2Cpp\uuvr-il2cpp\plugins</OutputPath>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <Configurations>Debug;Release;legacy-il2cpp;modern-il2cpp;legacy-mono;modern-mono</Configurations>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
   
   <ItemGroup>

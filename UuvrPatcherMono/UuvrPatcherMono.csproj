@@ -7,17 +7,11 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <Configurations>Release;Debug</Configurations>
-        <Platforms>x64</Platforms>
+        <Configurations>legacy-il2cpp;modern-il2cpp;legacy-mono;modern-mono</Configurations>
+        <Platforms>AnyCPU</Platforms>
         <LangVersion>10</LangVersion>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <OutputPath>$(BepInExDir)\mods\Mono\uuvr-mono\patchers</OutputPath>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <DebugType>pdbonly</DebugType>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <DebugType>none</DebugType>
     </PropertyGroup>
     <ItemGroup>
       <PackageReference Include="AssetsTools.NET" Version="2.0.9" />

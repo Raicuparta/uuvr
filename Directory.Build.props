@@ -2,13 +2,6 @@
 <Project ToolsVersion="Current"
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ReleaseBepInExDir>C:\Users\rai\AppData\Roaming\raicuparta\rai-pal\data\mod-loaders\bepinex</ReleaseBepInExDir>
-    <DebugBepInExDir>C:\Users\rai\AppData\Roaming\raicuparta\rai-pal\data\mod-loaders\bepinex</DebugBepInExDir>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <BepInExDir>$(DebugBepInExDir)</BepInExDir>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <BepInExDir>$(ReleaseBepInExDir)</BepInExDir>
+    <BepInExDir>C:\Users\rai\AppData\Roaming\raicuparta\rai-pal\data\mod-loaders\bepinex</BepInExDir>
   </PropertyGroup>
 </Project>
