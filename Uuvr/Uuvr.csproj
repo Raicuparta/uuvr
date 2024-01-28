@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Configurations>legacy-il2cpp;modern-il2cpp;legacy-mono;modern-mono</Configurations>
         <Platforms>AnyCPU</Platforms>

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using Mono.CompilerServices.SymbolWriter;
-using System.Reflection;
 using UnityEngine;
 
 public class VrCamera : MonoBehaviour
