@@ -84,6 +84,6 @@ public class VrCamera : MonoBehaviour
         
         // Some times setting worldToCameraMatrix is enough, some times not. I'm not sure why, need to learn more.
         // Some times it's actually better not to call SetStereoViewMatrix, since it messes up the shadows. Like in Aragami.
-        // _camera.SetStereoViewMatrix(eye, _camera.worldToCameraMatrix);
+        _camera.SetStereoViewMatrix(eye, _camera.worldToCameraMatrix);
     }
 }

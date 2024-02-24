@@ -21,7 +21,7 @@
 
     <!--  Il2Cpp  -->
     <PropertyGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
     </PropertyGroup>
     <ItemGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
         <PackageReference Include="BepInEx.IL2CPP" Version="6.0.0-pre.1" />
