@@ -14,7 +14,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Reference Include="lib\$(UnityBackend)\$(UnityGeneration)/*.dll">
+        <!-- TODO: some of these need to be copied to output -->
+        <Reference Include="lib\$(UnityBackend)\$(UnityGeneration)\*.dll">
             <Private>False</Private>
         </Reference>
     </ItemGroup>
@@ -30,10 +31,22 @@
 
     <!--  Mono  -->
     <PropertyGroup Condition=" '$(UnityBackend)' == 'mono' ">
-        <TargetFramework>net35</TargetFramework>
+        <!-- TODO: This might need to be 3.5 for legacy -->
+        <TargetFramework>netstandard2.1</TargetFramework>
     </PropertyGroup>
     <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
         <PackageReference Include="BepInEx.Core" Version="5.4.16" />
+    </ItemGroup>
+
+    <!--  Modern  -->
+    <ItemGroup Condition=" '$(UnityGeneration)' == 'modern' ">
+        <!-- TODO: don't actually need asset bundles for this, check StanleyVR -->
+        <None Update="AssetBundles\xrmanager">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="AssetBundles\xrmanager.manifest">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

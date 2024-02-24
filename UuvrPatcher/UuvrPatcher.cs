@@ -39,7 +39,7 @@ public class Patcher
     public static void Initialize()
 #endif
     {
-        Console.WriteLine("Patching Unity Universal VR...");
+        Console.WriteLine("Patching UUVR...");
         
         string installerPath = Assembly.GetExecutingAssembly().Location;
         Console.WriteLine("installerPath " + installerPath);

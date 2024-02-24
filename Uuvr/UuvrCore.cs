@@ -34,6 +34,10 @@ public class UuvrCore: MonoBehaviour
 
         SetXrEnabled(false);
         SetPositionTrackingEnabled(false);
+        
+#if MODERN
+        gameObject.AddComponent<ModXrManager>();
+#endif
     }
 
     private void Update()

@@ -7,7 +7,14 @@ using UnhollowerRuntimeLib;
 
 namespace Uuvr;
 
-[BepInPlugin("raicuparta.unityuniversalvr", "UUVR", "0.3.0")]
+[BepInPlugin(
+#if LEGACY
+    "raicuparta.uuvr-legacy",
+#elif MODERN
+    "raicuparta.uuvr-modern",
+#endif
+    "UUVR",
+    "0.3.0")]
 public class UuvrPlugin
 #if CPP
 : BasePlugin
