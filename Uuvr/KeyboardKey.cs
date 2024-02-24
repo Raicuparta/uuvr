@@ -1,7 +1,10 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace UuvrPluginMono;
+namespace Uuvr;
 
+// Even though Unity has its own Input stuff, there are multiple input systems that can be used,
+// and different Unity versions have slightly different APIs for the same input system.
+// So instead of relying on those systems, we just make our own using native system calls.
 public class KeyboardKey
 {
     public enum KeyCode

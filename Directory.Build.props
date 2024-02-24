@@ -2,13 +2,30 @@
 <Project ToolsVersion="Current"
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ReleaseBepInExDir>C:\Users\rai\AppData\Roaming\raicuparta\rai-pal\data\mod-loaders\bepinex</ReleaseBepInExDir>
-    <DebugBepInExDir>C:\Users\rai\AppData\Roaming\raicuparta\rai-pal\data\mod-loaders\bepinex</DebugBepInExDir>
+    <BepInExDir>C:\Users\rai\AppData\Roaming\raicuparta\rai-pal\data\mod-loaders\bepinex</BepInExDir>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <BepInExDir>$(DebugBepInExDir)</BepInExDir>
+
+  <!--  Il2Cpp  -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'legacy-il2cpp' Or '$(Configuration)' == 'modern-il2cpp' ">
+    <UnityBackend>il2cpp</UnityBackend>
+    <UnityBackendFolderName>Il2Cpp</UnityBackendFolderName>
+    <DefineConstants>CPP</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <BepInExDir>$(ReleaseBepInExDir)</BepInExDir>
+
+  <!--  Mono  -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'legacy-mono' Or '$(Configuration)' == 'modern-mono' ">
+    <UnityBackend>mono</UnityBackend>
+    <UnityBackendFolderName>Mono</UnityBackendFolderName>
+    <DefineConstants>MONO</DefineConstants>
+  </PropertyGroup>
+
+  <!--  Legacy (Unity 2019 or earlier)  -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'legacy-mono' Or '$(Configuration)' == 'legacy-il2cpp' ">
+    <UnityGeneration>legacy</UnityGeneration>
+  </PropertyGroup>
+
+  <!--  Modern (Unity 2020 or later)  -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'modern-mono' Or '$(Configuration)' == 'modern-il2cpp' ">
+    <UnityGeneration>modern</UnityGeneration>
   </PropertyGroup>
 </Project>

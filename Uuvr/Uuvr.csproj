@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <Configurations>legacy-il2cpp;modern-il2cpp;legacy-mono;modern-mono</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <LangVersion>10</LangVersion>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
+        <DebugType>none</DebugType>
+        <OutputPath>$(BepInExDir)\mods\$(UnityBackendFolderName)\uuvr-$(UnityBackend)-$(UnityGeneration)\plugins</OutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="lib\$(UnityBackend)\$(UnityGeneration)/*.dll">
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+
+    <!--  Il2Cpp  -->
+    <PropertyGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
+        <TargetFramework>netstandard2.1</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
+        <PackageReference Include="BepInEx.IL2CPP" Version="6.0.0-pre.1" />
+        <PackageReference Include="BepInEx.Core" Version="6.0.0-pre.1" />
+    </ItemGroup>
+
+    <!--  Mono  -->
+    <PropertyGroup Condition=" '$(UnityBackend)' == 'mono' ">
+        <TargetFramework>net35</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
+        <PackageReference Include="BepInEx.Core" Version="5.4.16" />
+    </ItemGroup>
+
+</Project>

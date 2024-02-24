@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using BepInEx;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UuvrPluginMono;
+namespace Uuvr;
 
-[BepInPlugin("raicuparta.unityuniversalvr", "Unity Universal VR", "0.2.1")]
-public class MonoPlugin : BaseUnityPlugin
+public class UuvrCore: MonoBehaviour
 {
     private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
     private readonly KeyboardKey _reparentCameraKey = new (KeyboardKey.KeyCode.F4);
     private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
-
-    private bool _vrEnabled;
-    private bool _setUpDone;
+    
     private Type _xrSettingsType;
     private PropertyInfo _xrEnabledProperty;
-    private RenderTexture _mainCameraRenderTexture;
     private bool _shouldPatchUi;
-
     private const string VR_UI_PARENT_NAME = "UUVR_UI_PARENT";
+    
+#if CPP
+    public UuvrCore(IntPtr pointer) : base(pointer)
+    {
+    }
+#endif
 
     private void Start()
     {
@@ -31,9 +30,8 @@ public class MonoPlugin : BaseUnityPlugin
             Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.VRModule") ??
             Type.GetType("UnityEngine.VR.VRSettings, UnityEngine");
         
-        
         _xrEnabledProperty = _xrSettingsType.GetProperty("enabled");
-        
+
         SetXrEnabled(false);
         SetPositionTrackingEnabled(false);
     }
@@ -46,6 +44,7 @@ public class MonoPlugin : BaseUnityPlugin
 
         UpdateXrUi();
     }
+    
     private void ToggleXrUi()
     {
         _shouldPatchUi = !_shouldPatchUi;
@@ -56,50 +55,8 @@ public class MonoPlugin : BaseUnityPlugin
         bool xrEnabled = (bool) _xrEnabledProperty.GetValue(null, null);
         SetXrEnabled(!xrEnabled);
     }
-
-    private void DisableRenderTexture()
-    {
-        try
-        {
-            Camera mainCamera = Camera.main ?? Camera.current;
-
-            if (mainCamera == null)
-            {
-                Console.WriteLine("Failed to find main camera, so not doing anything about render textures. This might be OK.");
-                return;
-            }
-
-            _mainCameraRenderTexture = mainCamera.targetTexture;
-            mainCamera.targetTexture = null;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Failed to disable render texture: {e}");
-        }
-    }
-
-    private void EnableRenderTexture()
-    {
-        try
-        {
-            Camera mainCamera = Camera.main ?? Camera.current;
-
-            if (mainCamera == null)
-            {
-                Console.WriteLine("Failed to find main camera, so not doing anything about render textures. This might be OK.");
-                return;
-            }
-
-            mainCamera.targetTexture = _mainCameraRenderTexture;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Failed to enable render texture: {e}");
-        }
-    }
     
     private void ReparentCamera() {
-
         Console.WriteLine("Reparenting Camera...");
 
         Camera mainCamera = Camera.main ?? Camera.current;
@@ -107,25 +64,32 @@ public class MonoPlugin : BaseUnityPlugin
 
         GameObject vrCameraObject = new("VrCamera");
         Camera vrCamera = vrCameraObject.AddComponent<Camera>();
-        vrCamera.CopyFrom(mainCamera);
         vrCamera.tag = "MainCamera";
         vrCamera.transform.parent = mainCamera.transform;
         vrCamera.transform.localPosition = Vector3.zero;
-        vrCamera.cullingMask |= 1 << LayerMask.NameToLayer("UI");
     }
 
     private void SetXrEnabled(bool enabled)
     {
         Console.WriteLine($"Setting XR enabled to {enabled}");
+
         _xrEnabledProperty.SetValue(null, enabled, null);
         
-        if (enabled)
+        // TODO verify if exists etc.
+        try
         {
-            DisableRenderTexture();
-        }
-        else
+
+            if (enabled)
+            {
+                Camera.main.gameObject.AddComponent<VrCamera>();
+            }
+            else
+            {
+                Destroy(Camera.main.gameObject.GetComponent<VrCamera>());
+            }
+        } catch
         {
-            EnableRenderTexture();
+            
         }
     }
 
@@ -157,9 +121,8 @@ public class MonoPlugin : BaseUnityPlugin
     {
         if (!_shouldPatchUi) return;
 
-        List<Canvas> canvases = GraphicRegistry.instance.m_Graphics.Keys.ToList();
-        
-        foreach (Canvas canvas in canvases)
+        List<Canvas> canvases = new();
+        foreach (Canvas canvas in GraphicRegistry.instance.m_Graphics.Keys)
         {
             if (!canvas) continue;
             
@@ -168,7 +131,12 @@ public class MonoPlugin : BaseUnityPlugin
 
             // Screen space canvases being rendered to textures are probably already working as intended in VR.
             if (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera?.targetTexture != null) continue;
-
+            
+            canvases.Add(canvas);
+        }
+        
+        foreach (Canvas canvas in canvases)
+        {
             canvas.renderMode = RenderMode.ScreenSpaceCamera;
             canvas.worldCamera = Camera.main ?? Camera.current;
             canvas.planeDistance = 1;
