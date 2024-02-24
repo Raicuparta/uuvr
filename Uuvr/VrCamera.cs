@@ -51,7 +51,13 @@ public class VrCamera : MonoBehaviour
             // Adding a TrackedPoseDriver component, and then disabling it, also disables auto-tracking.
             // This works in Aragami since the TrackedPoseDriver component exists,
             // and it doesn't have the same shadows bug that the SetStereoViewMatrix method caused.
-            Component poseDriver = _camera.gameObject.AddComponent(poseDriverType);
+            Component poseDriver = _camera.gameObject.AddComponent(
+#if CPP
+                UnhollowerRuntimeLib.Il2CppType.From(poseDriverType)
+#else
+                poseDriverType
+#endif
+            );
             poseDriverType.GetProperty("enabled").SetValue(poseDriver, false, null);
         }
     }

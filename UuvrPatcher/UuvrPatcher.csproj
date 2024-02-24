@@ -5,12 +5,12 @@
         <Configurations>legacy-il2cpp;modern-il2cpp;legacy-mono;modern-mono</Configurations>
         <Platforms>AnyCPU</Platforms>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <LangVersion>10</LangVersion>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
         <DebugType>none</DebugType>
+        <OutputPath>$(BepInExDir)\mods\$(UnityBackendFolderName)\uuvr-$(UnityBackend)-$(UnityGeneration)\patchers</OutputPath>
     </PropertyGroup>
     
     <ItemGroup>
@@ -30,17 +30,11 @@
     </ItemGroup>
 
     <!--  Il2Cpp  -->
-    <PropertyGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
-        <OutputPath>$(BepInExDir)\mods\Il2Cpp\uuvr-il2cpp\patchers</OutputPath>
-    </PropertyGroup>
     <ItemGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
-        <PackageReference Include="BepInEx.Unity.Mono.Preloader" Version="6.0.0-be.674" />
+        <PackageReference Include="BepInEx.Unity.Mono.Preloader" Version="6.0.0-be.674" IncludeAssets="compile"  />
     </ItemGroup>
 
     <!--  Mono  -->
-    <PropertyGroup Condition=" '$(UnityBackend)' == 'mono' ">
-        <OutputPath>$(BepInExDir)\mods\Mono\uuvr-mono\patchers</OutputPath>
-    </PropertyGroup>
     <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
         <PackageReference Include="Mono.Cecil" Version="0.10.4" IncludeAssets="compile" />
     </ItemGroup>
