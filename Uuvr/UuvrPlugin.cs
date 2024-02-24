@@ -15,12 +15,15 @@ public class UuvrPlugin
 : BaseUnityPlugin
 #endif
 {
+    
 #if CPP
     public override void Load()
 #elif MONO
     private void Awake()
 #endif
     {
+        new ModConfiguration(Config);
+        
 #if CPP
         ClassInjector.RegisterTypeInIl2Cpp<VrCamera>();
 #endif
