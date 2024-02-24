@@ -57,7 +57,10 @@ public class Patcher
         string classDataPath = Path.Combine(patcherPath, "classdata.tpk");
 
         CopyGameDataFiles(patcherPath, dataPath);
+        
+#if LEGACY
         PatchVR(globalSettingsBackupPath, globalSettingsFilePath, classDataPath);
+#endif
 
         Console.WriteLine("");
         Console.WriteLine("Installed successfully, probably.");

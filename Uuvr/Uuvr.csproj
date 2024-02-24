@@ -32,7 +32,7 @@
     <!--  Mono  -->
     <PropertyGroup Condition=" '$(UnityBackend)' == 'mono' ">
         <!-- TODO: This might need to be 3.5 for legacy -->
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFramework>net48</TargetFramework>
     </PropertyGroup>
     <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
         <PackageReference Include="BepInEx.Core" Version="5.4.16" />

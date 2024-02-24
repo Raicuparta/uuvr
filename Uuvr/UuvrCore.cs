@@ -126,18 +126,20 @@ public class UuvrCore: MonoBehaviour
         if (!_shouldPatchUi) return;
 
         List<Canvas> canvases = new();
-        foreach (Canvas canvas in GraphicRegistry.instance.m_Graphics.Keys)
-        {
-            if (!canvas) continue;
-            
-            // World space canvases probably already work as intended in VR.
-            if (canvas.renderMode == RenderMode.WorldSpace) continue;
-
-            // Screen space canvases being rendered to textures are probably already working as intended in VR.
-            if (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera?.targetTexture != null) continue;
-            
-            canvases.Add(canvas);
-        }
+        
+        // TODO: need to get m_Graphics but it's private. Publicize?
+        // foreach (Canvas canvas in GraphicRegistry.instance.m_Graphics.Keys)
+        // {
+        //     if (!canvas) continue;
+        //     
+        //     // World space canvases probably already work as intended in VR.
+        //     if (canvas.renderMode == RenderMode.WorldSpace) continue;
+        //
+        //     // Screen space canvases being rendered to textures are probably already working as intended in VR.
+        //     if (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera?.targetTexture != null) continue;
+        //     
+        //     canvases.Add(canvas);
+        // }
         
         foreach (Canvas canvas in canvases)
         {
