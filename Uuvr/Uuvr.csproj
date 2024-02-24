@@ -39,14 +39,5 @@
     </ItemGroup>
 
     <!--  Modern  -->
-    <ItemGroup Condition=" '$(UnityGeneration)' == 'modern' ">
-        <!-- TODO: don't actually need asset bundles for this, check StanleyVR -->
-        <None Update="AssetBundles\xrmanager">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="AssetBundles\xrmanager.manifest">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
 
 </Project>

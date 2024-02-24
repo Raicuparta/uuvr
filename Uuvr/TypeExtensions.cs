@@ -25,4 +25,16 @@ public static class TypeExtensions
             _ => default
         };
     }
+    public static void SetValue(this object obj, string name, object value)
+    {
+        switch (obj.GetType().GetAnyMember(name))
+        {
+            case FieldInfo field:
+                field.SetValue(obj, value);
+                break;
+            case PropertyInfo property:
+                property.SetValue(obj, value, null);
+                break;
+        }
+    }
 }
