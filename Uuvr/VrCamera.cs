@@ -33,6 +33,19 @@ public class VrCamera : MonoBehaviour
         _trackingCamera.cullingMask = 0;
         _trackingCamera.clearFlags = CameraClearFlags.Nothing;
         _trackingCamera.depth = -100;
+        
+        Type poseDriverType = Type.GetType("UnityEngine.SpatialTracking.TrackedPoseDriver, UnityEngine.SpatialTracking");
+        if (poseDriverType != null)
+        {
+            Component? poseDriver = _trackingCamera.gameObject.AddComponent(
+#if CPP
+                UnhollowerRuntimeLib.Il2CppType.From(poseDriverType)
+#else
+                poseDriverType
+#endif
+            );
+            poseDriver.SetValue("trackingType", 1); // rotation only.
+        }
     }
 
     // When VR is enabled, Unity auto-enables HMD tracking for the cameras, overriding the game's

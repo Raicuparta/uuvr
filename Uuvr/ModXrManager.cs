@@ -47,9 +47,9 @@ public class ModXrManager : MonoBehaviour
     private void SetUpXr()
     {
 
-        var generalSettings = ScriptableObject.CreateInstance<XRGeneralSettings>();
-        var managerSetings = ScriptableObject.CreateInstance<XRManagerSettings>();
-        var features = new OpenXRInteractionFeature[]
+        XRGeneralSettings? generalSettings = ScriptableObject.CreateInstance<XRGeneralSettings>();
+        XRManagerSettings? managerSetings = ScriptableObject.CreateInstance<XRManagerSettings>();
+        OpenXRInteractionFeature[] features = new OpenXRInteractionFeature[]
         {
             ScriptableObject.CreateInstance<HTCViveControllerProfile>(),
             ScriptableObject.CreateInstance<OculusTouchControllerProfile>(),
@@ -59,7 +59,7 @@ public class ModXrManager : MonoBehaviour
         _openXrLoader = ScriptableObject.CreateInstance<OpenXRLoader>();
         OpenXRSettings.Instance.renderMode = OpenXRSettings.RenderMode.MultiPass;
         OpenXRSettings.Instance.SetValue("features", features);
-        foreach (var feature in features) feature.enabled = true;
+        foreach (OpenXRInteractionFeature feature in features) feature.enabled = true;
 
         generalSettings.Manager = managerSetings;
         #pragma warning disable CS0618
@@ -83,7 +83,10 @@ public class ModXrManager : MonoBehaviour
 
     private void SetUpCameraTracking()
     {
-        var mainCamera = Camera.main ?? Camera.current;
+        Camera? mainCamera = Camera.main ?? Camera.current;
+        mainCamera.gameObject.AddComponent<VrCamera>();
+
+        return;
         
         Type spacialTrackingPoseDriverType = Type.GetType("UnityEngine.SpatialTracking.TrackedPoseDriver, UnityEngine.SpatialTracking");
         if (spacialTrackingPoseDriverType != null)
@@ -108,7 +111,7 @@ public class ModXrManager : MonoBehaviour
 
     private void SetUpSpacialTrackingPoseDriver(Type spacialTrackingPoseDriverType, Camera mainCamera)
     {
-        var poseDriver = mainCamera.gameObject.AddComponent(spacialTrackingPoseDriverType);
+        Component? poseDriver = mainCamera.gameObject.AddComponent(spacialTrackingPoseDriverType);
         poseDriver.SetValue("trackingType", 1); // rotation only.
     }
 
