@@ -1,5 +1,7 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.XR;
 using Uuvr;
 
 public class VrCamera : MonoBehaviour
@@ -12,7 +14,7 @@ public class VrCamera : MonoBehaviour
     private bool _isRight = false;
     
     // This pose driver is used only for disabling the tracking that some Unity versions add to cameras automatically.
-    private Component _directTrackingDisablerPoseDriver;
+    private MonoBehaviour _directTrackingPoseDriver;
     private bool _isDirectTrackingDisabled = false;
 
 #if CPP
@@ -34,26 +36,57 @@ public class VrCamera : MonoBehaviour
         _trackingCamera.clearFlags = CameraClearFlags.Nothing;
         _trackingCamera.depth = -100;
         
-        Type poseDriverType = Type.GetType("UnityEngine.SpatialTracking.TrackedPoseDriver, UnityEngine.SpatialTracking");
-        if (poseDriverType != null)
+        AddTrackedPoseDriver(_trackingCamera);
+    }
+
+    private MonoBehaviour AddTrackedPoseDriver(Camera camera)
+    {
+        Type spacialTrackingPoseDriverType = Type.GetType("UnityEngine.SpatialTracking.TrackedPoseDriver, UnityEngine.SpatialTracking");
+        if (spacialTrackingPoseDriverType == null)
         {
-            Component? poseDriver = _trackingCamera.gameObject.AddComponent(
+            return SetUpInputSystemPoseDriver(camera);
+        }
+        else
+        {
+            return SetUpSpacialTrackingPoseDriver(spacialTrackingPoseDriverType, camera);
+        }
+    }
+
+    private MonoBehaviour SetUpInputSystemPoseDriver(Camera camera)
+    {
+        TrackedPoseDriver poseDriver = camera.gameObject.AddComponent<TrackedPoseDriver>();
+        poseDriver.trackingType = TrackedPoseDriver.TrackingType.RotationOnly;
+        poseDriver.rotationAction = new InputAction("VrRotation", InputActionType.PassThrough, "HeadTrackingOpenXR/centereyerotation");
+        return poseDriver;
+    }
+
+    private MonoBehaviour SetUpSpacialTrackingPoseDriver(Type spacialTrackingPoseDriverType, Camera camera)
+    {
+        Component? poseDriver = camera.gameObject.AddComponent(
 #if CPP
                 UnhollowerRuntimeLib.Il2CppType.From(poseDriverType)
 #else
-                poseDriverType
+            spacialTrackingPoseDriverType
 #endif
-            );
-            poseDriver.SetValue("trackingType", 1); // rotation only.
-        }
+        );
+        poseDriver.SetValue("trackingType", 1); // rotation only.
+        return poseDriver as MonoBehaviour;
+    }
+
+    private void SetUpDirectTracking()
+    {
+        if (_directTrackingPoseDriver != null) return;
+        _directTrackingPoseDriver = AddTrackedPoseDriver(_camera);
     }
 
     // When VR is enabled, Unity auto-enables HMD tracking for the cameras, overriding the game's
     // intended camera position. This is annoying, we want tracking relative to the intended position.
     private void DisableDirectTracking()
     {
-        Type poseDriverType = Type.GetType("UnityEngine.SpatialTracking.TrackedPoseDriver, UnityEngine.SpatialTracking");
-        if (poseDriverType == null)
+        Debug.Log("Disabling Direct Tracking");
+
+        SetUpDirectTracking();
+        if (_directTrackingPoseDriver == null)
         {
             // Calling this method disables tracking for some reason.
             // But when I tested it in Aragami, it also messed up the shadows in the right eye.
@@ -62,26 +95,21 @@ public class VrCamera : MonoBehaviour
         }
         else
         {
-            // Adding a TrackedPoseDriver component, and then disabling it, also disables auto-tracking.
-            // This works in Aragami since the TrackedPoseDriver component exists,
-            // and it doesn't have the same shadows bug that the SetStereoViewMatrix method caused.
-            _directTrackingDisablerPoseDriver = _camera.gameObject.AddComponent(
-#if CPP
-                UnhollowerRuntimeLib.Il2CppType.From(poseDriverType)
-#else
-                poseDriverType
-#endif
-            );
-            poseDriverType.GetProperty("enabled").SetValue(_directTrackingDisablerPoseDriver, false, null);
-
-            _isDirectTrackingDisabled = true;
+            _directTrackingPoseDriver.enabled = false;
         }
+
+        _isDirectTrackingDisabled = true;
     }
 
     private void EnableDirectTracking()
     {
-        if (_directTrackingDisablerPoseDriver == null)
+        Debug.Log("Enabling Direct Tracking");
+
+        SetUpDirectTracking();
+
+        if (_directTrackingPoseDriver == null)
         {
+            Debug.LogWarning("Can't enable direct tracking, since pose driver is not defined");
             // TODO: if tracking was disabled via SetStereoViewMatrix,
             // I don't think it's possible to enabled it again with the same camera.
             // Might require a restart.
@@ -89,7 +117,7 @@ public class VrCamera : MonoBehaviour
         else
         {
             // Removing the disabled TrackedPoseDriver should let Unity go back to the auto-tracking it usually does.
-            Destroy(_directTrackingDisablerPoseDriver);
+            _directTrackingPoseDriver.enabled = true;
         }
 
         _isDirectTrackingDisabled = false;
@@ -101,6 +129,11 @@ public class VrCamera : MonoBehaviour
     }
 
     private void OnPreRender()
+    {
+        UpdateCamera();
+    }
+
+    private void LateUpdate()
     {
         UpdateCamera();
     }
