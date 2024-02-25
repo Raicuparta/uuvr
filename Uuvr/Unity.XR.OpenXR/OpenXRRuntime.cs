@@ -123,20 +123,6 @@ namespace UnityEngine.XR.OpenXR
             return true;
         }
 
-#if UNITY_INCLUDE_TESTS
-        internal static void ClearEvents ()
-        {
-            if(wantsToQuit != null)
-                foreach (Func<bool> f in wantsToQuit.GetInvocationList()) wantsToQuit -= f;
-
-            if(wantsToRestart != null)
-                foreach (Func<bool> f in wantsToRestart.GetInvocationList()) wantsToRestart -= f;
-
-            wantsToQuit = null;
-            wantsToRestart = null;
-        }
-#endif
-
         internal static bool ShouldQuit() => InvokeEvent(wantsToQuit);
         internal static bool ShouldRestart() => InvokeEvent(wantsToRestart);
 

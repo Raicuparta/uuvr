@@ -100,14 +100,6 @@ namespace UnityEngine.XR.OpenXR
             Internal_SetDepthSubmissionMode(m_depthSubmissionMode);
         }
 
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            if (Application.isPlaying)
-                ApplyRenderSettings();
-        }
-#endif
-
         private const string LibraryName = "UnityOpenXR";
 
         [DllImport(LibraryName, EntryPoint = "NativeConfig_SetRenderMode")]

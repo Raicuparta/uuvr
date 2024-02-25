@@ -113,14 +113,6 @@ namespace UnityEngine.XR.OpenXR
                 return false;
             }
 
-#if UNITY_EDITOR
-            if (!DisableValidationChecksOnEnteringPlaymode)
-            {
-                if (OpenXRProjectValidation.LogPlaymodeValidationIssues())
-                    return false;
-            }
-#endif
-
             // Wrap the initialization in a try catch block to ensure if any exceptions are thrown that
             // we cleanup, otherwise the user will not be able to run again until they restart the editor.
             try
@@ -419,24 +411,6 @@ namespace UnityEngine.XR.OpenXR
         private bool LoadOpenXRSymbols()
         {
             string loaderPath = "openxr_loader";
-
-#if UNITY_EDITOR_WIN
-            loaderPath ="..\\..\\..\\RuntimeLoaders\\windows\\x64\\openxr_loader";
-#elif UNITY_EDITOR_OSX
-            // no loader for osx, use the mock by default
-            loaderPath = "../../../Tests/osx/x64/openxr_loader";
-#endif
-
-#if UNITY_EDITOR
-            // Pass down active loader path to plugin
-            EditorBuildSettings.TryGetConfigObject<UnityEngine.Object>(Constants.k_SettingsKey, out var obj);
-            if (obj != null && (obj is IPackageSettings packageSettings))
-            {
-                var extensionLoaderPath = packageSettings.GetActiveLoaderLibraryPath();
-                if (!String.IsNullOrEmpty(extensionLoaderPath))
-                    loaderPath = extensionLoaderPath;
-            }
-#endif
             if (!Internal_LoadOpenXRLibrary(StringToWCHAR_T(loaderPath)))
                 return false;
 
@@ -547,55 +521,5 @@ namespace UnityEngine.XR.OpenXR
         {
             Internal_SetCallbacks(ReceiveNativeEvent);
         }
-
-#if UNITY_EDITOR
-        private void OnAfterAssemblyReload()
-        {
-            AssemblyReloadEvents.afterAssemblyReload -= OnAfterAssemblyReload;
-
-            // Recreate the subsystems.  Note that post domain reload this is more about
-            // repopulating the subsystem instance map than it is about actually creating subsystems. At this
-            // point the domain reload is finished and the SubsystemManager has already patched
-            // all of the subsystem interop pointers so we just need to go out and get them again.
-            CreateSubsystems();
-        }
-
-        private void OnEnable()
-        {
-            AppDomain currentDomain = AppDomain.CurrentDomain;
-
-            if (unhandledExceptionHandler != null)
-            {
-                currentDomain.UnhandledException -= unhandledExceptionHandler;
-                unhandledExceptionHandler = null;
-            }
-
-            unhandledExceptionHandler = new UnhandledExceptionEventHandler(ExceptionHandler);
-            currentDomain.UnhandledException += unhandledExceptionHandler;
-
-            // If the loader is already initialized then this is likely due to a domain
-            // reload so we need patch u the running instance reference.
-            if (isInitialized && Instance == null)
-            {
-                Instance = this;
-
-                // Recreate subsystems after all assemblies are finished loading.  This cannot be done here
-                // because the SubsystemManager is handling domain reload itself, but is called after
-                // this call to OnEnable but before the afterAssemblyReload callback.  The SubsystemManager will
-                // reset the subsystem instance list on domain reload and thus if we create the subsystems now they
-                // will be invalidated immediately after by the domain reload and the list will be out of sync.  By waiting
-                // until the afterAssemblyReload we can ensure the list has been created first.
-                AssemblyReloadEvents.afterAssemblyReload += OnAfterAssemblyReload;
-                // Re-register the callbacks with the plugin to reflect the new class instance
-                RegisterOpenXRCallbacks();
-
-                // Hook ourself back into onBeforeRender.  While the onBeforeRender should no longer contain our
-                // message loop hook we will remove it first just to be extra safe.
-                Application.onBeforeRender -= ProcessOpenXRMessageLoop;
-                Application.onBeforeRender += ProcessOpenXRMessageLoop;
-            }
-
-        }
-#endif
     }
 }

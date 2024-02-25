@@ -4,10 +4,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.XR.Management;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 namespace UnityEngine.XR.OpenXR
 {
     internal class OpenXRRestarter : MonoBehaviour
@@ -115,16 +111,7 @@ namespace UnityEngine.XR.OpenXR
                 else if (OpenXRRuntime.ShouldQuit())
                 {
                     onQuit?.Invoke();
-#if !UNITY_INCLUDE_TESTS
-#if UNITY_EDITOR
-                    if (EditorApplication.isPlaying || EditorApplication.isPaused)
-                    {
-                        EditorApplication.ExitPlaymode();
-                    }
-#else
                     Application.Quit();
-#endif
-#endif
                 }
             }
             finally
