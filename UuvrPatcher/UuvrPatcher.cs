@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
@@ -25,14 +26,20 @@ public class Patcher
             "globalgamemanagers", "mainData", "data.unity3d"
         };
 
-    public static IEnumerable<string> TargetDLLs { get; } = new[] {"Assembly-CSharp.dll"};
+    private static readonly List<string> PluginsToDeleteBeforePatch =
+        new()
+        {
+            "openvr_api", "openxr_loader", "UnityOpenXR"
+        };
+
+    public static IEnumerable<string> TargetDLLs { get; } = new[] { "Assembly-CSharp.dll" };
 
 #if MONO
     public static void Patch(AssemblyDefinition assembly)
     {
     }
 #endif
-    
+
 #if CPP
     public override void Initialize()
 #elif MONO
@@ -40,25 +47,22 @@ public class Patcher
 #endif
     {
         Console.WriteLine("Patching UUVR...");
-        
+
         string installerPath = Assembly.GetExecutingAssembly().Location;
-        Console.WriteLine("installerPath " + installerPath);
 
         string gameExePath = Process.GetCurrentProcess().MainModule.FileName;
-        Console.WriteLine("gameExePath " + gameExePath);
 
         string gamePath = Path.GetDirectoryName(gameExePath);
         string gameName = Path.GetFileNameWithoutExtension(gameExePath);
         string dataPath = Path.Combine(gamePath, $"{gameName}_Data/");
+        string patcherPath = Path.GetDirectoryName(installerPath);
         
+        CopyFilesToGame(patcherPath, dataPath);
+
+#if LEGACY
         string globalSettingsFilePath = GetGlobalSettingsFilePath(dataPath);
         string globalSettingsBackupPath = CreateGlobalSettingsBackup(globalSettingsFilePath);
-        string patcherPath = Path.GetDirectoryName(installerPath);
         string classDataPath = Path.Combine(patcherPath, "classdata.tpk");
-
-        CopyGameDataFiles(patcherPath, dataPath);
-        
-#if LEGACY
         PatchVR(globalSettingsBackupPath, globalSettingsFilePath, classDataPath);
 #endif
 
@@ -112,10 +116,10 @@ public class Patcher
         AssetTypeValueField buildSettingsBase = am.GetATI(ggmFile, buildSettings).GetBaseField();
         AssetTypeValueField enabledVRDevices = buildSettingsBase.Get("enabledVRDevices").Get("Array");
         AssetTypeTemplateField stringTemplate = enabledVRDevices.templateField.children[1];
-        AssetTypeValueField[] vrDevicesList = {StringField("OpenVR", stringTemplate)};
+        AssetTypeValueField[] vrDevicesList = { StringField("OpenVR", stringTemplate) };
         enabledVRDevices.SetChildrenList(vrDevicesList);
 
-        replacers.Add(new AssetsReplacerFromMemory(0, buildSettings.index, (int) buildSettings.curFileType, 0xffff,
+        replacers.Add(new AssetsReplacerFromMemory(0, buildSettings.index, (int)buildSettings.curFileType, 0xffff,
             buildSettingsBase.WriteToByteArray()));
 
         using AssetsFileWriter writer = new(File.OpenWrite(globalSettingsFilePath));
@@ -133,14 +137,53 @@ public class Patcher
         };
     }
 
-    private static void CopyGameDataFiles(string patcherPath, string dataPath)
+    private static void CopyFilesToGame(string patcherPath, string dataPath)
     {
-        Console.WriteLine("Copying game data files...");
+        string copyToGameFolderPath = Path.Combine(patcherPath, "CopyToGame");
 
-        CopyDirectory(Path.Combine(patcherPath, "GameDataFiles"), dataPath);
+        Console.WriteLine($"Copying mod files to game... These files get overwritten every time the game starts. If you want to change them manually, replace them in the mod folder instead: {copyToGameFolderPath}");
+
+        CopyDirectory(Path.Combine(copyToGameFolderPath, "Data"), dataPath);
+
+        string gamePluginsPath = Path.Combine(dataPath, "Plugins");
+        string uuvrPluginsPath = Path.Combine(copyToGameFolderPath, "Plugins");
+
+        DeleteExistingVrPlugins(gamePluginsPath);
+
+        // IntPtr size is 4 on x86, 8 on x64.
+        bool is64Bit = IntPtr.Size == 8;
+        Console.WriteLine($"Detected game as being {(is64Bit ? "x64" : "x86")}");
+
+        // Unity plugins are often in a subfolder of the Plugins folder, but they also get detected from the root folder,
+        // so we don't need to worry about the subfolders.
+        CopyDirectory(is64Bit ? Path.Combine(uuvrPluginsPath, "x64") : Path.Combine(uuvrPluginsPath, "x86"), gamePluginsPath);
     }
-    
-    
+
+    // There might be leftover stuff from previous UUVR versions, or from other filthy VR mods,
+    // and they might be in different subfolders, which could cause conflicts.
+    // So we should make sure to nuke them all before replacing with our own.
+    private static void DeleteExistingVrPlugins(string gamePluginsPath)
+    {
+        IEnumerable<string> pluginPaths = Directory
+            .GetFiles(gamePluginsPath, "*.dll", SearchOption.AllDirectories)
+            .Where(pluginPath => PluginsToDeleteBeforePatch
+                .Select(pluginToDelete => $"{pluginToDelete.ToLower()}.dll")
+                .Contains(Path.GetFileName(pluginPath).ToLower()));
+
+        Console.WriteLine($"### Found {pluginPaths.Count()} plugins");
+
+        foreach (string pluginPath in pluginPaths)
+        {
+            try
+            {
+                Console.WriteLine($"Deleting plugin `{pluginPath}`");
+                File.Delete(pluginPath);
+            } catch (Exception exception)
+            {
+                Console.WriteLine($"Failed to delete plugin before patching. Path: `{pluginPath}`. Exception: `{exception}`");
+            }
+        }
+    }
 
     private static void CopyDirectory(string sourceDir, string destinationDir)
     {
@@ -164,8 +207,10 @@ public class Patcher
             string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
             CopyDirectory(subDir.FullName, newDestinationDir);
         }
+
+        Console.WriteLine($"Copied files from:\n> {sourceDir}\nto:\n> {destinationDir}");
     }
-    
+
 #if CPP
     public override void Finalizer() { }
 #endif

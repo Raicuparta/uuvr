@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="GameDataFiles\**" >
+        <Content Include="CopyToGame\**" >
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <Content Include="classdata.tpk">
