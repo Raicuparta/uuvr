@@ -4,10 +4,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using UnityEngine.Serialization;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.LowLevel;
-using UnityEngine.InputSystem.Utilities;
-using UnityEngine.XR.OpenXR.Input;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.XR.OpenXR;
@@ -679,12 +675,5 @@ namespace UnityEngine.XR.OpenXR.Features
 
             Internal_SetProcAddressPtrAndLoadStage1(procAddr);
         }
-
-        /// <summary>
-        /// Returns XrAction handle bound to the given <see cref="UnityEngine.InputSystem.InputAction"/>.
-        /// </summary>
-        /// <param name="inputAction">Action to retrieve XrAction handles for</param>
-        /// <returns>XrAction handle bound to the given <see cref="UnityEngine.InputSystem.InputAction"/> or 0 if there is no bound XrAction</returns>
-        protected ulong GetAction(InputAction inputAction) => OpenXRInput.GetActionHandle(inputAction);
     }
 }

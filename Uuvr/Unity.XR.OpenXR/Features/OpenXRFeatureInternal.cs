@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using UnityEngine.InputSystem;
 
 namespace UnityEngine.XR.OpenXR.Features
 {

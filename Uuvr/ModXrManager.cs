@@ -1,14 +1,10 @@
 ﻿#if MODERN
 
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR;
 using UnityEngine.XR.Management;
 using UnityEngine.XR.OpenXR;
 using UnityEngine.XR.OpenXR.Features;
-using UnityEngine.XR.OpenXR.Features.Interactions;
 
 namespace Uuvr;
 
@@ -46,20 +42,10 @@ public class ModXrManager : MonoBehaviour
 
     private void SetUpXr()
     {
-
         XRGeneralSettings? generalSettings = ScriptableObject.CreateInstance<XRGeneralSettings>();
         XRManagerSettings? managerSetings = ScriptableObject.CreateInstance<XRManagerSettings>();
-        OpenXRInteractionFeature[] features = new OpenXRInteractionFeature[]
-        {
-            ScriptableObject.CreateInstance<HTCViveControllerProfile>(),
-            ScriptableObject.CreateInstance<OculusTouchControllerProfile>(),
-            ScriptableObject.CreateInstance<MicrosoftMotionControllerProfile>(),
-            ScriptableObject.CreateInstance<ValveIndexControllerProfile>()
-        };
         _openXrLoader = ScriptableObject.CreateInstance<OpenXRLoader>();
         OpenXRSettings.Instance.renderMode = OpenXRSettings.RenderMode.MultiPass;
-        OpenXRSettings.Instance.SetValue("features", features);
-        foreach (OpenXRInteractionFeature feature in features) feature.enabled = true;
 
         generalSettings.Manager = managerSetings;
         #pragma warning disable CS0618
@@ -85,37 +71,7 @@ public class ModXrManager : MonoBehaviour
     {
         Camera? mainCamera = Camera.main ?? Camera.current;
         mainCamera.gameObject.AddComponent<VrCamera>();
-
-        return;
-        
-        Type spacialTrackingPoseDriverType = Type.GetType("UnityEngine.SpatialTracking.TrackedPoseDriver, UnityEngine.SpatialTracking");
-        if (spacialTrackingPoseDriverType != null)
-        {
-            SetUpSpacialTrackingPoseDriver(spacialTrackingPoseDriverType, mainCamera);
-            return;
-        }
-        
-        Type inputSystemPoseDriverType = Type.GetType("UnityEngine.InputSystem.XR.TrackedPoseDriver, UnityEngine.InputSystem");
-        if (inputSystemPoseDriverType != null)
-        {
-            SetUpInputSystemPoseDriver(spacialTrackingPoseDriverType, mainCamera);
-            return;
-        }
     }
-    private void SetUpInputSystemPoseDriver(Type spacialTrackingPoseDriverType, Camera mainCamera)
-    {
-        TrackedPoseDriver poseDriver = mainCamera.gameObject.AddComponent(spacialTrackingPoseDriverType) as TrackedPoseDriver;
-        poseDriver.trackingType = TrackedPoseDriver.TrackingType.RotationOnly;
-        poseDriver.rotationAction = new InputAction("VrRotation", InputActionType.PassThrough, "HeadTrackingOpenXR/centereyerotation");
-    }
-
-    private void SetUpSpacialTrackingPoseDriver(Type spacialTrackingPoseDriverType, Camera mainCamera)
-    {
-        Component? poseDriver = mainCamera.gameObject.AddComponent(spacialTrackingPoseDriverType);
-        poseDriver.SetValue("trackingType", 1); // rotation only.
-    }
-
-
 }
 
 #endif

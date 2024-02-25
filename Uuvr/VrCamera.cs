@@ -1,8 +1,4 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR;
-using UnityEngine.XR;
+﻿using UnityEngine;
 using Uuvr;
 
 public class VrCamera : MonoBehaviour
@@ -37,47 +33,13 @@ public class VrCamera : MonoBehaviour
         _trackingCamera.clearFlags = CameraClearFlags.Nothing;
         _trackingCamera.depth = -100;
         
-        AddTrackedPoseDriver(_trackingCamera);
-    }
-
-    private MonoBehaviour AddTrackedPoseDriver(Camera camera)
-    {
-        Type spacialTrackingPoseDriverType = Type.GetType("UnityEngine.SpatialTracking.TrackedPoseDriver, UnityEngine.SpatialTracking");
-        if (spacialTrackingPoseDriverType == null)
-        {
-            return SetUpInputSystemPoseDriver(camera);
-        }
-        else
-        {
-            return SetUpSpacialTrackingPoseDriver(spacialTrackingPoseDriverType, camera);
-        }
-    }
-
-    private MonoBehaviour SetUpInputSystemPoseDriver(Camera camera)
-    {
-        TrackedPoseDriver poseDriver = camera.gameObject.AddComponent<TrackedPoseDriver>();
-        poseDriver.trackingType = TrackedPoseDriver.TrackingType.RotationOnly;
-        poseDriver.rotationAction = new InputAction("VrRotation", InputActionType.PassThrough, "HeadTrackingOpenXR/centereyerotation");
-        return poseDriver;
-    }
-
-    private MonoBehaviour SetUpSpacialTrackingPoseDriver(Type spacialTrackingPoseDriverType, Camera camera)
-    {
-        Component? poseDriver = camera.gameObject.AddComponent(
-#if CPP
-                UnhollowerRuntimeLib.Il2CppType.From(poseDriverType)
-#else
-            spacialTrackingPoseDriverType
-#endif
-        );
-        poseDriver.SetValue("trackingType", 1); // rotation only.
-        return poseDriver as MonoBehaviour;
+        UuvrPoseDriver.Create(_trackingCamera);
     }
 
     private void SetUpDirectTracking()
     {
         if (_directTrackingPoseDriver != null) return;
-        _directTrackingPoseDriver = AddTrackedPoseDriver(_camera);
+        _directTrackingPoseDriver = UuvrPoseDriver.Create(_camera);
     }
 
     // When VR is enabled, Unity auto-enables HMD tracking for the cameras, overriding the game's
@@ -141,9 +103,6 @@ public class VrCamera : MonoBehaviour
 
     private void UpdateCamera()
     {
-        // TODO make my own tracked driver that just does this.
-        _trackingCamera.transform.localRotation = InputTracking.GetLocalRotation(XRNode.CenterEye);
-        
         bool isRelativeTracking = ModConfiguration.Instance.cameraTracking.Value == ModConfiguration.CameraTracking.Relative;
 
         if (isRelativeTracking && !_isDirectTrackingDisabled) DisableDirectTracking();

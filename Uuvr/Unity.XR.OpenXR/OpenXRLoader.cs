@@ -10,7 +10,6 @@ using System.Security.Cryptography;
 using System.Text;
 using UnityEngine.Scripting;
 using UnityEngine.XR.Management;
-using UnityEngine.XR.OpenXR.Input;
 using UnityEngine.XR.OpenXR.Features;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -205,8 +204,6 @@ namespace UnityEngine.XR.OpenXR
             if (ShouldExitEarly()) return false;
 #endif
 
-            OpenXRInput.RegisterLayouts();
-
             OpenXRFeature.Initialize();
 
             if (!LoadOpenXRSymbols())
@@ -345,7 +342,6 @@ namespace UnityEngine.XR.OpenXR
 
             if (!actionSetsAttached)
             {
-                OpenXRInput.AttachActionSets();
                 actionSetsAttached = true;
             }
 

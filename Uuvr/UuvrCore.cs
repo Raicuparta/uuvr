@@ -4,11 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 using UnityEngine.UI;
-using UnityEngine.UI.Collections;
-using UnityEngine.XR;
-using UnityEngine.XR.Management;
 
 namespace Uuvr;
 
