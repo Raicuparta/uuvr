@@ -4,11 +4,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using UnityEngine.Serialization;
-#if UNITY_EDITOR
-using UnityEditor;
-using UnityEditor.XR.OpenXR;
-using UnityEditor.XR.OpenXR.Features;
-#endif
 
 [assembly:InternalsVisibleTo("Unity.XR.OpenXR.Editor")]
 [assembly:InternalsVisibleTo("UnityEditor.XR.OpenXR.Tests")]
@@ -22,9 +17,6 @@ namespace UnityEngine.XR.OpenXR.Features
     [Serializable]
     public abstract partial class OpenXRFeature : ScriptableObject
     {
-#if UNITY_EDITOR
-        internal static Func<string, bool> canSetFeatureDisabled;
-#endif
         /// <summary>
         /// Feature will be enabled when OpenXR is initialized.
         /// </summary>
@@ -50,11 +42,6 @@ namespace UnityEngine.XR.OpenXR.Features
             {
                 if (enabled == value)
                     return;
-
-#if UNITY_EDITOR
-                if (canSetFeatureDisabled != null && !value && !canSetFeatureDisabled.Invoke(featureIdInternal))
-                    return;
-#endif //UNITY_EDITOR
 
                 if (OpenXRLoaderBase.Instance != null)
                 {
@@ -300,125 +287,6 @@ namespace UnityEngine.XR.OpenXR.Features
         /// <returns>viewConfigurationType for certain renderPass. Return 0 if invalid renderPass.</returns>
         protected static int GetViewConfigurationTypeForRenderPass(int renderPassIndex) =>
             Internal_GetViewTypeFromRenderIndex(renderPassIndex);
-
-#if UNITY_EDITOR
-        /// <summary>
-        /// A Build-time validation rule.
-        /// </summary>
-        public class ValidationRule
-        {
-            /// <summary>
-            /// Creates a validation rule for an OpenXRFeature.
-            /// </summary>
-            /// <param name="feature">Feature to create validation rule for</param>
-            public ValidationRule(OpenXRFeature feature)
-            {
-                if (feature == null)
-                    throw new Exception("Invalid feature");
-                this.feature = feature;
-            }
-
-            internal ValidationRule()
-            {}
-
-            /// <summary>
-            /// Message describing the rule that will be showed to the developer if it fails.
-            /// </summary>
-            public string message;
-
-            /// <summary>
-            /// Lambda function that returns true if validation passes, false if validation fails.
-            /// </summary>
-            public Func<bool> checkPredicate;
-
-            /// <summary>
-            /// Lambda function that fixes the issue, if possible.
-            /// </summary>
-            public Action fixIt;
-
-            /// <summary>
-            /// Text describing how the issue is fixed, shown in a tooltip.
-            /// </summary>
-            public string fixItMessage;
-
-            /// <summary>
-            /// True if the fixIt Lambda function performs a function that is automatic and does not require user input.  If your fixIt
-            /// function requires user input, set fixitAutomatic to false to prevent the fixIt method from being executed during fixAll
-            /// </summary>
-            public bool fixItAutomatic = true;
-
-            /// <summary>
-            /// If true, failing the rule is treated as an error and stops the build.
-            /// If false, failing the rule is treated as a warning and it doesn't stop the build. The developer has the option to correct the problem, but is not required to.
-            /// </summary>
-            public bool error;
-
-            /// <summary>
-            /// If true, will deny the project from entering playmode in editor.
-            /// If false, can still enter playmode in editor if this issue isn't fixed.
-            /// </summary>
-            public bool errorEnteringPlaymode;
-
-            /// <summary>
-            /// Optional text to display in a help icon with the issue in the validator.
-            /// </summary>
-            public string helpText;
-
-            /// <summary>
-            /// Optional link that will be opened if the help icon is clicked.
-            /// </summary>
-            public string helpLink;
-
-            internal OpenXRFeature feature;
-
-            internal BuildTargetGroup buildTargetGroup = BuildTargetGroup.Unknown;
-        }
-
-        /// <summary>
-        /// Allows a feature to add to a list of validation rules which your feature will evaluate at build time.
-        /// Details of the validation results can be found in OpenXRProjectValidation.
-        /// </summary>
-        /// <param name="rules">Your feature will check the rules in this list at build time. Add rules that you want your feature to check, and remove rules that you want your feature to ignore.</param>
-        /// <param name="targetGroup">Build target group these validation rules will be evaluated for.</param>
-        protected internal virtual void GetValidationChecks(List<ValidationRule> rules, BuildTargetGroup targetGroup)
-        {
-        }
-
-        internal static void GetFullValidationList(List<ValidationRule> rules, BuildTargetGroup targetGroup)
-        {
-            var openXrSettings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
-            if (openXrSettings == null)
-            {
-                return;
-            }
-
-            var tempList = new List<ValidationRule>();
-            foreach (var feature in openXrSettings.features)
-            {
-                if (feature != null)
-                {
-                    feature.GetValidationChecks(tempList, targetGroup);
-                    rules.AddRange(tempList);
-                    tempList.Clear();
-                }
-            }
-        }
-
-        internal static void GetValidationList(List<ValidationRule> rules, BuildTargetGroup targetGroup)
-        {
-            var openXrSettings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
-            if (openXrSettings == null)
-            {
-                return;
-            }
-
-            foreach (var feature in openXrSettings.features)
-            {
-                if (feature != null && feature.enabled)
-                    feature.GetValidationChecks(rules, targetGroup);
-            }
-        }
-#endif
 
         /// <summary>
         /// Creates a subsystem based on a given a list of descriptors and a specific subsystem id.

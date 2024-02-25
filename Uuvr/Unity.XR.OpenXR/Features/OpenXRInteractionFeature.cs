@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-#if UNITY_EDITOR
-using System.Linq;
-#endif
-
 namespace UnityEngine.XR.OpenXR.Features
 {
     /// <summary>
@@ -222,44 +218,11 @@ namespace UnityEngine.XR.OpenXR.Features
             m_CreatedActionMaps.Add(map);
         }
 
-        /// <summary>
-        /// Handle enabled state change to register/unregister device layouts as needed
-        /// </summary>
-        protected internal override void OnEnabledChange()
-        {
-            base.OnEnabledChange();
-
-#if UNITY_EDITOR
-            // Keep the layouts registered in the editor as long as at least one of the build target
-            // groups has the feature enabled.
-            var packageSettings = OpenXRSettings.GetPackageSettings();
-            var featureType = GetType();
-            if(null != packageSettings && packageSettings.GetFeatures<OpenXRInteractionFeature>().Any(f => f.feature.enabled && featureType.IsAssignableFrom(f.feature.GetType())))
-            {
-                RegisterDeviceLayout();
-            }
-            else
-            {
-                UnregisterDeviceLayout();
-            }
-#endif
-        }
-
         internal static void RegisterLayouts()
         {
-#if UNITY_EDITOR
-            // Find all enabled interaction features and force them to register their device layouts
-            var packageSettings = OpenXRSettings.GetPackageSettings();
-            if (null == packageSettings)
-                return;
-
-            foreach (var feature in packageSettings.GetFeatures<OpenXRInteractionFeature>().Where(f => f.feature.enabled).Select(f => f.feature))
-                feature.OnEnabledChange();
-#else
             foreach(var feature in OpenXRSettings.Instance.GetFeatures<OpenXRInteractionFeature>())
                 if (feature.enabled)
                     ((OpenXRInteractionFeature) feature).RegisterDeviceLayout();
-#endif
         }
     }
 }

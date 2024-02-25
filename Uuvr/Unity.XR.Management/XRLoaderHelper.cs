@@ -3,10 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.XR;
@@ -176,17 +172,5 @@ namespace UnityEngine.XR.Management
             m_SubsystemInstanceMap.Clear();
             return base.Deinitialize();
         }
-
-#if UNITY_EDITOR
-        virtual public void WasAssignedToBuildTarget(BuildTargetGroup buildTargetGroup)
-        {
-
-        }
-
-        virtual public void WasUnassignedFromBuildTarget(BuildTargetGroup buildTargetGroup)
-        {
-
-        }
-#endif
     }
 }

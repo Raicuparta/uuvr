@@ -1,7 +1,3 @@
-#if UNITY_EDITOR && ENABLE_TEST_SUPPORT
-#define TEST_SUPPORT
-#endif
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +7,6 @@ using System.Text;
 using UnityEngine.Scripting;
 using UnityEngine.XR.Management;
 using UnityEngine.XR.OpenXR.Features;
-#if UNITY_EDITOR
-using UnityEditor;
-using UnityEditor.XR.Management;
-using UnityEditor.XR.OpenXR;
-
-#endif
 
 [assembly: Preserve]
 
@@ -29,31 +19,13 @@ namespace UnityEngine.XR.OpenXR
     /// <summary>
     /// Loader for the OpenXR Plug-in. Used by [XR Plug-in Management](https://docs.unity3d.com/Packages/com.unity.xr.management@latest) to manage OpenXR lifecycle.
     /// </summary>
-#if UNITY_EDITOR
-    [XRSupportedBuildTarget(BuildTargetGroup.Standalone, new BuildTarget[] {BuildTarget.StandaloneWindows64})]
-    [XRSupportedBuildTarget(BuildTargetGroup.Android)]
-    [XRSupportedBuildTarget(BuildTargetGroup.WSA)]
-#endif
     public class OpenXRLoader : OpenXRLoaderBase
-#if UNITY_EDITOR
-        , IXRLoaderPreInit
-#endif
     {
-#if UNITY_EDITOR
-        public string GetPreInitLibraryName(BuildTarget buildTarget, BuildTargetGroup buildTargetGroup)
-        {
-            return "UnityOpenXR";
-        }
-#endif
     }
 
     /// <summary>
     /// Base abstract class to hold common loader code.
     /// </summary>
-#if UNITY_EDITOR
-    // Hide this by default from the UI by setting to Unknown.
-    [XRSupportedBuildTarget(BuildTargetGroup.Unknown)]
-#endif
     public partial class OpenXRLoaderBase : XRLoaderHelper
     {
         const double k_IdlePollingWaitTimeInSeconds = 0.1;
@@ -94,16 +66,6 @@ namespace UnityEngine.XR.OpenXR
             LoaderState.Started
         };
 
-#if TEST_SUPPORT
-        [NonSerialized]
-        internal LoaderState targetLoaderState;
-
-        bool ShouldExitEarly()
-        {
-            return (currentLoaderState == targetLoaderState);
-        }
-#endif
-
         OpenXRFeature.NativeEvent currentOpenXRState;
         private bool actionSetsAttached;
 
@@ -133,20 +95,6 @@ namespace UnityEngine.XR.OpenXR
 
         internal bool DisableValidationChecksOnEnteringPlaymode = false;
 
-        static void ExceptionHandler(object sender, UnhandledExceptionEventArgs args)
-        {
-            var section = DiagnosticReport.GetSection("Unhandled Exception Report");
-            DiagnosticReport.AddSectionEntry(section, "Is Terminating", $"{args.IsTerminating}");
-
-            var e = (Exception)args.ExceptionObject;
-
-            DiagnosticReport.AddSectionEntry(section, "Message", $"{e.Message}");
-            DiagnosticReport.AddSectionEntry(section, "Source", $"{e.Source}");
-            DiagnosticReport.AddSectionEntry(section, "Stack Trace", $"\n{e.StackTrace}");
-
-            DiagnosticReport.DumpReport("Uncaught Exception");
-        }
-
         /// <summary>
         /// See [XRLoader.Initialize](xref:UnityEngine.XR.Management.XRLoader.Initialize)
         /// </summary>
@@ -173,8 +121,6 @@ namespace UnityEngine.XR.OpenXR
             }
 #endif
 
-            DiagnosticReport.StartReport();
-
             // Wrap the initialization in a try catch block to ensure if any exceptions are thrown that
             // we cleanup, otherwise the user will not be able to run again until they restart the editor.
             try
@@ -189,7 +135,6 @@ namespace UnityEngine.XR.OpenXR
 
             Deinitialize();
             Instance = null;
-            OpenXRAnalytics.SendInitializeEvent(false);
 
             return false;
         }
@@ -199,10 +144,6 @@ namespace UnityEngine.XR.OpenXR
             Instance = this;
 
             currentLoaderState = LoaderState.InitializeAttempted;
-
-#if TEST_SUPPORT
-            if (ShouldExitEarly()) return false;
-#endif
 
             OpenXRFeature.Initialize();
 
@@ -236,8 +177,6 @@ namespace UnityEngine.XR.OpenXR
 
             if (OpenXRFeature.requiredFeatureFailed)
                 return false;
-
-            OpenXRAnalytics.SendInitializeEvent(true);
 
             OpenXRFeature.ReceiveLoaderEvent(this, OpenXRFeature.LoaderEvent.SubsystemCreate);
 
@@ -308,10 +247,6 @@ namespace UnityEngine.XR.OpenXR
 
             currentLoaderState = LoaderState.StartAttempted;
 
-#if TEST_SUPPORT
-            if (ShouldExitEarly()) return false;
-#endif
-
             if (!StartInternal())
             {
                 Stop();
@@ -373,10 +308,6 @@ namespace UnityEngine.XR.OpenXR
 
             currentLoaderState = LoaderState.StopAttempted;
 
-#if TEST_SUPPORT
-            if (ShouldExitEarly()) return false;
-#endif
-
             StopInternal();
 
             currentLoaderState = LoaderState.Stopped;
@@ -419,14 +350,6 @@ namespace UnityEngine.XR.OpenXR
 
             try
             {
-#if TEST_SUPPORT
-                if (ShouldExitEarly()) return false;
-
-                // The test hook above will leave the loader in a half initialized state.  To work
-                // around this we reset the instance pointer if it is missing.
-                if (Instance == null)
-                    Instance = this;
-#endif
                 Internal_RequestExitSession();
 
                 Application.onBeforeRender -= ProcessOpenXRMessageLoop;
@@ -437,8 +360,6 @@ namespace UnityEngine.XR.OpenXR
 
                 DestroySubsystem<XRInputSubsystem>();
                 DestroySubsystem<XRDisplaySubsystem>();
-
-                DiagnosticReport.DumpReport("System Shutdown");
 
                 Internal_DestroySession();
 
@@ -559,25 +480,14 @@ namespace UnityEngine.XR.OpenXR
 
                 requestedLog.Append("\n");
             }
-
-            var section = DiagnosticReport.GetSection("OpenXR Runtime Info");
-            DiagnosticReport.AddSectionBreak(section);
-            DiagnosticReport.AddSectionEntry(section, "Features requested to be enabled", $"({count})\n{requestedLog.ToString()}");
-            DiagnosticReport.AddSectionBreak(section);
-            DiagnosticReport.AddSectionEntry(section, "Requested feature extensions not supported by runtime", $"({failedCount})\n{failedLog.ToString()}");
         }
 
         private static void DebugLogEnabledSpecExtensions()
         {
-            var section = DiagnosticReport.GetSection("OpenXR Runtime Info");
-            DiagnosticReport.AddSectionBreak(section);
-
             var extensions = OpenXRRuntime.GetEnabledExtensions();
             var log = new StringBuilder($"({extensions.Length})\n");
             foreach(var extension in extensions)
                 log.Append($"  {extension}: Version={OpenXRRuntime.GetExtensionVersion(extension)}\n");
-
-            DiagnosticReport.AddSectionEntry(section, "Runtime extensions enabled", log.ToString());
         }
 
         [AOT.MonoPInvokeCallback(typeof(ReceiveNativeEventDelegate))]
@@ -598,7 +508,6 @@ namespace UnityEngine.XR.OpenXR
                     break;
 
                 case OpenXRFeature.NativeEvent.XrFocused:
-                    DiagnosticReport.DumpReport("System Startup Completed");
                     break;
 
                 case OpenXRFeature.NativeEvent.XrStopping:

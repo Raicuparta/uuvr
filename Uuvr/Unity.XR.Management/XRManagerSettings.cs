@@ -113,9 +113,6 @@ namespace UnityEngine.XR.Management
         public List<XRLoader> loaders
         {
             get { return m_Loaders; }
-#if UNITY_EDITOR
-            set { m_Loaders = value; }
-#endif
         }
 
         /// <summary>
@@ -271,10 +268,6 @@ namespace UnityEngine.XR.Management
             if (loader == null || currentLoaders.Contains(loader))
                 return false;
 
-#if UNITY_EDITOR
-            if (!EditorApplication.isPlaying && !m_RegisteredLoaders.Contains(loader))
-                m_RegisteredLoaders.Add(loader);
-#endif
             if (!m_RegisteredLoaders.Contains(loader))
                 return false;
 
@@ -308,11 +301,6 @@ namespace UnityEngine.XR.Management
             if (currentLoaders.Contains(loader))
                 removedLoader = currentLoaders.Remove(loader);
 
-#if UNITY_EDITOR
-            if (!EditorApplication.isPlaying && !currentLoaders.Contains(loader))
-                m_RegisteredLoaders.Remove(loader);
-#endif
-
             return removedLoader;
         }
 
@@ -334,23 +322,6 @@ namespace UnityEngine.XR.Management
         public bool TrySetLoaders(List<XRLoader> reorderedLoaders)
         {
             var originalLoaders = new List<XRLoader>(activeLoaders);
-#if UNITY_EDITOR
-            if (!EditorApplication.isPlaying)
-            {
-                registeredLoaders.Clear();
-                currentLoaders.Clear();
-                foreach (var loader in reorderedLoaders)
-                {
-                    if (!TryAddLoader(loader))
-                    {
-                        TrySetLoaders(originalLoaders);
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-#endif
             currentLoaders.Clear();
             foreach (var loader in reorderedLoaders)
             {
