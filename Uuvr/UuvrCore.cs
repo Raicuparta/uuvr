@@ -17,7 +17,8 @@ public class UuvrCore: MonoBehaviour
     private readonly List<string> _ignoredCanvases = new()
     {
         // Unity Explorer canvas, don't want it to be affected by VR.
-        "unityexplorer"
+        "unityexplorer",
+        "universelib",
     };
     
     private Type _xrSettingsType;
@@ -144,17 +145,22 @@ public class UuvrCore: MonoBehaviour
         foreach (Canvas canvas in keys)
         {
             if (!canvas) continue;
+            
+            // World space canvases probably already work as intended in VR.
+            if (canvas.renderMode == RenderMode.WorldSpace) continue;
+        
+            // Screen space canvases are probably already working as intended in VR.
+            if (canvas.renderMode == RenderMode.ScreenSpaceCamera) continue;
+
+            // No need to look at child canvases, just change the parents.
+            if (!canvas.isRootCanvas) continue;
 
             if (_ignoredCanvases.Any(ignoredCanvas => canvas.name.ToLower().Contains(ignoredCanvas.ToLower())))
             {
                 continue;
             }
-            
-            // World space canvases probably already work as intended in VR.
-            if (canvas.renderMode == RenderMode.WorldSpace) continue;
-        
-            // Screen space canvases being rendered to textures are probably already working as intended in VR.
-            if (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera?.targetTexture != null) continue;
+
+            Debug.Log($"Found canvas to convert to VR: {canvas.name}");
             
             canvases.Add(canvas);
         }
