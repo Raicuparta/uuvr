@@ -27,6 +27,9 @@ public class UuvrCore: MonoBehaviour
     private object _graphicRegistryGraphics;
     private PropertyInfo _graphicRegistryKeysProperty;
     private const string VR_UI_PARENT_NAME = "UUVR_UI_PARENT";
+    private static Camera _uiCaptureCamera;
+    private static Camera _uiSceneCamera;
+    private RenderTexture _uiTexture;
     
 #if CPP
     public UuvrCore(IntPtr pointer) : base(pointer)
@@ -45,6 +48,29 @@ public class UuvrCore: MonoBehaviour
 
         SetXrEnabled(false);
         SetPositionTrackingEnabled(false);
+
+        _uiTexture = new RenderTexture(Screen.width, Screen.height, 0);
+
+        _uiCaptureCamera = new GameObject("VrUiCaptureCamera").AddComponent<Camera>();
+        _uiCaptureCamera.transform.parent = transform;
+        _uiCaptureCamera.clearFlags = CameraClearFlags.Depth;
+        _uiCaptureCamera.targetTexture = _uiTexture;
+        
+        // Dumb solution to avoid the scene camera from seeing the capture camera.
+        // Should use layers instead but dunno maybe not.
+        _uiCaptureCamera.transform.localPosition = Vector3.right * 1000;
+
+        _uiSceneCamera = new GameObject("VrUiSceneCamera").AddComponent<Camera>();
+        _uiSceneCamera.transform.parent = transform;
+        _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
+
+        GameObject vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        vrUiQuad.name = "VrUiQuad";
+        vrUiQuad.transform.parent = transform;
+        vrUiQuad.transform.localPosition = Vector3.forward * 2f;
+        vrUiQuad.transform.localScale = new Vector3(1.6f, 0.9f, 1f);
+        vrUiQuad.GetComponent<Renderer>().material = Canvas.GetDefaultCanvasMaterial();
+        vrUiQuad.GetComponent<Renderer>().material.mainTexture = _uiTexture;
 
         _graphicRegistryGraphics = GraphicRegistry.instance.GetValue<object>("m_Graphics");
         _graphicRegistryKeysProperty = _graphicRegistryGraphics.GetType().GetProperty("Keys");
@@ -168,27 +194,7 @@ public class UuvrCore: MonoBehaviour
         foreach (Canvas canvas in canvases)
         {
             canvas.renderMode = RenderMode.ScreenSpaceCamera;
-            canvas.worldCamera = Camera.main ?? Camera.current;
-            canvas.planeDistance = 1;
-            canvas.sortingOrder = int.MaxValue;
-
-            Transform originalParent = canvas.transform.parent;
-            if (originalParent?.name == VR_UI_PARENT_NAME) continue;
-            
-            Transform vrUiParent = new GameObject(VR_UI_PARENT_NAME).transform;
-            vrUiParent.parent = originalParent;
-            vrUiParent.localPosition = Vector3.zero;
-            vrUiParent.localRotation = Quaternion.identity;
-            canvas.transform.parent = vrUiParent;
-
-            vrUiParent.transform.localScale = Vector3.one * 0.3f;
-
-            CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
-            if (scaler)
-            {
-                scaler.scaleFactor = 2;
-                scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
-            }
+            canvas.worldCamera = _uiCaptureCamera;
         }
     }
 }
