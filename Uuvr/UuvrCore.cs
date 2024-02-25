@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,6 +14,11 @@ public class UuvrCore: MonoBehaviour
     private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
     private readonly KeyboardKey _reparentCameraKey = new (KeyboardKey.KeyCode.F4);
     private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
+    private readonly List<string> _ignoredCanvases = new()
+    {
+        // Unity Explorer canvas, don't want it to be affected by VR.
+        "unityexplorer"
+    };
     
     private Type _xrSettingsType;
     private PropertyInfo _xrEnabledProperty;
@@ -138,6 +144,11 @@ public class UuvrCore: MonoBehaviour
         foreach (Canvas canvas in keys)
         {
             if (!canvas) continue;
+
+            if (_ignoredCanvases.Any(ignoredCanvas => canvas.name.ToLower().Contains(ignoredCanvas.ToLower())))
+            {
+                continue;
+            }
             
             // World space canvases probably already work as intended in VR.
             if (canvas.renderMode == RenderMode.WorldSpace) continue;

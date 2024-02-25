@@ -72,7 +72,7 @@ public class ModXrManager : MonoBehaviour
         #pragma warning restore CS0618
 
         managerSetings.InitializeLoaderSync();
-        if (managerSetings.activeLoader == null) throw new Exception("Cannot initialize OpenVR Loader");
+        if (managerSetings.activeLoader == null) throw new Exception("Cannot initialize OpenXR Loader. Maybe The VR headset wasn't ready?");
         
         managerSetings.StartSubsystems();
 
