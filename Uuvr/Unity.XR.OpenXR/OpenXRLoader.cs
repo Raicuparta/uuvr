@@ -82,7 +82,7 @@ namespace UnityEngine.XR.OpenXR
         /// <summary>
         /// True if the loader has been initialized, false otherwise.
         /// </summary>
-        private bool isInitialized =>
+        public bool IsInitialized =>
             currentLoaderState != LoaderState.Uninitialized &&
             currentLoaderState != LoaderState.DeinitializeAttempted;
 

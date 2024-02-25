@@ -4,16 +4,19 @@ using System;
 using UnityEngine;
 using UnityEngine.XR.Management;
 using UnityEngine.XR.OpenXR;
-using UnityEngine.XR.OpenXR.Features;
 
 namespace Uuvr;
 
 public class ModXrManager : MonoBehaviour
 {
-    public static bool IsVrEnabled;
+    private static bool _isVrEnabled;
     private static OpenXRLoader _openXrLoader;
-    private bool isXrSetUp;
-    private static bool IsInitialized => _openXrLoader != null && _openXrLoader.GetValue<bool>("isInitialized");
+    private bool _isXrSetUp;
+    private static bool IsInitialized {
+        get {
+            return _openXrLoader != null && _openXrLoader.IsInitialized;
+        }
+    }
     private readonly KeyboardKey _toggleKey = new (KeyboardKey.KeyCode.F2);
 
     private void Update()
@@ -23,9 +26,9 @@ public class ModXrManager : MonoBehaviour
 
     private void ToggleXr()
     {
-        if (!isXrSetUp) SetUpXr();
+        if (!_isXrSetUp) SetUpXr();
 
-        if (!IsVrEnabled)
+        if (!_isVrEnabled)
         {
             XRGeneralSettings.Instance.Manager.StartSubsystems();
             XRGeneralSettings.Instance.Manager.activeLoader.Initialize();
@@ -37,7 +40,7 @@ public class ModXrManager : MonoBehaviour
             XRGeneralSettings.Instance.Manager.activeLoader.Deinitialize();
         }
 
-        IsVrEnabled = IsInitialized;
+        _isVrEnabled = IsInitialized;
     }
 
     private void SetUpXr()
@@ -64,7 +67,7 @@ public class ModXrManager : MonoBehaviour
 
         SetUpCameraTracking();
 
-        isXrSetUp = true;
+        _isXrSetUp = true;
     }
 
     private void SetUpCameraTracking()
