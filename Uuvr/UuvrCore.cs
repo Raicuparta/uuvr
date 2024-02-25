@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UI.Collections;
 
 namespace Uuvr;
 
@@ -15,6 +17,8 @@ public class UuvrCore: MonoBehaviour
     private Type _xrSettingsType;
     private PropertyInfo _xrEnabledProperty;
     private bool _shouldPatchUi;
+    private object _graphicRegistryGraphics;
+    private PropertyInfo _graphicRegistryKeysProperty;
     private const string VR_UI_PARENT_NAME = "UUVR_UI_PARENT";
     
 #if CPP
@@ -34,6 +38,9 @@ public class UuvrCore: MonoBehaviour
 
         SetXrEnabled(false);
         SetPositionTrackingEnabled(false);
+
+        _graphicRegistryGraphics = GraphicRegistry.instance.GetValue<object>("m_Graphics");
+        _graphicRegistryKeysProperty = _graphicRegistryGraphics.GetType().GetProperty("Keys");
         
 #if MODERN
         gameObject.AddComponent<ModXrManager>();
@@ -127,19 +134,19 @@ public class UuvrCore: MonoBehaviour
 
         List<Canvas> canvases = new();
         
-        // TODO: need to get m_Graphics but it's private. Publicize?
-        // foreach (Canvas canvas in GraphicRegistry.instance.m_Graphics.Keys)
-        // {
-        //     if (!canvas) continue;
-        //     
-        //     // World space canvases probably already work as intended in VR.
-        //     if (canvas.renderMode == RenderMode.WorldSpace) continue;
-        //
-        //     // Screen space canvases being rendered to textures are probably already working as intended in VR.
-        //     if (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera?.targetTexture != null) continue;
-        //     
-        //     canvases.Add(canvas);
-        // }
+        IEnumerable keys = (IEnumerable)_graphicRegistryKeysProperty.GetValue(_graphicRegistryGraphics);
+        foreach (Canvas canvas in keys)
+        {
+            if (!canvas) continue;
+            
+            // World space canvases probably already work as intended in VR.
+            if (canvas.renderMode == RenderMode.WorldSpace) continue;
+        
+            // Screen space canvases being rendered to textures are probably already working as intended in VR.
+            if (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera?.targetTexture != null) continue;
+            
+            canvases.Add(canvas);
+        }
         
         foreach (Canvas canvas in canvases)
         {
