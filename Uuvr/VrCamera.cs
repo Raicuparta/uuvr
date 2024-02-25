@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XR;
+using UnityEngine.XR;
 using Uuvr;
 
 public class VrCamera : MonoBehaviour
@@ -140,6 +141,9 @@ public class VrCamera : MonoBehaviour
 
     private void UpdateCamera()
     {
+        // TODO make my own tracked driver that just does this.
+        _trackingCamera.transform.localRotation = InputTracking.GetLocalRotation(XRNode.CenterEye);
+        
         bool isRelativeTracking = ModConfiguration.Instance.cameraTracking.Value == ModConfiguration.CameraTracking.Relative;
 
         if (isRelativeTracking && !_isDirectTrackingDisabled) DisableDirectTracking();
