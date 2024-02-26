@@ -23,6 +23,9 @@ public class VrCamera : MonoBehaviour
     void Start()
     {
         _camera = GetComponent<Camera>();
+        // TODO: setting for overriding camera depth.
+        // TODO: setting for disabling post processing, antialiasing, etc.
+        
         _trackingSource = new GameObject("VrCameraTracking").transform;
         _trackingSource.parent = transform;
         _trackingSource.localPosition = Vector3.zero;
