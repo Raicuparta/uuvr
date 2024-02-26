@@ -106,7 +106,9 @@ public class VrCamera : MonoBehaviour
 
     private void UpdateCamera()
     {
-        bool isRelativeTracking = ModConfiguration.Instance.cameraTracking.Value == ModConfiguration.CameraTracking.Relative;
+        _camera.depth = ModConfiguration.Instance.VrCameraDepth.Value;
+        
+        bool isRelativeTracking = ModConfiguration.Instance.CameraTracking.Value == ModConfiguration.CameraTrackingMode.Relative;
 
         if (isRelativeTracking && !_isDirectTrackingDisabled) DisableDirectTracking();
         else if (!isRelativeTracking && _isDirectTrackingDisabled) EnableDirectTracking();
@@ -121,7 +123,7 @@ public class VrCamera : MonoBehaviour
         // So I'm just doing both I guess.
         _camera.worldToCameraMatrix = _trackingCamera.GetStereoViewMatrix(eye);
 
-        if (ModConfiguration.Instance.relativeCameraSetStereoView.Value)
+        if (ModConfiguration.Instance.RelativeCameraSetStereoView.Value)
         {
             // Some times setting worldToCameraMatrix is enough, some times not. I'm not sure why, need to learn more.
             // Some times it's actually better not to call SetStereoViewMatrix, since it messes up the shadows. Like in Aragami.
