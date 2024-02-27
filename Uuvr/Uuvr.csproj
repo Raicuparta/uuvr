@@ -14,8 +14,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <!-- TODO: some of these need to be copied to output -->
-        <Reference Include="lib\$(UnityBackend)\$(UnityGeneration)\*.dll">
+        <Reference Include="..\lib\$(UnityBackend)\$(UnityGeneration)\*.dll">
             <Private>False</Private>
         </Reference>
     </ItemGroup>

@@ -36,8 +36,8 @@ Global
 		{6DBAB490-0743-4FD8-AA9D-C27D683E5725}.modern-il2cpp|Any CPU.ActiveCfg = Debug|Any CPU
 		{6DBAB490-0743-4FD8-AA9D-C27D683E5725}.legacy-il2cpp|Any CPU.ActiveCfg = Debug|Any CPU
 		{6DBAB490-0743-4FD8-AA9D-C27D683E5725}.legacy-mono|Any CPU.ActiveCfg = Debug|Any CPU
-		{6DBAB490-0743-4FD8-AA9D-C27D683E5725}.modern-mono|Any CPU.ActiveCfg = Debug|Any CPU
-		{6DBAB490-0743-4FD8-AA9D-C27D683E5725}.modern-mono|Any CPU.Build.0 = Debug|Any CPU
+		{6DBAB490-0743-4FD8-AA9D-C27D683E5725}.modern-mono|Any CPU.ActiveCfg = modern-mono|Any CPU
+		{6DBAB490-0743-4FD8-AA9D-C27D683E5725}.modern-mono|Any CPU.Build.0 = modern-mono|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
