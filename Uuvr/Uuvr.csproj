@@ -31,15 +31,15 @@
     <!--  Mono  -->
     <PropertyGroup Condition=" '$(UnityBackend)' == 'mono' ">
         <!-- TODO: This might need to be 3.5 for legacy -->
-        <TargetFramework>net48</TargetFramework>
+        <TargetFramework>net35</TargetFramework>
     </PropertyGroup>
     <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
         <PackageReference Include="BepInEx.Core" Version="5.4.16" />
     </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\UuvrOpenXr\UuvrOpenXr.csproj" />
-    </ItemGroup>
 
     <!--  Modern  -->
+    <ItemGroup Condition=" '$(UnityGeneration)' == 'modern' ">
+        <ProjectReference Include="..\UuvrOpenXr\UuvrOpenXr.csproj" />
+    </ItemGroup>
 
 </Project>

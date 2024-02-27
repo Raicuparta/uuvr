@@ -121,10 +121,7 @@ public class VrCamera : MonoBehaviour
         // worldToCameraMatrix by itself almost works perfectly, but it breaks culling.
         // I expected SetStereoViewMatrix by itself to be enough, but it was even more broken (although culling did work).
         // So I'm just doing both I guess.
-        Quaternion trackingRotation = _trackingCamera.transform.localRotation;
-        trackingRotation.z *= -1;
-        _camera.ResetWorldToCameraMatrix();
-        _camera.worldToCameraMatrix = Matrix4x4.Rotate(trackingRotation) * _camera.worldToCameraMatrix;
+        _camera.worldToCameraMatrix = _trackingCamera.GetStereoViewMatrix(eye);
 
         if (ModConfiguration.Instance.RelativeCameraSetStereoView.Value)
         {

@@ -204,7 +204,7 @@ public class UuvrCore: MonoBehaviour
 
         List<Canvas> canvases = new();
         
-        IEnumerable keys = (IEnumerable)_graphicRegistryKeysProperty.GetValue(_graphicRegistryGraphics);
+        IEnumerable keys = (IEnumerable)_graphicRegistryKeysProperty.GetValue(_graphicRegistryGraphics, null);
         foreach (Canvas canvas in keys)
         {
             if (!canvas) continue;
