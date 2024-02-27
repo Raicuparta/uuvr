@@ -10,6 +10,11 @@ namespace UnityEngine.XR.OpenXR.Features
     [Serializable]
     public abstract class OpenXRInteractionFeature : OpenXRFeature
     {
+#if CPP
+        public OpenXRInteractionFeature(IntPtr pointer) : base(pointer)
+        {
+        }
+#endif
         /// <summary>
         /// Temporary static list used for action map creation
         /// </summary>

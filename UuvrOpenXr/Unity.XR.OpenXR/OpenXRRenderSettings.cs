@@ -24,7 +24,7 @@ namespace UnityEngine.XR.OpenXR
         /// <summary>
         /// Stereo rendering mode.
         /// </summary>
-        [SerializeField] private RenderMode m_renderMode = RenderMode.SinglePassInstanced;
+ private RenderMode m_renderMode = RenderMode.SinglePassInstanced;
 
         /// <summary>
         /// Runtime Stereo rendering mode.
@@ -71,7 +71,7 @@ namespace UnityEngine.XR.OpenXR
         /// <summary>
         /// Enables XR_KHR_composition_layer_depth if possible and resolves or submits depth to OpenXR runtime.
         /// </summary>
-        [SerializeField] private DepthSubmissionMode m_depthSubmissionMode = DepthSubmissionMode.None;
+        private DepthSubmissionMode m_depthSubmissionMode = DepthSubmissionMode.None;
 
         /// <summary>
         /// Enables XR_KHR_composition_layer_depth if possible and resolves or submits depth to OpenXR runtime.

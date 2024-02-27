@@ -6,6 +6,12 @@ namespace Uuvr;
 
 public class UuvrPoseDriver: MonoBehaviour
 {
+#if CPP
+    public UuvrPoseDriver(IntPtr pointer) : base(pointer)
+    {
+    }
+#endif
+
     private MethodInfo _getLocalRotation;
     private readonly object[] getLocalRotationArgs = {
         2 // Enum value for XRNode.CenterEye

@@ -16,6 +16,11 @@ namespace UnityEngine.XR.Management
     /// </summary>
     public abstract class XRLoaderHelper : XRLoader
     {
+#if CPP
+        public XRLoaderHelper(IntPtr pointer) : base(pointer)
+        {
+        }
+#endif
         /// <summary>
         /// Map of loaded susbsystems. Used so we don't always have to fo to XRSubsystemManger and do a manual
         /// search to find the instance we loaded.

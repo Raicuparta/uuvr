@@ -10,7 +10,7 @@ namespace UnityEngine.XR.OpenXR
         /// <summary>
         /// All known features.
         /// </summary>
-        [FormerlySerializedAs("extensions")] [HideInInspector] [SerializeField]
+        
         internal OpenXRFeature[] features = {};
 
         /// <summary>

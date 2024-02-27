@@ -8,8 +8,6 @@ using UnityEngine.Scripting;
 using UnityEngine.XR.Management;
 using UnityEngine.XR.OpenXR.Features;
 
-[assembly: Preserve]
-
 [assembly:InternalsVisibleTo("Unity.XR.OpenXR.TestHelpers")]
 [assembly:InternalsVisibleTo("Unity.XR.OpenXR.Tests")]
 [assembly:InternalsVisibleTo("Unity.XR.OpenXR.Tests.Editor")]
@@ -21,6 +19,11 @@ namespace UnityEngine.XR.OpenXR
     /// </summary>
     public class OpenXRLoader : OpenXRLoaderBase
     {
+#if CPP
+        public OpenXRLoader(IntPtr pointer) : base(pointer)
+        {
+        }
+#endif
     }
 
     /// <summary>
@@ -28,6 +31,12 @@ namespace UnityEngine.XR.OpenXR
     /// </summary>
     public partial class OpenXRLoaderBase : XRLoaderHelper
     {
+#if CPP
+        public OpenXRLoaderBase(IntPtr pointer) : base(pointer)
+        {
+        }
+#endif
+
         const double k_IdlePollingWaitTimeInSeconds = 0.1;
         private static List<XRDisplaySubsystemDescriptor> s_DisplaySubsystemDescriptors =
             new List<XRDisplaySubsystemDescriptor>();
@@ -122,7 +131,7 @@ namespace UnityEngine.XR.OpenXR
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                Debug.LogError(e.Message);
             }
 
             Deinitialize();
@@ -174,7 +183,8 @@ namespace UnityEngine.XR.OpenXR
 
             DebugLogEnabledSpecExtensions();
 
-            Application.onBeforeRender += ProcessOpenXRMessageLoop;
+            // TODO: UUVR
+            // Application.onBeforeRender += ProcessOpenXRMessageLoop;
             currentLoaderState = LoaderState.Initialized;
             return true;
         }
@@ -344,7 +354,8 @@ namespace UnityEngine.XR.OpenXR
             {
                 Internal_RequestExitSession();
 
-                Application.onBeforeRender -= ProcessOpenXRMessageLoop;
+                // TODO: UUVR
+                // Application.onBeforeRender -= ProcessOpenXRMessageLoop;
 
                 ProcessOpenXRMessageLoop(); // Drain any remaining events.
 
@@ -464,7 +475,6 @@ namespace UnityEngine.XR.OpenXR
                 log.Append($"  {extension}: Version={OpenXRRuntime.GetExtensionVersion(extension)}\n");
         }
 
-        [AOT.MonoPInvokeCallback(typeof(ReceiveNativeEventDelegate))]
         private static void ReceiveNativeEvent(OpenXRFeature.NativeEvent e, ulong payload)
         {
             var loader = Instance;

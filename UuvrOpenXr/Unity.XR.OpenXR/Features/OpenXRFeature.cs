@@ -17,10 +17,15 @@ namespace UnityEngine.XR.OpenXR.Features
     [Serializable]
     public abstract partial class OpenXRFeature : ScriptableObject
     {
+#if CPP
+        public OpenXRFeature(IntPtr pointer) : base(pointer)
+        {
+        }
+#endif
         /// <summary>
         /// Feature will be enabled when OpenXR is initialized.
         /// </summary>
-        [FormerlySerializedAs("enabled")] [HideInInspector] [SerializeField] private bool m_enabled = false;
+        private bool m_enabled = false;
 
         internal bool failedInitialization { get; private set; } = false;
 
@@ -59,43 +64,43 @@ namespace UnityEngine.XR.OpenXR.Features
         /// Automatically filled out by the build process from OpenXRFeatureAttribute.
         /// Name of the feature.
         /// </summary>
-        [HideInInspector] [SerializeField] internal string nameUi = null;
+internal string nameUi = null;
 
         /// <summary>
         /// Automatically filled out by the build process from OpenXRFeatureAttribute.
         /// Version of the feature.
         /// </summary>
-        [HideInInspector] [SerializeField] internal string version = null;
+internal string version = null;
 
         /// <summary>
         /// Feature id.
         /// </summary>
-        [HideInInspector] [SerializeField] internal string featureIdInternal  = null;
+internal string featureIdInternal  = null;
 
         /// <summary>
         /// Automatically filled out by the build process from OpenXRFeatureAttribute.
         /// OpenXR runtime extension strings that need to be enabled to use this extension.
         /// May contain multiple extensions separated by spaces.
         /// </summary>
-        [HideInInspector] [SerializeField] internal string openxrExtensionStrings = null;
+internal string openxrExtensionStrings = null;
 
         /// <summary>
         /// Automatically filled out by the build process from OpenXRFeatureAttribute.
         /// Company name of the author of the feature.
         /// </summary>
-        [HideInInspector] [SerializeField] internal string company = null;
+internal string company = null;
 
         /// <summary>
         /// Automatically filled out by the build process from OpenXRFeatureAttribute.
         /// Priority of the feature.
         /// </summary>
-        [HideInInspector] [SerializeField] internal int priority = 0;
+internal int priority = 0;
 
         /// <summary>
         /// Automatically filled out by the build process from OpenXRFeatureAttribute.
         /// True if the feature is required, false otherwise.
         /// </summary>
-        [HideInInspector] [SerializeField] internal bool required = false;
+internal bool required = false;
 
         /// <summary>
         /// Set to true if the internal fields have been updated in the current domain

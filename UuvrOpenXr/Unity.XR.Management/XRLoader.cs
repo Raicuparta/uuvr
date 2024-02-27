@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -9,8 +10,13 @@ namespace UnityEngine.XR.Management
     /// subclasses of this to provide specific initialization and management implementations that make sense for their supported
     /// scenarios and needs.
     /// </summary>
-    public abstract class XRLoader : ScriptableObject
+    public class XRLoader : ScriptableObject
     {
+#if CPP
+        public XRLoader(IntPtr pointer) : base(pointer)
+        {
+        }
+#endif
         /// <summary>
         /// Initialize the loader. This should initialize all subsystems to support the desired runtime setup this
         /// loader represents.
@@ -55,7 +61,10 @@ namespace UnityEngine.XR.Management
         /// <typeparam name="T">Type of the subsystem to get</typeparam>
         ///
         /// <returns>The loaded subsystem or null if not found.</returns>
-        public abstract T GetLoadedSubsystem<T>() where T : class, ISubsystem;
+        public virtual T GetLoadedSubsystem<T>() where T : class, ISubsystem
+        {
+            return null;
+        }
 
         /// <summary>
         /// Gets the loader's supported graphics device types. If the list is empty, it is assumed that it supports all graphics device types.

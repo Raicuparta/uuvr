@@ -116,7 +116,7 @@ namespace UnityEngine.XR.OpenXR
                 }
                 catch (Exception exception)
                 {
-                    Debug.LogException(exception);
+                    Debug.LogError(exception.Message);
                 }
             }
 

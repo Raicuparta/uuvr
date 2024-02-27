@@ -6,8 +6,14 @@ using UnityEngine.XR.Management;
 
 namespace UnityEngine.XR.OpenXR
 {
-    internal class OpenXRRestarter : MonoBehaviour
+    public class OpenXRRestarter : MonoBehaviour
     {
+#if CPP
+        public OpenXRRestarter(IntPtr pointer) : base(pointer)
+        {
+        }
+#endif
+
         internal Action onAfterRestart;
         internal Action onAfterShutdown;
         internal Action onQuit;
@@ -63,7 +69,7 @@ namespace UnityEngine.XR.OpenXR
                 return;
             }
 
-            m_Coroutine = StartCoroutine(RestartCoroutine(false));
+            // m_Coroutine = StartCoroutine(RestartCoroutine(false));
         }
 
         /// <summary>
@@ -80,7 +86,7 @@ namespace UnityEngine.XR.OpenXR
                 return;
             }
 
-            m_Coroutine = StartCoroutine(RestartCoroutine(true));
+            // m_Coroutine = StartCoroutine(RestartCoroutine(true));
         }
 
         private IEnumerator RestartCoroutine (bool shouldRestart)

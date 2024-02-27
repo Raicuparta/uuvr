@@ -44,21 +44,24 @@ namespace UnityEngine.XR.Management
     /// </summary>
     public sealed class XRManagerSettings : ScriptableObject
     {
-        [HideInInspector]
+#if CPP
+        public XRManagerSettings(IntPtr pointer) : base(pointer)
+        {
+        }
+#endif
+
         bool m_InitializationComplete = false;
 
 #pragma warning disable 414
         // This property is only used by the scriptable object editing part of the system and as such no one
         // directly references it. Have to manually disable the console warning here so that we can
         // get a clean console report.
-        [HideInInspector]
-        [SerializeField]
+
         bool m_RequiresSettingsUpdate = false;
 #pragma warning restore 414
 
-        [SerializeField]
-        [Tooltip("Determines if the XR Manager instance is responsible for creating and destroying the appropriate loader instance.")]
-        [FormerlySerializedAs("AutomaticLoading")]
+        
+        
         bool m_AutomaticLoading = false;
 
         /// <summary>
@@ -73,9 +76,8 @@ namespace UnityEngine.XR.Management
             set { m_AutomaticLoading = value; }
         }
 
-        [SerializeField]
-        [Tooltip("Determines if the XR Manager instance is responsible for starting and stopping subsystems for the active loader instance.")]
-        [FormerlySerializedAs("AutomaticRunning")]
+        
+        
         bool m_AutomaticRunning = false;
 
         /// <summary>
@@ -90,14 +92,12 @@ namespace UnityEngine.XR.Management
         }
 
 
-        [SerializeField]
-        [Tooltip("List of XR Loader instances arranged in desired load order.")]
-        [FormerlySerializedAs("Loaders")]
+        
+        
         List<XRLoader> m_Loaders = new List<XRLoader>();
 
         // Maintains a list of registered loaders that is immutable at runtime.
-        [SerializeField]
-        [HideInInspector]
+
         HashSet<XRLoader> m_RegisteredLoaders = new HashSet<XRLoader>();
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace UnityEngine.XR.Management
         ///<summary>
         /// Return the current singleton active loader instance.
         ///</summary>
-        [HideInInspector]
+
         public XRLoader activeLoader { get; private set; }
 
         /// <summary>

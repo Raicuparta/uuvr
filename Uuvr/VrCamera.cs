@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Uuvr;
 
 public class VrCamera : MonoBehaviour

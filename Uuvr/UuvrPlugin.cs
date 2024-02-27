@@ -3,6 +3,9 @@
 #if CPP
 using BepInEx.IL2CPP;
 using UnhollowerRuntimeLib;
+using UnityEngine.XR.Management;
+using UnityEngine.XR.OpenXR;
+using UnityEngine.XR.OpenXR.Features;
 #endif
 
 namespace Uuvr;
@@ -34,6 +37,18 @@ public class UuvrPlugin
 #if CPP
         ClassInjector.RegisterTypeInIl2Cpp<VrCamera>();
         ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
+        ClassInjector.RegisterTypeInIl2Cpp<UuvrPoseDriver>();
+        ClassInjector.RegisterTypeInIl2Cpp<ModXrManager>();
+        ClassInjector.RegisterTypeInIl2Cpp<OpenXRSettings>();
+        ClassInjector.RegisterTypeInIl2Cpp<XRLoader>();
+        // ClassInjector.RegisterTypeInIl2Cpp<XRLoaderHelper>();
+        ClassInjector.RegisterTypeInIl2Cpp<OpenXRLoaderBase>();
+        ClassInjector.RegisterTypeInIl2Cpp<OpenXRLoader>();
+        ClassInjector.RegisterTypeInIl2Cpp<XRManagerSettings>();
+        ClassInjector.RegisterTypeInIl2Cpp<XRGeneralSettings>();
+        // ClassInjector.RegisterTypeInIl2Cpp<OpenXRFeature>();
+        // ClassInjector.RegisterTypeInIl2Cpp<OpenXRInteractionFeature>();
+        ClassInjector.RegisterTypeInIl2Cpp<OpenXRRestarter>();
 #endif
 
         UuvrCore.Create();

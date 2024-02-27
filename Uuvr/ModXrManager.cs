@@ -1,6 +1,7 @@
 ﻿#if MODERN
 
 using System;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.XR.Management;
 using UnityEngine.XR.OpenXR;
@@ -9,6 +10,12 @@ namespace Uuvr;
 
 public class ModXrManager : MonoBehaviour
 {
+#if CPP
+    public ModXrManager(IntPtr pointer) : base(pointer)
+    {
+    }
+#endif
+    
     private static bool _isVrEnabled;
     private static OpenXRLoader _openXrLoader;
     private bool _isXrSetUp;
@@ -18,6 +25,15 @@ public class ModXrManager : MonoBehaviour
         }
     }
     private readonly KeyboardKey _toggleKey = new (KeyboardKey.KeyCode.F2);
+
+    [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern IntPtr LoadLibrary(string lpFileName);
+
+    private void Awake()
+    {
+        LoadLibrary(@"C:\Users\rai\Repos\vr-mods\unity-universal-vr\UuvrPatcher\CopyToGame\Plugins\x64\openxr_loader.dll");
+        LoadLibrary(@"C:\Users\rai\Repos\vr-mods\unity-universal-vr\UuvrPatcher\CopyToGame\Plugins\x64\UnityOpenXR.dll");
+    }
 
     private void Update()
     {

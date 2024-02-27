@@ -8,6 +8,12 @@ namespace UnityEngine.XR.OpenXR
     [Serializable]
     public partial class OpenXRSettings : ScriptableObject
     {
+#if CPP
+        public OpenXRSettings(IntPtr pointer) : base(pointer)
+        {
+        }
+#endif
+
         private static OpenXRSettings s_RuntimeInstance = null;
 
         private void Awake()
