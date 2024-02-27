@@ -25,7 +25,6 @@ public class UuvrCore: MonoBehaviour
     private bool _shouldPatchUi;
     private object _graphicRegistryGraphics;
     private PropertyInfo _graphicRegistryKeysProperty;
-    private const string VR_UI_PARENT_NAME = "UUVR_UI_PARENT";
     private static Camera _uiCaptureCamera;
     private static Camera _uiSceneCamera;
     private RenderTexture _uiTexture;
@@ -35,6 +34,24 @@ public class UuvrCore: MonoBehaviour
     {
     }
 #endif
+    
+    public static void Create()
+    {
+        new GameObject("UUVR").AddComponent<UuvrCore>();
+    }
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        Debug.Log("UUVR has been destroyed. This shouldn't have happened. Recreating...");
+        
+        // TODO: make some (most?) stuff static so it survives recreation.
+        Create();
+    }
 
     private void Start()
     {

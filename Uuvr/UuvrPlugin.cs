@@ -33,12 +33,10 @@ public class UuvrPlugin
         
 #if CPP
         ClassInjector.RegisterTypeInIl2Cpp<VrCamera>();
+        ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
 #endif
 
-#if MONO
-        gameObject.
-#endif
-        AddComponent<UuvrCore>();
-        
+        UuvrCore.Create();
+
     }
 }
