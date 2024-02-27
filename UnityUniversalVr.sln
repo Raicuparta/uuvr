@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uuvr", "Uuvr\Uuvr.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UuvrPatcher", "UuvrPatcher\UuvrPatcher.csproj", "{7F7CF87A-01D8-417A-89BB-16C6239FF847}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UuvrOpenXr", "UuvrOpenXr\UuvrOpenXr.csproj", "{6DBAB490-0743-4FD8-AA9D-C27D683E5725}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		modern-il2cpp|Any CPU = modern-il2cpp|Any CPU
@@ -31,6 +33,11 @@ Global
 		{7F7CF87A-01D8-417A-89BB-16C6239FF847}.modern-mono|Any CPU.ActiveCfg = modern-mono|Any CPU
 		{7F7CF87A-01D8-417A-89BB-16C6239FF847}.modern-il2cpp|Any CPU.Build.0 = modern-il2cpp|Any CPU
 		{7F7CF87A-01D8-417A-89BB-16C6239FF847}.modern-mono|Any CPU.Build.0 = modern-mono|Any CPU
+		{6DBAB490-0743-4FD8-AA9D-C27D683E5725}.modern-il2cpp|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DBAB490-0743-4FD8-AA9D-C27D683E5725}.legacy-il2cpp|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DBAB490-0743-4FD8-AA9D-C27D683E5725}.legacy-mono|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DBAB490-0743-4FD8-AA9D-C27D683E5725}.modern-mono|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DBAB490-0743-4FD8-AA9D-C27D683E5725}.modern-mono|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
