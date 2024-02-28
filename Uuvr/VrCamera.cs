@@ -25,24 +25,21 @@ public class VrCamera : MonoBehaviour
         _camera = GetComponent<Camera>();
         // TODO: setting for overriding camera depth.
         // TODO: setting for disabling post processing, antialiasing, etc.
+
+        var rotationNullifier = UuvrRotationNullifier.Create(transform);
         
-        _trackingSource = new GameObject("VrCameraTracking").transform;
-        _trackingSource.parent = transform;
-        _trackingSource.localPosition = Vector3.zero;
-        _trackingSource.rotation = Quaternion.identity;
+        _trackingSource = UuvrPoseDriver.Create(rotationNullifier.transform).transform;
         _trackingCamera = _trackingSource.gameObject.AddComponent<Camera>();
         // _trackingCamera.CopyFrom(_camera);
         _trackingCamera.cullingMask = 0;
         _trackingCamera.clearFlags = CameraClearFlags.Nothing;
         _trackingCamera.depth = -100;
-        
-        UuvrPoseDriver.Create(_trackingCamera);
     }
 
     private void SetUpDirectTracking()
     {
         if (_directTrackingPoseDriver != null) return;
-        _directTrackingPoseDriver = UuvrPoseDriver.Create(_camera);
+        _directTrackingPoseDriver = _camera.gameObject.AddComponent<UuvrPoseDriver>();
     }
 
     // When VR is enabled, Unity auto-enables HMD tracking for the cameras, overriding the game's

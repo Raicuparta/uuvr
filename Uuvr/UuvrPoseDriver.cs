@@ -11,9 +11,17 @@ public class UuvrPoseDriver: MonoBehaviour
         2 // Enum value for XRNode.CenterEye
     };
     
-    public static UuvrPoseDriver Create(Camera camera)
+    public static UuvrPoseDriver Create(Transform parent)
     {
-        return camera.gameObject.AddComponent<UuvrPoseDriver>();
+        return new GameObject(nameof(UuvrPoseDriver))
+        {
+            transform =
+            {
+                parent = parent,
+                localPosition = Vector3.zero,
+                localRotation = Quaternion.identity
+            }
+        }.AddComponent<UuvrPoseDriver>();
     }
 
     private void Awake()
