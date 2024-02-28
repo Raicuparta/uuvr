@@ -113,7 +113,9 @@ public class Patcher
         List<AssetsReplacer> replacers = new();
 
         AssetFileInfoEx buildSettings = ggmTable.GetAssetInfo(11);
+        #pragma warning disable CS0618 // Type or member is obsolete
         AssetTypeValueField buildSettingsBase = am.GetATI(ggmFile, buildSettings).GetBaseField();
+        #pragma warning restore CS0618 // Type or member is obsolete
         AssetTypeValueField enabledVRDevices = buildSettingsBase.Get("enabledVRDevices").Get("Array");
         AssetTypeTemplateField stringTemplate = enabledVRDevices.templateField.children[1];
         AssetTypeValueField[] vrDevicesList = { StringField("OpenVR", stringTemplate) };

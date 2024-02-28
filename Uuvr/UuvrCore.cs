@@ -20,14 +20,14 @@ public class UuvrCore: MonoBehaviour
         "universelib",
     };
     
-    private Type _xrSettingsType;
-    private PropertyInfo _xrEnabledProperty;
+    private Type? _xrSettingsType;
+    private PropertyInfo? _xrEnabledProperty;
     private bool _shouldPatchUi;
-    private object _graphicRegistryGraphics;
-    private PropertyInfo _graphicRegistryKeysProperty;
-    private static Camera _uiCaptureCamera;
-    private static Camera _uiSceneCamera;
-    private RenderTexture _uiTexture;
+    private object? _graphicRegistryGraphics;
+    private PropertyInfo? _graphicRegistryKeysProperty;
+    private static Camera? _uiCaptureCamera;
+    private static Camera? _uiSceneCamera;
+    private RenderTexture? _uiTexture;
     
 #if CPP
     public UuvrCore(IntPtr pointer) : base(pointer)

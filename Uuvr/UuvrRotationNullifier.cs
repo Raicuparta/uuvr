@@ -5,9 +5,14 @@ namespace Uuvr;
 // Since changing camera pitch and roll in VR is more nauseating,
 // we can use this to allow only yaw rotations, which preserve the horizon line.
 // TODO: add config toggle for this.
-// TODO: Figure out better way to run update, to prevent it from being jittery.
-public class UuvrRotationNullifier: MonoBehaviour
+public class UuvrRotationNullifier: UuvrBehaviour
 {
+#if CPP
+    protected UuvrRotationNullifier(System.IntPtr pointer) : base(pointer)
+    {
+    }
+#endif
+    
     public static UuvrRotationNullifier Create(Transform parent)
     {
         return new GameObject(nameof(UuvrPoseDriver))
@@ -21,17 +26,7 @@ public class UuvrRotationNullifier: MonoBehaviour
         }.AddComponent<UuvrRotationNullifier>();
     }
 
-    private void OnEnable()
-    {
-        Application.onBeforeRender += OnBeforeRender;
-    }
-
-    private void OnDisable()
-    {
-        Application.onBeforeRender -= OnBeforeRender;
-    }
-
-    private void OnBeforeRender()
+    protected override void OnBeforeRender()
     {
         UpdateTransform();
     }

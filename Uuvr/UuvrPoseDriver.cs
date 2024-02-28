@@ -4,12 +4,18 @@ using UnityEngine;
 
 namespace Uuvr;
 
-public class UuvrPoseDriver: MonoBehaviour
+public class UuvrPoseDriver: UuvrBehaviour
 {
     private MethodInfo? _trackingRotationMethod;
-    private readonly object[] getLocalRotationArgs = {
+    private readonly object[] _trackingRotationMethodArgs = {
         2 // Enum value for XRNode.CenterEye
     };
+    
+#if CPP
+    protected UuvrPoseDriver(IntPtr pointer) : base(pointer)
+    {
+    }
+#endif
     
     public static UuvrPoseDriver Create(Transform parent)
     {
@@ -24,8 +30,9 @@ public class UuvrPoseDriver: MonoBehaviour
         }.AddComponent<UuvrPoseDriver>();
     }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         Type? inputTrackingType = Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.XRModule") ??
                                  Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.VRModule") ??
                                  Type.GetType("UnityEngine.VR.InputTracking, UnityEngine.VRModule") ??
@@ -43,18 +50,9 @@ public class UuvrPoseDriver: MonoBehaviour
         DisableCameraAutoTracking();
     }
 
-    private void OnEnable()
+    protected override void OnBeforeRender()
     {
-        Application.onBeforeRender += OnBeforeRender;
-    }
-
-    private void OnDisable()
-    {
-        Application.onBeforeRender -= OnBeforeRender;
-    }
-
-    private void OnBeforeRender()
-    {
+        base.OnBeforeRender();
         UpdateTransform();
     }
 
@@ -70,7 +68,10 @@ public class UuvrPoseDriver: MonoBehaviour
 
     private void UpdateTransform()
     {
-        transform.localRotation = (Quaternion)_trackingRotationMethod.Invoke(null, getLocalRotationArgs);
+        if (_trackingRotationMethod != null)
+        {
+            transform.localRotation = (Quaternion)_trackingRotationMethod.Invoke(null, _trackingRotationMethodArgs);
+        }
     }
 
     private void DisableCameraAutoTracking()

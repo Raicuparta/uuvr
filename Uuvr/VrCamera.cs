@@ -1,21 +1,16 @@
 ﻿using UnityEngine;
 using Uuvr;
 
-public class VrCamera : MonoBehaviour
+public class VrCamera : UuvrBehaviour
 {
-    private Transform _trackingSource;
-    private Camera _camera;
-    private Camera _trackingCamera;
-    private Vector3 _previousPosition;
-    private Quaternion _previousRotation;
-    private bool _isRight = false;
-    
-    // This pose driver is used only for disabling the tracking that some Unity versions add to cameras automatically.
-    private MonoBehaviour _directTrackingPoseDriver;
+    private Transform? _trackingSource;
+    private Camera? _camera;
+    private Camera? _trackingCamera;
+    private MonoBehaviour? _directTrackingPoseDriver;
     private bool _isDirectTrackingDisabled = false;
 
 #if CPP
-    public VrCamera(IntPtr pointer) : base(pointer)
+    public VrCamera(System.IntPtr pointer) : base(pointer)
     {
     }
 #endif
@@ -34,16 +29,6 @@ public class VrCamera : MonoBehaviour
         _trackingCamera.cullingMask = 0;
         _trackingCamera.clearFlags = CameraClearFlags.Nothing;
         _trackingCamera.depth = -100;
-    }
-
-    private void OnEnable()
-    {
-        Application.onBeforeRender += OnBeforeRender;
-    }
-
-    private void OnDisable()
-    {
-        Application.onBeforeRender -= OnBeforeRender;
     }
 
     private void SetUpDirectTracking()
@@ -96,7 +81,7 @@ public class VrCamera : MonoBehaviour
         _isDirectTrackingDisabled = false;
     }
 
-    private void OnBeforeRender()
+    protected override void OnBeforeRender()
     {
         UpdateCamera();
     }
