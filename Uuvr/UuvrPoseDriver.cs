@@ -38,25 +38,34 @@ public class UuvrPoseDriver: MonoBehaviour
             Debug.LogError("Failed to find InputTracking.GetLocalRotation. Destroying UUVR Pose Driver.");
             Destroy(this);
         }
-
     }
 
-    private void OnPreCull()
+    private void OnEnable()
     {
-        UpdateCamera();
+        Application.onBeforeRender += OnBeforeRender;
     }
 
-    private void OnPreRender()
+    private void OnDisable()
     {
-        UpdateCamera();
+        Application.onBeforeRender -= OnBeforeRender;
+    }
+
+    private void OnBeforeRender()
+    {
+        UpdateTransform();
+    }
+
+    private void Update()
+    {
+        UpdateTransform();
     }
 
     private void LateUpdate()
     {
-        UpdateCamera();
+        UpdateTransform();
     }
 
-    private void UpdateCamera()
+    private void UpdateTransform()
     {
         transform.localRotation = (Quaternion)_getLocalRotation.Invoke(null, getLocalRotationArgs);
     }

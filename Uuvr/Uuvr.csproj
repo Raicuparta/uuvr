@@ -29,9 +29,11 @@
     </ItemGroup>
 
     <!--  Mono  -->
-    <PropertyGroup Condition=" '$(UnityBackend)' == 'mono' ">
-        <!-- TODO: This might need to be 3.5 for legacy -->
+    <PropertyGroup Condition=" '$(Configuration)' == 'legacy-mono' ">
         <TargetFramework>net35</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'modern-mono' ">
+        <TargetFramework>net48</TargetFramework>
     </PropertyGroup>
     <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
         <PackageReference Include="BepInEx.Core" Version="5.4.16" />

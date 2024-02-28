@@ -36,6 +36,16 @@ public class VrCamera : MonoBehaviour
         _trackingCamera.depth = -100;
     }
 
+    private void OnEnable()
+    {
+        Application.onBeforeRender += OnBeforeRender;
+    }
+
+    private void OnDisable()
+    {
+        Application.onBeforeRender -= OnBeforeRender;
+    }
+
     private void SetUpDirectTracking()
     {
         if (_directTrackingPoseDriver != null) return;
@@ -84,6 +94,11 @@ public class VrCamera : MonoBehaviour
         }
 
         _isDirectTrackingDisabled = false;
+    }
+
+    private void OnBeforeRender()
+    {
+        UpdateCamera();
     }
 
     private void OnPreCull()

@@ -20,7 +20,22 @@ public class UuvrRotationNullifier: MonoBehaviour
             }
         }.AddComponent<UuvrRotationNullifier>();
     }
-    
+
+    private void OnEnable()
+    {
+        Application.onBeforeRender += OnBeforeRender;
+    }
+
+    private void OnDisable()
+    {
+        Application.onBeforeRender -= OnBeforeRender;
+    }
+
+    private void OnBeforeRender()
+    {
+        UpdateTransform();
+    }
+
     private void Update()
     {
         UpdateTransform();
