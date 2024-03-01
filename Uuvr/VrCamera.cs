@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-using Uuvr;
+
+namespace Uuvr;
 
 public class VrCamera : UuvrBehaviour
 {
