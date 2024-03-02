@@ -83,6 +83,7 @@ public class VrUi: UuvrBehaviour
         // Should use layers instead but dunno maybe not.
         _uiCaptureCamera.transform.localPosition = Vector3.right * 1000;
 
+        // TODO: use Overlay camera type in URP and HDRP
         _uiSceneCamera = new GameObject("VrUiSceneCamera").AddComponent<Camera>();
         VrCamera.IgnoredCameras.Add(_uiSceneCamera);
         _uiSceneCamera.transform.parent = transform;
