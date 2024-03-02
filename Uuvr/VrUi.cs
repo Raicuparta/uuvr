@@ -21,6 +21,7 @@ public class VrUi: UuvrBehaviour
     private static Camera? _uiCaptureCamera;
     private static Camera? _uiSceneCamera;
     private RenderTexture? _uiTexture;
+    private int _uiSceneLayer = -1;
     
     private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
     private readonly List<string> _ignoredCanvases = new()
@@ -37,6 +38,25 @@ public class VrUi: UuvrBehaviour
     {
         _graphicRegistryGraphics = GraphicRegistry.instance.GetValue<object>("m_Graphics");
         _graphicRegistryKeysProperty = _graphicRegistryGraphics.GetType().GetProperty("Keys");
+
+        SetUpLayer();
+    }
+
+    private void SetUpLayer()
+    {
+        for (int layer = 0; layer < 32; layer++)
+        {
+            if (LayerMask.LayerToName(layer).Length == 0)
+            {
+                Debug.Log($"Found free layer for VR UI: {layer}");
+                _uiSceneLayer = layer;
+            }
+        }
+
+        if (_uiSceneLayer != -1) return;
+
+        Debug.LogWarning("Failed to find a free layer to use for VR UI. Falling back to last layer.");
+        _uiSceneLayer = 31;
     }
 
     private void SetUpUi()
@@ -62,9 +82,11 @@ public class VrUi: UuvrBehaviour
         _uiSceneCamera.transform.parent = transform;
         _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
         _uiSceneCamera.depth = 100;
+        _uiSceneCamera.cullingMask = 1 << _uiSceneLayer;
 
         GameObject vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         vrUiQuad.name = "VrUiQuad";
+        vrUiQuad.layer = _uiSceneLayer;
         vrUiQuad.transform.parent = transform;
         vrUiQuad.transform.localPosition = Vector3.forward * 2f;
         float quadWidth = 1.8f;
