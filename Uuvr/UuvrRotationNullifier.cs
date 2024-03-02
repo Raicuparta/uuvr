@@ -8,7 +8,7 @@ namespace Uuvr;
 public class UuvrRotationNullifier: UuvrBehaviour
 {
 #if CPP
-    protected UuvrRotationNullifier(System.IntPtr pointer) : base(pointer)
+    public UuvrRotationNullifier(System.IntPtr pointer) : base(pointer)
     {
     }
 #endif

@@ -13,7 +13,7 @@ public class UuvrBehaviour: MonoBehaviour
 #endif
 
 #if CPP
-    protected UuvrBehaviour(IntPtr pointer) : base(pointer)
+    public UuvrBehaviour(IntPtr pointer) : base(pointer)
     {
     }
 #endif
@@ -41,7 +41,14 @@ public class UuvrBehaviour: MonoBehaviour
     protected virtual void OnEnable()
     {
 #if CPP
-        Application.add_onBeforeRender(_onBeforeRenderAction);
+        try
+        {
+            Application.add_onBeforeRender(_onBeforeRenderAction);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning($"Failed to listen to BeforeRender: {exception}");
+        }
 #else
         Application.onBeforeRender += OnBeforeRender;
 #endif
@@ -50,7 +57,14 @@ public class UuvrBehaviour: MonoBehaviour
     protected virtual void OnDisable()
     {
 #if CPP
-        Application.remove_onBeforeRender(_onBeforeRenderAction);
+        try
+        {
+            Application.remove_onBeforeRender(_onBeforeRenderAction);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning($"Failed to unlisten from BeforeRender: {exception}");
+        }
 #else
         Application.onBeforeRender -= OnBeforeRender;
 #endif

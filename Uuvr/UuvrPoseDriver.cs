@@ -6,16 +6,16 @@ namespace Uuvr;
 
 public class UuvrPoseDriver: UuvrBehaviour
 {
+#if CPP
+    public UuvrPoseDriver(IntPtr pointer) : base(pointer)
+    {
+    }
+#endif
+
     private MethodInfo? _trackingRotationMethod;
     private readonly object[] _trackingRotationMethodArgs = {
         2 // Enum value for XRNode.CenterEye
     };
-    
-#if CPP
-    protected UuvrPoseDriver(IntPtr pointer) : base(pointer)
-    {
-    }
-#endif
 
     protected override void Awake()
     {

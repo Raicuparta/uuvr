@@ -18,8 +18,6 @@ public class VrUi: UuvrBehaviour
     }
 #endif
     
-    private object? _graphicRegistryGraphics;
-    private PropertyInfo? _graphicRegistryKeysProperty;
     private static Camera? _uiCaptureCamera;
     private static Camera? _uiSceneCamera;
     private RenderTexture? _uiTexture;
@@ -38,9 +36,6 @@ public class VrUi: UuvrBehaviour
 
     private void Start()
     {
-        _graphicRegistryGraphics = GraphicRegistry.instance.GetValue<object>("m_Graphics");
-        _graphicRegistryKeysProperty = _graphicRegistryGraphics.GetType().GetProperty("Keys");
-
         _uiLayer = FindFreeLayer();
     }
 
@@ -108,40 +103,54 @@ public class VrUi: UuvrBehaviour
     {
         if (_uiTexture == null) SetUpUi();
         
-        IEnumerable keys = (IEnumerable)_graphicRegistryKeysProperty.GetValue(_graphicRegistryGraphics, null);
-        foreach (Canvas canvas in keys)
+        foreach (Canvas canvas in GraphicRegistry.instance.m_Graphics.Keys)
         {
-            if (!canvas) continue;
-            
-            // World space canvases probably already work as intended in VR.
-            if (canvas.renderMode == RenderMode.WorldSpace) continue;
-        
-            // Screen space canvases are probably already working as intended in VR.
-            if (canvas.renderMode == RenderMode.ScreenSpaceCamera) continue;
-            
-            // TODO: option to skip the above only if it's rendering to a texture, or only if not rendering to stereo.
-            // if (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera?.targetTexture != null) continue;
-
-            // No need to look at child canvases, just change the parents.
-            if (!canvas.isRootCanvas) continue;
-
-            if (_ignoredCanvases.Any(ignoredCanvas => canvas.name.ToLower().Contains(ignoredCanvas.ToLower())))
-            {
-                continue;
-            }
-
-            Debug.Log($"Found canvas to convert to VR: {canvas.name}");
-            
-            canvas.renderMode = RenderMode.ScreenSpaceCamera;
-            canvas.worldCamera = _uiCaptureCamera;
-            SetLayer(canvas.transform, _uiLayer);
+            PatchCanvas(canvas);
         }
     }
 
-    private void SetLayer(Transform parent, int layer)
+    private void PatchCanvas(Canvas canvas)
     {
-        foreach (Transform child in parent)
+        if (!canvas) return;
+
+        // Already patched;
+        if (canvas.worldCamera == _uiCaptureCamera) return;
+        
+        // World space canvases probably already work as intended in VR.
+        if (canvas.renderMode == RenderMode.WorldSpace) return;
+        
+        // Screen space canvases are probably already working as intended in VR.
+        // if (canvas.renderMode == RenderMode.ScreenSpaceCamera) return;
+            
+        // TODO: option to skip the above only if it's rendering to a texture, or only if not rendering to stereo.
+        // if (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera?.targetTexture != null) return;
+
+        // No need to look at child canvases, just change the parents.
+        // Also changing some properties of children affects the parents, which makes it harder for us to know what we're doing.
+        if (!canvas.isRootCanvas)
         {
+            // TODO: seems like this is inefficient, really need to find a better way to get all canvases.
+            PatchCanvas(canvas.rootCanvas);
+            return;
+        }
+
+        if (_ignoredCanvases.Any(ignoredCanvas => canvas.name.ToLower().Contains(ignoredCanvas.ToLower())))
+        {
+            return;
+        }
+
+        Debug.Log($"Found canvas to convert to VR: {canvas.name}");
+            
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = _uiCaptureCamera;
+        SetLayer(canvas.transform, _uiLayer);
+    }
+
+    private static void SetLayer(Transform parent, int layer)
+    {
+        for (int index = 0; index < parent.childCount; index++)
+        {
+            Transform child = parent.GetChild(index);
             SetLayer(child, layer);
             parent.gameObject.layer = layer;
         }

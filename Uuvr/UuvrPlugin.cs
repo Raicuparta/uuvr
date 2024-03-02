@@ -1,8 +1,11 @@
-﻿using BepInEx;
+﻿using System.Reflection;
+using BepInEx;
+using HarmonyLib;
 
 #if CPP
 using BepInEx.IL2CPP;
 using UnhollowerRuntimeLib;
+using UnityEngine;
 #endif
 
 namespace Uuvr;
@@ -30,10 +33,16 @@ public class UuvrPlugin
 #endif
     {
         new ModConfiguration(Config);
+        Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
         
 #if CPP
+        ClassInjector.RegisterTypeInIl2Cpp<UuvrBehaviour>();
         ClassInjector.RegisterTypeInIl2Cpp<VrCamera>();
         ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
+        ClassInjector.RegisterTypeInIl2Cpp<UuvrRotationNullifier>();
+        ClassInjector.RegisterTypeInIl2Cpp<VrCameraManager>();
+        ClassInjector.RegisterTypeInIl2Cpp<VrUi>();
+        ClassInjector.RegisterTypeInIl2Cpp<UuvrPoseDriver>();
 #endif
 
         UuvrCore.Create();
