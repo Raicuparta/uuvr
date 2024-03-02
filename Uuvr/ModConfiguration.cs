@@ -22,11 +22,12 @@ public class ModConfiguration
     public readonly ConfigEntry<int> VrCameraDepth;
     public readonly ConfigEntry<bool> AlignCameraToHorizon;
     public readonly ConfigEntry<bool> OverrideDepth;
+    public readonly ConfigEntry<bool> PhysicsMatchHeadsetRefreshRate;
 
     public ModConfiguration(ConfigFile config)
     {
         Instance = this;
-        
+
         CameraTracking = config.Bind(
             "Camera",
             "Camera Tracking Mode",
@@ -44,7 +45,7 @@ public class ModConfiguration
             "Align To Horizon",
             false,
             "Prevents pitch and roll changes on the camera, allowing only yaw changes.");
-        
+
         OverrideDepth = config.Bind(
             "Camera",
             "Override Depth",
@@ -56,5 +57,11 @@ public class ModConfiguration
             "Depth Value",
             1,
             "Requires enabling 'Override Depth'. Range is -100 to 100, but you should try to find the lowest value that fixes visibility.");
+        
+        PhysicsMatchHeadsetRefreshRate = config.Bind(
+            "General",
+            "Force physics rate to match headset refresh rate",
+            false,
+            "Can help fix jiterriness in games that rely a lot on physics. Might break a lot of games too.");
     }
 }

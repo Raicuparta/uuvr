@@ -15,9 +15,11 @@ public class UuvrCore: MonoBehaviour
     private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
     private readonly KeyboardKey _reparentCameraKey = new (KeyboardKey.KeyCode.F4);
     private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
+    private float _originalFixedDeltaTime = -1;
     
     private VrUi? _vrUi;
-    
+    private PropertyInfo? _refreshRateProperty;
+
     public static void Create()
     {
         new GameObject("UUVR").AddComponent<UuvrCore>();
@@ -39,7 +41,13 @@ public class UuvrCore: MonoBehaviour
 
     private void Start()
     {
+        Type? xrDeviceType = Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.XRModule") ??
+                             Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.VRModule") ??
+                             Type.GetType("UnityEngine.VR.VRDevice, UnityEngine.VRModule") ??
+                             Type.GetType("UnityEngine.VR.VRDevice, UnityEngine");
 
+        _refreshRateProperty = xrDeviceType.GetProperty("refreshRate");
+        
         _vrUi = UuvrBehaviour.Create<VrUi>(transform);
         _vrUi.enabled = false;
         
@@ -52,8 +60,31 @@ public class UuvrCore: MonoBehaviour
         if (_toggleVrKey.UpdateIsDown()) VrToggle.ToggleVr();
         if (_reparentCameraKey.UpdateIsDown()) ReparentCamera();
         if (_vrUiKey.UpdateIsDown()) ToggleVrUi();
+        UpdatePhysicsRate();
     }
-    
+
+    private void UpdatePhysicsRate()
+    {
+        if (_originalFixedDeltaTime == -1)
+        {
+            _originalFixedDeltaTime = Time.fixedDeltaTime;
+        }
+
+        if (_refreshRateProperty == null) return;
+
+        float headsetRefreshRate = (float)_refreshRateProperty.GetValue(null, null);
+        if (headsetRefreshRate <= 0) return;
+
+        if (ModConfiguration.Instance.PhysicsMatchHeadsetRefreshRate.Value)
+        {
+            Time.fixedDeltaTime = 1f / (float) _refreshRateProperty.GetValue(null, null);
+        }
+        else
+        {
+            Time.fixedDeltaTime = _originalFixedDeltaTime;
+        }
+    }
+
     private void ToggleVrUi()
     {
         if (!VrToggle.IsVrEnabled)
