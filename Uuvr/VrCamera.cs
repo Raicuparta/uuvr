@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if CPP
+using System;
+#endif
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,11 +11,10 @@ public class VrCamera : UuvrBehaviour
     public static readonly HashSet<Camera> VrCameras = new();
     public static readonly HashSet<Camera> IgnoredCameras = new();
     
-    private Transform? _trackingSource;
+    private UuvrPoseDriver? _childCameraPoseDriver;
     private Camera? _camera;
-    private Camera? _trackingCamera;
-    private MonoBehaviour? _directTrackingPoseDriver;
-    private bool _isDirectTrackingDisabled = false;
+    private Camera? _childCamera;
+    private UuvrPoseDriver? _parentCameraPoseDriver;
 
 #if CPP
     public VrCamera(System.IntPtr pointer) : base(pointer)
@@ -38,99 +39,52 @@ public class VrCamera : UuvrBehaviour
         // TODO: setting for disabling post processing, antialiasing, etc.
 
         UuvrRotationNullifier rotationNullifier = Create<UuvrRotationNullifier>(transform);
+        _parentCameraPoseDriver = _camera.gameObject.AddComponent<UuvrPoseDriver>();
         
-        _trackingSource = Create<UuvrPoseDriver>(rotationNullifier.transform).transform;
-        _trackingCamera = _trackingSource.gameObject.AddComponent<Camera>();
-        IgnoredCameras.Add(_trackingCamera);
-        // _trackingCamera.CopyFrom(_camera);
-        _trackingCamera.cullingMask = 0;
-        _trackingCamera.clearFlags = CameraClearFlags.Nothing;
-        _trackingCamera.depth = -100;
-    }
-
-    private void SetUpDirectTracking()
-    {
-        if (_directTrackingPoseDriver != null) return;
-        _directTrackingPoseDriver = _camera.gameObject.AddComponent<UuvrPoseDriver>();
-    }
-
-    // When VR is enabled, Unity auto-enables HMD tracking for the cameras, overriding the game's
-    // intended camera position. This is annoying, we want tracking relative to the intended position.
-    private void DisableDirectTracking()
-    {
-        Debug.Log("Disabling Direct Tracking");
-
-        SetUpDirectTracking();
-        if (_directTrackingPoseDriver == null)
-        {
-            // Calling this method disables tracking for some reason.
-            // But when I tested it in Aragami, it also messed up the shadows in the right eye.
-            // Still, this method is useful for games where TrackedPoseDriver isn't available.
-            _camera.SetStereoViewMatrix(Camera.StereoscopicEye.Left, Matrix4x4.zero);
-        }
-        else
-        {
-            _directTrackingPoseDriver.enabled = false;
-        }
-
-        _isDirectTrackingDisabled = true;
-    }
-
-    private void EnableDirectTracking()
-    {
-        Debug.Log("Enabling Direct Tracking");
-
-        SetUpDirectTracking();
-
-        if (_directTrackingPoseDriver == null)
-        {
-            Debug.LogWarning("Can't enable direct tracking, since pose driver is not defined");
-            // TODO: if tracking was disabled via SetStereoViewMatrix,
-            // I don't think it's possible to enabled it again with the same camera.
-            // Might require a restart.
-        }
-        else
-        {
-            // Removing the disabled TrackedPoseDriver should let Unity go back to the auto-tracking it usually does.
-            _directTrackingPoseDriver.enabled = true;
-        }
-
-        _isDirectTrackingDisabled = false;
+        _childCameraPoseDriver = Create<UuvrPoseDriver>(rotationNullifier.transform);
+        _childCamera = _childCameraPoseDriver.gameObject.AddComponent<Camera>();
+        IgnoredCameras.Add(_childCamera);
+        // _childCamera.CopyFrom(_camera);
+        _childCamera.cullingMask = 0;
+        _childCamera.clearFlags = CameraClearFlags.Nothing;
+        _childCamera.depth = -100;
     }
 
     protected override void OnBeforeRender()
     {
-        UpdateCamera();
+        UpdateRelativeCamera();
     }
 
     private void OnPreCull()
     {
-        UpdateCamera();
+        UpdateRelativeCamera();
     }
 
     private void OnPreRender()
     {
-        UpdateCamera();
+        UpdateRelativeCamera();
     }
 
     private void LateUpdate()
     {
-        UpdateCamera();
+        UpdateRelativeCamera();
     }
 
-    private void UpdateCamera()
+    private void Update()
     {
         if (ModConfiguration.Instance.OverrideDepth.Value)
         {
             _camera.depth = ModConfiguration.Instance.VrCameraDepth.Value;
         }
         
-        bool isRelativeTracking = ModConfiguration.Instance.CameraTracking.Value == ModConfiguration.CameraTrackingMode.Relative;
+        ModConfiguration.CameraTrackingMode cameraTrackingMode = ModConfiguration.Instance.CameraTracking.Value;
+        _parentCameraPoseDriver.enabled = cameraTrackingMode == ModConfiguration.CameraTrackingMode.Absolute;
+        _childCameraPoseDriver.gameObject.SetActive(cameraTrackingMode == ModConfiguration.CameraTrackingMode.Relative);
+    }
 
-        if (isRelativeTracking && !_isDirectTrackingDisabled) DisableDirectTracking();
-        else if (!isRelativeTracking && _isDirectTrackingDisabled) EnableDirectTracking();
-        
-        if (!isRelativeTracking) return;
+    private void UpdateRelativeCamera()
+    {
+        if (ModConfiguration.Instance.CameraTracking.Value != ModConfiguration.CameraTrackingMode.Relative) return;
         
         Camera.StereoscopicEye eye = _camera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? Camera.StereoscopicEye.Left : Camera.StereoscopicEye.Right;
        
@@ -138,7 +92,7 @@ public class VrCamera : UuvrBehaviour
         // worldToCameraMatrix by itself almost works perfectly, but it breaks culling.
         // I expected SetStereoViewMatrix by itself to be enough, but it was even more broken (although culling did work).
         // So I'm just doing both I guess.
-        _camera.worldToCameraMatrix = _trackingCamera.GetStereoViewMatrix(eye);
+        _camera.worldToCameraMatrix = _childCamera.GetStereoViewMatrix(eye);
 
         if (ModConfiguration.Instance.RelativeCameraSetStereoView.Value)
         {

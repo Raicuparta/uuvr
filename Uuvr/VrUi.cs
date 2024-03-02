@@ -86,7 +86,7 @@ public class VrUi: UuvrBehaviour
         _uiSceneCamera = new GameObject("VrUiSceneCamera").AddComponent<Camera>();
         VrCamera.IgnoredCameras.Add(_uiSceneCamera);
         _uiSceneCamera.transform.parent = transform;
-        _uiSceneCamera.clearFlags = CameraClearFlags.Nothing;
+        _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
         _uiSceneCamera.depth = 100;
         _uiSceneCamera.cullingMask = 1 << _uiLayer;
         _uiSceneCamera.gameObject.AddComponent<UuvrPoseDriver>();
