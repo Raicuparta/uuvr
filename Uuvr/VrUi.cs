@@ -39,24 +39,25 @@ public class VrUi: UuvrBehaviour
         _graphicRegistryGraphics = GraphicRegistry.instance.GetValue<object>("m_Graphics");
         _graphicRegistryKeysProperty = _graphicRegistryGraphics.GetType().GetProperty("Keys");
 
-        SetUpLayer();
+        _uiSceneLayer = FindFreeLayer();
     }
 
-    private void SetUpLayer()
+    // Unity only lets you define 32 layers.
+    // This is annoying because it's useful for us to create layers for some VR-specific stuff.
+    // We try to find a free layer (one without a name), but some games use all 32 layers.
+    // In that case, we need to fall back to something else (TODO: fall back to user defined layer)
+    private static int FindFreeLayer()
     {
-        for (int layer = 0; layer < 32; layer++)
+        for (int layer = 31; layer >= 0; layer--)
         {
-            if (LayerMask.LayerToName(layer).Length == 0)
-            {
-                Debug.Log($"Found free layer for VR UI: {layer}");
-                _uiSceneLayer = layer;
-            }
+            if (LayerMask.LayerToName(layer).Length != 0) continue;
+
+            Debug.Log($"Found free layer: {layer}");
+            return layer;
         }
 
-        if (_uiSceneLayer != -1) return;
-
         Debug.LogWarning("Failed to find a free layer to use for VR UI. Falling back to last layer.");
-        _uiSceneLayer = 31;
+        return 31;
     }
 
     private void SetUpUi()
