@@ -9,10 +9,12 @@ public class ModConfiguration
     
     public enum CameraTrackingMode
     {
-        [Description("Absolute (takes over game camera)")]
+        [Description("Absolute (moves/rotates existing camera)")]
         Absolute,
-        [Description("Relative (adds to game camera)")]
+        [Description("Relative (changes existing camera rendering)")]
         Relative,
+        [Description("Child (adds new camera)")]
+        Child,
     }
 
     public readonly ConfigEntry<CameraTrackingMode> CameraTracking;
