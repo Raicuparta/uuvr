@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if CPP
+using System;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +23,7 @@ public class VrUi: UuvrBehaviour
     private static Camera? _uiCaptureCamera;
     private static Camera? _uiSceneCamera;
     private RenderTexture? _uiTexture;
-    private int _uiSceneLayer = -1;
+    private int _uiLayer = -1;
     
     private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
     private readonly List<string> _ignoredCanvases = new()
@@ -39,7 +41,7 @@ public class VrUi: UuvrBehaviour
         _graphicRegistryGraphics = GraphicRegistry.instance.GetValue<object>("m_Graphics");
         _graphicRegistryKeysProperty = _graphicRegistryGraphics.GetType().GetProperty("Keys");
 
-        _uiSceneLayer = FindFreeLayer();
+        _uiLayer = FindFreeLayer();
     }
 
     // Unity only lets you define 32 layers.
@@ -75,6 +77,7 @@ public class VrUi: UuvrBehaviour
         _uiCaptureCamera.backgroundColor = Color.clear;
         _uiCaptureCamera.targetTexture = _uiTexture;
         _uiCaptureCamera.depth = 100;
+        _uiCaptureCamera.cullingMask = 1 << _uiLayer;
         
         // Dumb solution to avoid the scene camera from seeing the capture camera.
         // Should use layers instead but dunno maybe not.
@@ -83,13 +86,14 @@ public class VrUi: UuvrBehaviour
         _uiSceneCamera = new GameObject("VrUiSceneCamera").AddComponent<Camera>();
         VrCamera.IgnoredCameras.Add(_uiSceneCamera);
         _uiSceneCamera.transform.parent = transform;
-        _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
+        _uiSceneCamera.clearFlags = CameraClearFlags.Nothing;
         _uiSceneCamera.depth = 100;
-        _uiSceneCamera.cullingMask = 1 << _uiSceneLayer;
+        _uiSceneCamera.cullingMask = 1 << _uiLayer;
+        _uiSceneCamera.gameObject.AddComponent<UuvrPoseDriver>();
 
         GameObject vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         vrUiQuad.name = "VrUiQuad";
-        vrUiQuad.layer = _uiSceneLayer;
+        vrUiQuad.layer = _uiLayer;
         vrUiQuad.transform.parent = transform;
         vrUiQuad.transform.localPosition = Vector3.forward * 2f;
         float quadWidth = 1.8f;
@@ -102,8 +106,6 @@ public class VrUi: UuvrBehaviour
     private void Update()
     {
         if (_uiTexture == null) SetUpUi();
-
-        List<Canvas> canvases = new();
         
         IEnumerable keys = (IEnumerable)_graphicRegistryKeysProperty.GetValue(_graphicRegistryGraphics, null);
         foreach (Canvas canvas in keys)
@@ -129,13 +131,18 @@ public class VrUi: UuvrBehaviour
 
             Debug.Log($"Found canvas to convert to VR: {canvas.name}");
             
-            canvases.Add(canvas);
-        }
-        
-        foreach (Canvas canvas in canvases)
-        {
             canvas.renderMode = RenderMode.ScreenSpaceCamera;
             canvas.worldCamera = _uiCaptureCamera;
+            SetLayer(canvas.transform, _uiLayer);
+        }
+    }
+
+    private void SetLayer(Transform parent, int layer)
+    {
+        foreach (Transform child in parent)
+        {
+            SetLayer(child, layer);
+            parent.gameObject.layer = layer;
         }
     }
 }
