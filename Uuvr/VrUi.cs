@@ -115,6 +115,9 @@ public class VrUi: UuvrBehaviour
         
             // Screen space canvases are probably already working as intended in VR.
             if (canvas.renderMode == RenderMode.ScreenSpaceCamera) continue;
+            
+            // TODO: option to skip the above only if it's rendering to a texture, or only if not rendering to stereo.
+            // if (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera?.targetTexture != null) continue;
 
             // No need to look at child canvases, just change the parents.
             if (!canvas.isRootCanvas) continue;

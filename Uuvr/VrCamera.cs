@@ -120,7 +120,10 @@ public class VrCamera : UuvrBehaviour
 
     private void UpdateCamera()
     {
-        _camera.depth = ModConfiguration.Instance.VrCameraDepth.Value;
+        if (ModConfiguration.Instance.OverrideDepth.Value)
+        {
+            _camera.depth = ModConfiguration.Instance.VrCameraDepth.Value;
+        }
         
         bool isRelativeTracking = ModConfiguration.Instance.CameraTracking.Value == ModConfiguration.CameraTrackingMode.Relative;
 

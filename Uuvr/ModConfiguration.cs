@@ -19,6 +19,7 @@ public class ModConfiguration
     public readonly ConfigEntry<bool> RelativeCameraSetStereoView;
     public readonly ConfigEntry<int> VrCameraDepth;
     public readonly ConfigEntry<bool> AlignCameraToHorizon;
+    public readonly ConfigEntry<bool> OverrideDepth;
 
     public ModConfiguration(ConfigFile config)
     {
@@ -42,10 +43,16 @@ public class ModConfiguration
             false,
             "Prevents pitch and roll changes on the camera, allowing only yaw changes.");
         
+        OverrideDepth = config.Bind(
+            "Camera",
+            "Override Depth",
+            false,
+            "In some games, the VR camera won't display anything unless we override the camera depth value.");
+        
         VrCameraDepth = config.Bind(
-            "VR Camera",
             "Camera Depth",
+            "Depth Value",
             1,
-            "In some games, the VR camera won't display anything unless we increase this number. Range is -100 to 100, but you should try to find the lowest value that fixes visibility.");
+            "Requires enabling 'Override Depth'. Range is -100 to 100, but you should try to find the lowest value that fixes visibility.");
     }
 }
