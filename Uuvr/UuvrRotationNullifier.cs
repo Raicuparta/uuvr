@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Uuvr;
 
 // Since changing camera pitch and roll in VR is more nauseating,
 // we can use this to allow only yaw rotations, which preserve the horizon line.
-// TODO: add config toggle for this.
 public class UuvrRotationNullifier: UuvrBehaviour
 {
 #if CPP
@@ -26,6 +26,16 @@ public class UuvrRotationNullifier: UuvrBehaviour
         }.AddComponent<UuvrRotationNullifier>();
     }
 
+    protected override void Awake()
+    {
+        ModConfiguration.Instance.AlignCameraToHorizon.SettingChanged += AlignToHorizonChanged;
+    }
+
+    private void OnDestroy()
+    {
+        ModConfiguration.Instance.AlignCameraToHorizon.SettingChanged -= AlignToHorizonChanged;
+    }
+
     protected override void OnBeforeRender()
     {
         UpdateTransform();
@@ -39,6 +49,11 @@ public class UuvrRotationNullifier: UuvrBehaviour
     private void LateUpdate()
     {
         UpdateTransform();
+    }
+    
+    private void AlignToHorizonChanged(object sender, EventArgs e)
+    {
+        enabled = ModConfiguration.Instance.AlignCameraToHorizon.Value;
     }
 
     private void UpdateTransform()
