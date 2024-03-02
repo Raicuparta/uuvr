@@ -148,6 +148,8 @@ public class Patcher
         CopyDirectory(Path.Combine(copyToGameFolderPath, "Data"), dataPath);
 
         string gamePluginsPath = Path.Combine(dataPath, "Plugins");
+        Directory.CreateDirectory(gamePluginsPath);
+
         string uuvrPluginsPath = Path.Combine(copyToGameFolderPath, "Plugins");
 
         DeleteExistingVrPlugins(gamePluginsPath);
