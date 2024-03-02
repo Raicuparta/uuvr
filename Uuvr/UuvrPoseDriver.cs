@@ -16,19 +16,6 @@ public class UuvrPoseDriver: UuvrBehaviour
     {
     }
 #endif
-    
-    public static UuvrPoseDriver Create(Transform parent)
-    {
-        return new GameObject(nameof(UuvrPoseDriver))
-        {
-            transform =
-            {
-                parent = parent,
-                localPosition = Vector3.zero,
-                localRotation = Quaternion.identity
-            }
-        }.AddComponent<UuvrPoseDriver>();
-    }
 
     protected override void Awake()
     {

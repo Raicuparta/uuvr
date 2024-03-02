@@ -18,6 +18,19 @@ public class UuvrBehaviour: MonoBehaviour
     }
 #endif
     
+    public static T Create<T>(Transform parent) where T: UuvrBehaviour
+    {
+        return new GameObject(typeof(T).Name)
+        {
+            transform =
+            {
+                parent = parent,
+                localPosition = Vector3.zero,
+                localRotation = Quaternion.identity
+            }
+        }.AddComponent<T>();
+    }
+    
     protected virtual void Awake()
     {
 #if CPP

@@ -22,9 +22,9 @@ public class VrCamera : UuvrBehaviour
         // TODO: setting for overriding camera depth.
         // TODO: setting for disabling post processing, antialiasing, etc.
 
-        var rotationNullifier = UuvrRotationNullifier.Create(transform);
+        var rotationNullifier = Create<UuvrRotationNullifier>(transform);
         
-        _trackingSource = UuvrPoseDriver.Create(rotationNullifier.transform).transform;
+        _trackingSource = Create<UuvrPoseDriver>(rotationNullifier.transform).transform;
         _trackingCamera = _trackingSource.gameObject.AddComponent<Camera>();
         // _trackingCamera.CopyFrom(_camera);
         _trackingCamera.cullingMask = 0;

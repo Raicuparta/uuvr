@@ -12,22 +12,10 @@ public class UuvrRotationNullifier: UuvrBehaviour
     {
     }
 #endif
-    
-    public static UuvrRotationNullifier Create(Transform parent)
-    {
-        return new GameObject(nameof(UuvrRotationNullifier))
-        {
-            transform =
-            {
-                parent = parent,
-                localPosition = Vector3.zero,
-                localRotation = Quaternion.identity
-            }
-        }.AddComponent<UuvrRotationNullifier>();
-    }
 
     protected override void Awake()
     {
+        base.Awake();
         ModConfiguration.Instance.AlignCameraToHorizon.SettingChanged += AlignToHorizonChanged;
     }
 
@@ -36,8 +24,14 @@ public class UuvrRotationNullifier: UuvrBehaviour
         ModConfiguration.Instance.AlignCameraToHorizon.SettingChanged -= AlignToHorizonChanged;
     }
 
+    private void Start()
+    {
+        UpdateEnabledValue();
+    }
+
     protected override void OnBeforeRender()
     {
+        base.OnBeforeRender();
         UpdateTransform();
     }
 
@@ -52,6 +46,11 @@ public class UuvrRotationNullifier: UuvrBehaviour
     }
     
     private void AlignToHorizonChanged(object sender, EventArgs e)
+    {
+        UpdateEnabledValue();
+    }
+
+    private void UpdateEnabledValue()
     {
         enabled = ModConfiguration.Instance.AlignCameraToHorizon.Value;
     }
