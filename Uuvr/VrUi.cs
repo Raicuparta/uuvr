@@ -1,12 +1,11 @@
 ﻿#if CPP
 using System;
 #endif
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Uuvr;
 
@@ -75,7 +74,7 @@ public class VrUi: UuvrBehaviour
         _uiCaptureCamera.cullingMask = 1 << _uiLayer;
         
         // Dumb solution to avoid the scene camera from seeing the capture camera.
-        // Should use layers instead but dunno maybe not.
+        // TODO: for some reason this gets reset? (Cloudpunk)
         _uiCaptureCamera.transform.localPosition = Vector3.right * 1000;
 
         // TODO: use Overlay camera type in URP and HDRP

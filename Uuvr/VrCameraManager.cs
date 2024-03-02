@@ -1,5 +1,6 @@
 ﻿#if CPP
 using System;
+using UnhollowerBaseLib;
 #endif
 using UnityEngine;
 
@@ -13,7 +14,14 @@ public class VrCameraManager: MonoBehaviour
     }
 #endif
 
+#if CPP
+    // At first this looks like it works with a Camera[],
+    // but Camera.GetAllCameras just fills the array with nulls
+    // unless we use Il2CppReferenceArray.
+    private Il2CppReferenceArray<Camera> _allCameras;
+#else
     private Camera[] _allCameras;
+#endif
     
     private void Update()
     {

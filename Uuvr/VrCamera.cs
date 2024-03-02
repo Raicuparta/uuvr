@@ -1,7 +1,8 @@
 ﻿#if CPP
-using System;
-#endif
+using Il2CppSystem.Collections.Generic;
+#else
 using System.Collections.Generic;
+#endif
 using UnityEngine;
 
 namespace Uuvr;
@@ -42,6 +43,7 @@ public class VrCamera : UuvrBehaviour
         _parentCameraPoseDriver = _parentCamera.gameObject.AddComponent<UuvrPoseDriver>();
         
         _childCameraPoseDriver = Create<UuvrPoseDriver>(rotationNullifier.transform);
+        _childCameraPoseDriver.name = "VrChildCamera";
         _childCamera = _childCameraPoseDriver.gameObject.AddComponent<Camera>();
         IgnoredCameras.Add(_childCamera);
         _childCamera.CopyFrom(_parentCamera);
