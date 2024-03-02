@@ -16,8 +16,6 @@ public class UuvrCore: MonoBehaviour
     private readonly KeyboardKey _reparentCameraKey = new (KeyboardKey.KeyCode.F4);
     private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
     
-    private Type? _xrSettingsType;
-    private PropertyInfo? _xrEnabledProperty;
     private VrUi? _vrUi;
     
     public static void Create()
@@ -28,6 +26,7 @@ public class UuvrCore: MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
+        gameObject.AddComponent<VrCameraManager>();
     }
 
     private void OnDestroy()
@@ -40,35 +39,24 @@ public class UuvrCore: MonoBehaviour
 
     private void Start()
     {
-        _xrSettingsType =
-            Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.XRModule") ??
-            Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.VRModule") ??
-            Type.GetType("UnityEngine.VR.VRSettings, UnityEngine");
-        
-        _xrEnabledProperty = _xrSettingsType.GetProperty("enabled");
 
         _vrUi = UuvrBehaviour.Create<VrUi>(transform);
         _vrUi.enabled = false;
         
-        SetXrEnabled(false);
+        VrToggle.SetVrEnabled(false);
         SetPositionTrackingEnabled(false);
-        
-#if MODERN
-        gameObject.AddComponent<ModXrManager>();
-#endif
     }
 
     private void Update()
     {
-        if (_toggleVrKey.UpdateIsDown()) ToggleXr();
+        if (_toggleVrKey.UpdateIsDown()) VrToggle.ToggleVr();
         if (_reparentCameraKey.UpdateIsDown()) ReparentCamera();
-        if (_vrUiKey.UpdateIsDown()) ToggleXrUi();
+        if (_vrUiKey.UpdateIsDown()) ToggleVrUi();
     }
     
-    private void ToggleXrUi()
+    private void ToggleVrUi()
     {
-        bool xrEnabled = (bool) _xrEnabledProperty.GetValue(null, null);
-        if (!xrEnabled)
+        if (!VrToggle.IsVrEnabled)
         {
             Debug.LogWarning("Can't toggle VR UI while VR is disabled.");
             return;
@@ -82,12 +70,6 @@ public class UuvrCore: MonoBehaviour
         
         _vrUi.enabled = !_vrUi.enabled;
     }
-
-    private void ToggleXr()
-    {
-        bool xrEnabled = (bool) _xrEnabledProperty.GetValue(null, null);
-        SetXrEnabled(!xrEnabled);
-    }
     
     private void ReparentCamera() {
         Console.WriteLine("Reparenting Camera...");
@@ -97,33 +79,10 @@ public class UuvrCore: MonoBehaviour
 
         GameObject vrCameraObject = new("VrCamera");
         Camera vrCamera = vrCameraObject.AddComponent<Camera>();
+        VrCamera.IgnoredCameras.Add(vrCamera);
         vrCamera.tag = "MainCamera";
         vrCamera.transform.parent = mainCamera.transform;
         vrCamera.transform.localPosition = Vector3.zero;
-    }
-
-    private void SetXrEnabled(bool enabled)
-    {
-        Console.WriteLine($"Setting XR enabled to {enabled}");
-
-        _xrEnabledProperty.SetValue(null, enabled, null);
-        
-        // TODO verify if exists etc.
-        try
-        {
-
-            if (enabled)
-            {
-                Camera.main.gameObject.AddComponent<VrCamera>();
-            }
-            else
-            {
-                Destroy(Camera.main.gameObject.GetComponent<VrCamera>());
-            }
-        } catch
-        {
-            
-        }
     }
 
     private void SetPositionTrackingEnabled(bool enabled)

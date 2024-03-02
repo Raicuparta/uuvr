@@ -1,9 +1,14 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Uuvr;
 
 public class VrCamera : UuvrBehaviour
 {
+    public static readonly HashSet<Camera> VrCameras = new();
+    public static readonly HashSet<Camera> IgnoredCameras = new();
+    
     private Transform? _trackingSource;
     private Camera? _camera;
     private Camera? _trackingCamera;
@@ -15,17 +20,28 @@ public class VrCamera : UuvrBehaviour
     {
     }
 #endif
-    
-    void Start()
+
+    protected override void Awake()
     {
+        base.Awake();
         _camera = GetComponent<Camera>();
-        // TODO: setting for overriding camera depth.
+        VrCameras.Add(_camera);
+    }
+
+    private void OnDestroy()
+    {
+        VrCameras.Remove(_camera);
+    }
+
+    private void Start()
+    {
         // TODO: setting for disabling post processing, antialiasing, etc.
 
-        var rotationNullifier = Create<UuvrRotationNullifier>(transform);
+        UuvrRotationNullifier rotationNullifier = Create<UuvrRotationNullifier>(transform);
         
         _trackingSource = Create<UuvrPoseDriver>(rotationNullifier.transform).transform;
         _trackingCamera = _trackingSource.gameObject.AddComponent<Camera>();
+        IgnoredCameras.Add(_trackingCamera);
         // _trackingCamera.CopyFrom(_camera);
         _trackingCamera.cullingMask = 0;
         _trackingCamera.clearFlags = CameraClearFlags.Nothing;

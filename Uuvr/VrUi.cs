@@ -69,6 +69,7 @@ public class VrUi: UuvrBehaviour
         float uiTextureAspectRatio =  (float) _uiTexture.height / _uiTexture.width;
 
         _uiCaptureCamera = new GameObject("VrUiCaptureCamera").AddComponent<Camera>();
+        VrCamera.IgnoredCameras.Add(_uiCaptureCamera);
         _uiCaptureCamera.transform.parent = transform;
         _uiCaptureCamera.clearFlags = CameraClearFlags.SolidColor;
         _uiCaptureCamera.backgroundColor = Color.clear;
@@ -80,6 +81,7 @@ public class VrUi: UuvrBehaviour
         _uiCaptureCamera.transform.localPosition = Vector3.right * 1000;
 
         _uiSceneCamera = new GameObject("VrUiSceneCamera").AddComponent<Camera>();
+        VrCamera.IgnoredCameras.Add(_uiSceneCamera);
         _uiSceneCamera.transform.parent = transform;
         _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
         _uiSceneCamera.depth = 100;

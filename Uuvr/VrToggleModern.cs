@@ -7,28 +7,23 @@ using UnityEngine.XR.OpenXR;
 
 namespace Uuvr;
 
-public class ModXrManager : MonoBehaviour
+public static class VrToggle
 {
-    private static bool _isVrEnabled;
+    public static bool IsVrEnabled { get; private set; }
+
     private static OpenXRLoader _openXrLoader;
-    private bool _isXrSetUp;
+    private static bool _isXrSetUp;
     private static bool IsInitialized {
         get {
             return _openXrLoader != null && _openXrLoader.IsInitialized;
         }
     }
-    private readonly KeyboardKey _toggleKey = new (KeyboardKey.KeyCode.F2);
 
-    private void Update()
+    public static void ToggleVr()
     {
-        if (_toggleKey.UpdateIsDown()) ToggleXr();
-    }
+        if (!_isXrSetUp) SetUp();
 
-    private void ToggleXr()
-    {
-        if (!_isXrSetUp) SetUpXr();
-
-        if (!_isVrEnabled)
+        if (!IsVrEnabled)
         {
             XRGeneralSettings.Instance.Manager.StartSubsystems();
             XRGeneralSettings.Instance.Manager.activeLoader.Initialize();
@@ -40,11 +35,32 @@ public class ModXrManager : MonoBehaviour
             XRGeneralSettings.Instance.Manager.activeLoader.Deinitialize();
         }
 
-        _isVrEnabled = IsInitialized;
+        IsVrEnabled = IsInitialized;
     }
 
-    private void SetUpXr()
+    public static void SetVrEnabled(bool vrEnabled)
     {
+        SetUp();
+
+        if (vrEnabled)
+        {
+            XRGeneralSettings.Instance.Manager.StartSubsystems();
+            XRGeneralSettings.Instance.Manager.activeLoader.Initialize();
+            XRGeneralSettings.Instance.Manager.activeLoader.Start();
+        }
+        else
+        {
+            XRGeneralSettings.Instance.Manager.activeLoader.Stop();
+            XRGeneralSettings.Instance.Manager.activeLoader.Deinitialize();
+        }
+
+        IsVrEnabled = IsInitialized;
+    }
+
+    private static void SetUp()
+    {
+        if (_isXrSetUp) return;
+
         XRGeneralSettings? generalSettings = ScriptableObject.CreateInstance<XRGeneralSettings>();
         XRManagerSettings? managerSetings = ScriptableObject.CreateInstance<XRManagerSettings>();
         _openXrLoader = ScriptableObject.CreateInstance<OpenXRLoader>();
@@ -65,15 +81,7 @@ public class ModXrManager : MonoBehaviour
         
         managerSetings.StartSubsystems();
 
-        SetUpCameraTracking();
-
         _isXrSetUp = true;
-    }
-
-    private void SetUpCameraTracking()
-    {
-        Camera? mainCamera = Camera.main ?? Camera.current;
-        mainCamera.gameObject.AddComponent<VrCamera>();
     }
 }
 
