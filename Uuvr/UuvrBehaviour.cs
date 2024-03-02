@@ -1,11 +1,16 @@
-﻿using System;
+﻿#if CPP
+using System;
+#endif
+
 using UnityEngine;
 
 namespace Uuvr;
 
 public class UuvrBehaviour: MonoBehaviour
 {
+#if CPP
     private Action? _onBeforeRenderAction;
+#endif
 
 #if CPP
     protected UuvrBehaviour(IntPtr pointer) : base(pointer)
@@ -15,7 +20,9 @@ public class UuvrBehaviour: MonoBehaviour
     
     protected virtual void Awake()
     {
+#if CPP
         _onBeforeRenderAction = OnBeforeRender;
+#endif
     }
 
     protected virtual void OnEnable()
