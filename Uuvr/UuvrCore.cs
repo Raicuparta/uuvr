@@ -48,6 +48,7 @@ public class UuvrCore: MonoBehaviour
         _xrEnabledProperty = _xrSettingsType.GetProperty("enabled");
 
         _vrUi = UuvrBehaviour.Create<VrUi>(transform);
+        _vrUi.enabled = false;
         
         SetXrEnabled(false);
         SetPositionTrackingEnabled(false);
