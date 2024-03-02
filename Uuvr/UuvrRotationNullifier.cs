@@ -15,7 +15,7 @@ public class UuvrRotationNullifier: UuvrBehaviour
     
     public static UuvrRotationNullifier Create(Transform parent)
     {
-        return new GameObject(nameof(UuvrPoseDriver))
+        return new GameObject(nameof(UuvrRotationNullifier))
         {
             transform =
             {
