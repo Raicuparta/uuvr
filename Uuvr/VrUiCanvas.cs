@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Uuvr;
 
@@ -31,14 +32,29 @@ public class VrUiCanvas: UuvrBehaviour
 
     protected override void OnSettingChanged()
     {
-        if (ModConfiguration.Instance.PatchUi.Value && !_isPatched)
+        bool shouldPatch = ShouldPatchScreenSpaceCanvas() && ModConfiguration.Instance.PatchUi.Value;
+        
+        if (shouldPatch && !_isPatched)
         {
             Patch();
         }
-        else if (!ModConfiguration.Instance.PatchUi.Value && _isPatched)
+        else if (!shouldPatch && _isPatched)
         {
             UndoPatch();
         }
+    }
+
+    private bool ShouldPatchScreenSpaceCanvas()
+    {
+        bool isScreenSpace = _originalRenderMode == RenderMode.ScreenSpaceCamera;
+
+        return ModConfiguration.Instance.ScreenSpaceCanvasTypesToPatch.Value switch
+        {
+            ModConfiguration.ScreenSpaceCanvasType.None => !isScreenSpace,
+            ModConfiguration.ScreenSpaceCanvasType.NotToTexture => !isScreenSpace || isScreenSpace && _canvas.worldCamera?.targetTexture == null,
+            ModConfiguration.ScreenSpaceCanvasType.All => true,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     private void Patch()
