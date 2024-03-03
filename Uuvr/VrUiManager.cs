@@ -1,7 +1,4 @@
-﻿#if CPP
-using System;
-#endif
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +6,7 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace Uuvr;
 
-public class VrUi: UuvrBehaviour
+public class VrUiManager: UuvrBehaviour
 {
 #if CPP
     public VrUi(System.IntPtr pointer) : base(pointer)
@@ -20,9 +17,8 @@ public class VrUi: UuvrBehaviour
     private static Camera? _uiCaptureCamera;
     private static Camera? _uiSceneCamera;
     private RenderTexture? _uiTexture;
-    private int _uiLayer = -1;
+    private GameObject? _vrUiQuad;
     
-    private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
     private readonly List<string> _ignoredCanvases = new()
     {
         // Unity Explorer canvas, don't want it to be affected by VR.
@@ -35,25 +31,18 @@ public class VrUi: UuvrBehaviour
 
     private void Start()
     {
-        _uiLayer = FindFreeLayer();
+        SetUpUi();
+        OnSettingChanged();
     }
 
-    // Unity only lets you define 32 layers.
-    // This is annoying because it's useful for us to create layers for some VR-specific stuff.
-    // We try to find a free layer (one without a name), but some games use all 32 layers.
-    // In that case, we need to fall back to something else (TODO: fall back to user defined layer)
-    private static int FindFreeLayer()
+    protected override void OnSettingChanged()
     {
-        for (int layer = 31; layer >= 0; layer--)
-        {
-            if (LayerMask.LayerToName(layer).Length != 0) continue;
-
-            Debug.Log($"Found free layer: {layer}");
-            return layer;
-        }
-
-        Debug.LogWarning("Failed to find a free layer to use for VR UI. Falling back to last layer.");
-        return 31;
+        base.OnSettingChanged();
+        int uiLayer = LayerHelper.GetVrUiLayer();
+        
+        _uiCaptureCamera.cullingMask = 1 << uiLayer;
+        _uiSceneCamera.cullingMask = 1 << uiLayer;
+        _vrUiQuad.layer = uiLayer;
     }
 
     private void SetUpUi()
@@ -71,7 +60,6 @@ public class VrUi: UuvrBehaviour
         _uiCaptureCamera.backgroundColor = Color.clear;
         _uiCaptureCamera.targetTexture = _uiTexture;
         _uiCaptureCamera.depth = 100;
-        _uiCaptureCamera.cullingMask = 1 << _uiLayer;
         
         // Dumb solution to avoid the scene camera from seeing the capture camera.
         // TODO: for some reason this gets reset? (Cloudpunk)
@@ -83,19 +71,19 @@ public class VrUi: UuvrBehaviour
         _uiSceneCamera.transform.parent = transform;
         _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
         _uiSceneCamera.depth = 100;
-        _uiSceneCamera.cullingMask = 1 << _uiLayer;
         _uiSceneCamera.gameObject.AddComponent<UuvrPoseDriver>();
 
-        GameObject vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        vrUiQuad.name = "VrUiQuad";
-        vrUiQuad.layer = _uiLayer;
-        vrUiQuad.transform.parent = transform;
-        vrUiQuad.transform.localPosition = Vector3.forward * 2f;
+        _vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        _vrUiQuad.name = "VrUiQuad";
+        _vrUiQuad.transform.parent = transform;
+        _vrUiQuad.transform.localPosition = Vector3.forward * 2f;
         float quadWidth = 1.8f;
         float quadHeight = quadWidth * uiTextureAspectRatio;
-        vrUiQuad.transform.localScale = new Vector3(quadWidth, quadHeight, 1f);
-        vrUiQuad.GetComponent<Renderer>().material = Canvas.GetDefaultCanvasMaterial();
-        vrUiQuad.GetComponent<Renderer>().material.mainTexture = _uiTexture;
+        _vrUiQuad.transform.localScale = new Vector3(quadWidth, quadHeight, 1f);
+
+        Renderer renderer = _vrUiQuad.GetComponent<Renderer>();
+        renderer.material = Canvas.GetDefaultCanvasMaterial();
+        renderer.material.mainTexture = _uiTexture;
     }
 
     private void Update()
@@ -139,19 +127,9 @@ public class VrUi: UuvrBehaviour
         }
 
         Debug.Log($"Found canvas to convert to VR: {canvas.name}");
-            
+
         canvas.renderMode = RenderMode.ScreenSpaceCamera;
         canvas.worldCamera = _uiCaptureCamera;
-        SetLayer(canvas.transform, _uiLayer);
-    }
-
-    private static void SetLayer(Transform parent, int layer)
-    {
-        for (int index = 0; index < parent.childCount; index++)
-        {
-            Transform child = parent.GetChild(index);
-            SetLayer(child, layer);
-            parent.gameObject.layer = layer;
-        }
+        canvas.gameObject.AddComponent<VrUiCanvas>();
     }
 }

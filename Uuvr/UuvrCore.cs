@@ -17,7 +17,7 @@ public class UuvrCore: MonoBehaviour
     private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
     private float _originalFixedDeltaTime = -1;
     
-    private VrUi? _vrUi;
+    private VrUiManager? _vrUi;
     private PropertyInfo? _refreshRateProperty;
 
     public static void Create()
@@ -48,7 +48,7 @@ public class UuvrCore: MonoBehaviour
 
         _refreshRateProperty = xrDeviceType.GetProperty("refreshRate");
         
-        _vrUi = UuvrBehaviour.Create<VrUi>(transform);
+        _vrUi = UuvrBehaviour.Create<VrUiManager>(transform);
         _vrUi.enabled = false;
         
         VrToggle.SetVrEnabled(false);

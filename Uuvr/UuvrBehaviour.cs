@@ -2,6 +2,7 @@
 using System;
 #endif
 
+using BepInEx.Configuration;
 using UnityEngine;
 
 namespace Uuvr;
@@ -52,6 +53,7 @@ public class UuvrBehaviour: MonoBehaviour
 #else
         Application.onBeforeRender += OnBeforeRender;
 #endif
+        ModConfiguration.Instance.Config.SettingChanged += ConfigOnSettingChanged;
     }
 
     protected virtual void OnDisable()
@@ -68,7 +70,15 @@ public class UuvrBehaviour: MonoBehaviour
 #else
         Application.onBeforeRender -= OnBeforeRender;
 #endif
+        ModConfiguration.Instance.Config.SettingChanged -= ConfigOnSettingChanged;
+    }
+
+    private void ConfigOnSettingChanged(object sender, SettingChangedEventArgs e)
+    {
+        OnSettingChanged();
     }
 
     protected virtual void OnBeforeRender() {}
+
+    protected virtual void OnSettingChanged() {}
 }

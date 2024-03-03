@@ -17,9 +17,11 @@ public class ModConfiguration
         Child,
     }
 
+    public readonly ConfigFile Config;
     public readonly ConfigEntry<CameraTrackingMode> CameraTracking;
     public readonly ConfigEntry<bool> RelativeCameraSetStereoView;
     public readonly ConfigEntry<int> VrCameraDepth;
+    public readonly ConfigEntry<int> VrUiLayerOverride;
     public readonly ConfigEntry<bool> AlignCameraToHorizon;
     public readonly ConfigEntry<bool> OverrideDepth;
     public readonly ConfigEntry<bool> PhysicsMatchHeadsetRefreshRate;
@@ -27,6 +29,8 @@ public class ModConfiguration
     public ModConfiguration(ConfigFile config)
     {
         Instance = this;
+
+        Config = config;
 
         CameraTracking = config.Bind(
             "Camera",
@@ -56,12 +60,22 @@ public class ModConfiguration
             "Camera Depth",
             "Depth Value",
             1,
-            "Requires enabling 'Override Depth'. Range is -100 to 100, but you should try to find the lowest value that fixes visibility.");
+            new ConfigDescription(
+                "Requires enabling 'Override Depth'. Range is -100 to 100, but you should try to find the lowest value that fixes visibility.",
+                new AcceptableValueRange<int>(-100, 100)));
         
         PhysicsMatchHeadsetRefreshRate = config.Bind(
             "General",
             "Force physics rate to match headset refresh rate",
             false,
             "Can help fix jiterriness in games that rely a lot on physics. Might break a lot of games too.");
+        
+        VrUiLayerOverride = config.Bind(
+            "UI",
+            "VR UI Layer Override",
+            -1,
+            new ConfigDescription(
+                "Layer to use for VR UI. By default (value -1) UUVR falls back to an unused (unnamed) layer.",
+                new AcceptableValueRange<int>(-1, 31)));
     }
 }
