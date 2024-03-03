@@ -61,21 +61,27 @@ public class VrUiManager: UuvrBehaviour
         _uiCaptureCamera.targetTexture = _uiTexture;
         _uiCaptureCamera.depth = 100;
         
-        // Dumb solution to avoid the scene camera from seeing the capture camera.
-        // TODO: for some reason this gets reset? (Cloudpunk)
-        _uiCaptureCamera.transform.localPosition = Vector3.right * 1000;
+        GameObject uiScene = new("VrUiScene")
+        {
+            transform =
+            {
+                parent = transform,
+
+                // Dumb solution to avoid the scene camera from seeing the capture camera.
+                // Without having to waste another layer.
+                localPosition = Vector3.right * 1000
+            }
+        };
 
         // TODO: use Overlay camera type in URP and HDRP
-        _uiSceneCamera = new GameObject("VrUiSceneCamera").AddComponent<Camera>();
+        _uiSceneCamera = Create<UuvrPoseDriver>(uiScene.transform).gameObject.AddComponent<Camera>();
         VrCamera.IgnoredCameras.Add(_uiSceneCamera);
-        _uiSceneCamera.transform.parent = transform;
         _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
         _uiSceneCamera.depth = 100;
-        _uiSceneCamera.gameObject.AddComponent<UuvrPoseDriver>();
 
         _vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         _vrUiQuad.name = "VrUiQuad";
-        _vrUiQuad.transform.parent = transform;
+        _vrUiQuad.transform.parent = uiScene.transform;
         _vrUiQuad.transform.localPosition = Vector3.forward * 2f;
         float quadWidth = 1.8f;
         float quadHeight = quadWidth * uiTextureAspectRatio;
