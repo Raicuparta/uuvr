@@ -463,7 +463,6 @@ namespace UnityEngine.XR.Management
 
         // To modify the list of loaders internally use `currentLoaders` as it will return a list reference rather
         // than a shallow copy.
-        // TODO @davidmo 10/12/2020: remove this in next major version bump and make 'loaders' internal.
         internal List<XRLoader> currentLoaders
         {
             get { return m_Loaders; }

@@ -13,7 +13,6 @@ public class UuvrCore: MonoBehaviour
 #endif
 
     private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
-    private readonly KeyboardKey _reparentCameraKey = new (KeyboardKey.KeyCode.F4);
     private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
     private float _originalFixedDeltaTime = -1;
     
@@ -35,7 +34,6 @@ public class UuvrCore: MonoBehaviour
     {
         Debug.Log("UUVR has been destroyed. This shouldn't have happened. Recreating...");
         
-        // TODO: make some (most?) stuff static so it survives recreation.
         Create();
     }
 
@@ -58,7 +56,6 @@ public class UuvrCore: MonoBehaviour
     private void Update()
     {
         if (_toggleVrKey.UpdateIsDown()) VrToggle.ToggleVr();
-        if (_reparentCameraKey.UpdateIsDown()) ReparentCamera();
         if (_vrUiKey.UpdateIsDown()) ToggleVrUi();
         UpdatePhysicsRate();
     }
@@ -100,20 +97,6 @@ public class UuvrCore: MonoBehaviour
         }
         
         _vrUi.enabled = !_vrUi.enabled;
-    }
-    
-    private void ReparentCamera() {
-        Console.WriteLine("Reparenting Camera...");
-
-        Camera mainCamera = Camera.main ?? Camera.current;
-        mainCamera.enabled = false;
-
-        GameObject vrCameraObject = new("VrCamera");
-        Camera vrCamera = vrCameraObject.AddComponent<Camera>();
-        VrCamera.IgnoredCameras.Add(vrCamera);
-        vrCamera.tag = "MainCamera";
-        vrCamera.transform.parent = mainCamera.transform;
-        vrCamera.transform.localPosition = Vector3.zero;
     }
 
     private void SetPositionTrackingEnabled(bool enabled)
