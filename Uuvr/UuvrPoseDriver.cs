@@ -79,6 +79,7 @@ public class UuvrPoseDriver: UuvrBehaviour
         }
         else
         {
+            // TODO: use alternative method for disabling tracking.
             Debug.LogWarning("Failed to find DisableAutoXRCameraTracking method");
         }
     }

@@ -112,5 +112,7 @@ public class VrCamera : UuvrBehaviour
             // Some times it's actually better not to call SetStereoViewMatrix, since it messes up the shadows. Like in Aragami.
             _parentCamera.SetStereoViewMatrix(eye, _parentCamera.worldToCameraMatrix);
         }
+        
+        // TODO: reset camera matrices and everything else on disabling VR
     }
 }
