@@ -16,6 +16,16 @@ public class ModConfiguration
         [Description("Child (adds new camera)")]
         Child,
     }
+    
+    public enum ScreenSpaceCanvasType
+    {
+        [Description("None")]
+        None,
+        [Description("Not rendering to texture")]
+        NotToTexture,
+        [Description("All")]
+        All,
+    }
 
     public readonly ConfigFile Config;
     public readonly ConfigEntry<CameraTrackingMode> CameraTracking;
@@ -25,6 +35,8 @@ public class ModConfiguration
     public readonly ConfigEntry<bool> AlignCameraToHorizon;
     public readonly ConfigEntry<bool> OverrideDepth;
     public readonly ConfigEntry<bool> PhysicsMatchHeadsetRefreshRate;
+    public readonly ConfigEntry<bool> PatchUi;
+    public readonly ConfigEntry<ScreenSpaceCanvasType> ScreenSpaceCanvasTypesToPatch;
 
     public ModConfiguration(ConfigFile config)
     {
@@ -69,6 +81,12 @@ public class ModConfiguration
             "Force physics rate to match headset refresh rate",
             false,
             "Can help fix jiterriness in games that rely a lot on physics. Might break a lot of games too.");
+
+        PatchUi = config.Bind(
+            "UI",
+            "Patch UI for VR",
+            true,
+            "Projects game UI on a plane in front of the VR camera");
         
         VrUiLayerOverride = config.Bind(
             "UI",
@@ -77,5 +95,11 @@ public class ModConfiguration
             new ConfigDescription(
                 "Layer to use for VR UI. By default (value -1) UUVR falls back to an unused (unnamed) layer.",
                 new AcceptableValueRange<int>(-1, 31)));
+
+        ScreenSpaceCanvasTypesToPatch = config.Bind(
+            "UI",
+            "Screen-space UI elements to patch",
+            ScreenSpaceCanvasType.NotToTexture,
+            "Screen-space UI elements are already visible in VR with no patches. But in some games, they are difficult to see in VR. So you can choose to patch some (or all) of them to be rendered in the VR UI screen.");
     }
 }

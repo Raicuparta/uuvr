@@ -13,7 +13,6 @@ public class UuvrCore: MonoBehaviour
 #endif
 
     private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
-    private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
     private float _originalFixedDeltaTime = -1;
     
     private VrUiManager? _vrUi;
@@ -47,7 +46,6 @@ public class UuvrCore: MonoBehaviour
         _refreshRateProperty = xrDeviceType.GetProperty("refreshRate");
         
         _vrUi = UuvrBehaviour.Create<VrUiManager>(transform);
-        _vrUi.enabled = false;
         
         VrToggle.SetVrEnabled(false);
         SetPositionTrackingEnabled(false);
@@ -56,7 +54,6 @@ public class UuvrCore: MonoBehaviour
     private void Update()
     {
         if (_toggleVrKey.UpdateIsDown()) VrToggle.ToggleVr();
-        if (_vrUiKey.UpdateIsDown()) ToggleVrUi();
         UpdatePhysicsRate();
     }
 
@@ -80,23 +77,6 @@ public class UuvrCore: MonoBehaviour
         {
             Time.fixedDeltaTime = _originalFixedDeltaTime;
         }
-    }
-
-    private void ToggleVrUi()
-    {
-        if (!VrToggle.IsVrEnabled)
-        {
-            Debug.LogWarning("Can't toggle VR UI while VR is disabled.");
-            return;
-        }
-
-        if (!_vrUi)
-        {
-            Debug.LogWarning("Can't toggle VR UI because VR UI component doesn't exist.");
-            return;
-        }
-        
-        _vrUi.enabled = !_vrUi.enabled;
     }
 
     private void SetPositionTrackingEnabled(bool enabled)

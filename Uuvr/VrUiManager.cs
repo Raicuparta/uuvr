@@ -105,9 +105,6 @@ public class VrUiManager: UuvrBehaviour
     private void PatchCanvas(Canvas canvas)
     {
         if (!canvas) return;
-
-        // Already patched;
-        if (canvas.worldCamera == _uiCaptureCamera) return;
         
         // World space canvases probably already work as intended in VR.
         if (canvas.renderMode == RenderMode.WorldSpace) return;
@@ -132,10 +129,10 @@ public class VrUiManager: UuvrBehaviour
             return;
         }
 
-        Debug.Log($"Found canvas to convert to VR: {canvas.name}");
-
-        canvas.renderMode = RenderMode.ScreenSpaceCamera;
-        canvas.worldCamera = _uiCaptureCamera;
-        canvas.gameObject.AddComponent<VrUiCanvas>();
+        // Already patched;
+        // TODO: might be smart to have a more efficient way to check if it's patched.
+        if (canvas.GetComponent<VrUiCanvas>()) return;
+        
+        VrUiCanvas.Create(canvas, _uiCaptureCamera);
     }
 }
