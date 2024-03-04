@@ -2,8 +2,7 @@
 
 namespace Uuvr;
 
-// Since changing camera pitch and roll in VR is more nauseating,
-// we can use this to allow only yaw rotations, which preserve the horizon line.
+// TODO: add manual offsets.
 public class VrCameraOffset: UuvrBehaviour
 {
 #if CPP
