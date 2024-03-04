@@ -39,7 +39,7 @@ public class VrCamera : UuvrBehaviour
     {
         // TODO: setting for disabling post processing, antialiasing, etc.
 
-        UuvrRotationNullifier rotationNullifier = Create<UuvrRotationNullifier>(transform);
+        VrCameraOffset rotationNullifier = Create<VrCameraOffset>(transform);
         _parentCameraPoseDriver = _parentCamera.gameObject.AddComponent<UuvrPoseDriver>();
         
         _childCameraPoseDriver = Create<UuvrPoseDriver>(rotationNullifier.transform);
