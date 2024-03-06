@@ -36,7 +36,7 @@ public class VrCameraOffset: UuvrBehaviour
         }
         else
         {
-            transform.rotation = Quaternion.identity;
+            transform.localRotation = Quaternion.identity;
         }
     }
 }
