@@ -39,9 +39,10 @@ public class UuvrPlugin
         ClassInjector.RegisterTypeInIl2Cpp<UuvrBehaviour>();
         ClassInjector.RegisterTypeInIl2Cpp<VrCamera>();
         ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
-        ClassInjector.RegisterTypeInIl2Cpp<UuvrRotationNullifier>();
+        ClassInjector.RegisterTypeInIl2Cpp<VrCameraOffset>();
         ClassInjector.RegisterTypeInIl2Cpp<VrCameraManager>();
-        ClassInjector.RegisterTypeInIl2Cpp<VrUi>();
+        ClassInjector.RegisterTypeInIl2Cpp<VrUiManager>();
+        ClassInjector.RegisterTypeInIl2Cpp<VrUiCanvas>();
         ClassInjector.RegisterTypeInIl2Cpp<UuvrPoseDriver>();
 #endif
 

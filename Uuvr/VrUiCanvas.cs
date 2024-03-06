@@ -6,7 +6,7 @@ namespace Uuvr;
 public class VrUiCanvas: UuvrBehaviour
 {
 #if CPP
-    public UuvrBehaviour(System.IntPtr pointer) : base(pointer)
+    public VrUiCanvas(System.IntPtr pointer) : base(pointer)
     {
     }
 #endif

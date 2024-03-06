@@ -9,7 +9,7 @@ namespace Uuvr;
 public class VrUiManager: UuvrBehaviour
 {
 #if CPP
-    public VrUi(System.IntPtr pointer) : base(pointer)
+    public VrUiManager(System.IntPtr pointer) : base(pointer)
     {
     }
 #endif
