@@ -16,6 +16,7 @@ public class VrCamera : UuvrBehaviour
     private UuvrPoseDriver? _parentCameraPoseDriver;
     private Camera? _childCamera;
     private UuvrPoseDriver? _childCameraPoseDriver;
+    private LineRenderer _forwardLine;
 
 #if CPP
     public VrCamera(System.IntPtr pointer) : base(pointer)
@@ -47,6 +48,7 @@ public class VrCamera : UuvrBehaviour
         _childCamera = _childCameraPoseDriver.gameObject.AddComponent<Camera>();
         IgnoredCameras.Add(_childCamera);
         _childCamera.CopyFrom(_parentCamera);
+        SetUpForwardLine();
     }
 
     protected override void OnBeforeRender()
@@ -114,5 +116,15 @@ public class VrCamera : UuvrBehaviour
         }
         
         // TODO: reset camera matrices and everything else on disabling VR
+    }
+
+    private void SetUpForwardLine()
+    {
+        _forwardLine = new GameObject("VrCameraForwardLine").AddComponent<LineRenderer>();
+        _forwardLine.transform.SetParent(transform, false);
+        _forwardLine.useWorldSpace = false;
+        _forwardLine.SetPositions(new []{ Vector3.forward * 2f, Vector3.forward * 10f });
+        _forwardLine.startWidth = 0.1f;
+        _forwardLine.endWidth = 0f;
     }
 }
