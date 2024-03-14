@@ -51,6 +51,7 @@ public class UuvrBehaviour: MonoBehaviour
             Debug.LogWarning($"Failed to listen to BeforeRender: {exception}");
         }
 #else
+        // TODO: This doesn't exist for unity <2017
         Application.onBeforeRender += OnBeforeRender;
 #endif
         ModConfiguration.Instance.Config.SettingChanged += ConfigOnSettingChanged;

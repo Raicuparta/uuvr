@@ -83,7 +83,9 @@ public class UuvrCore: MonoBehaviour
     {
         Type inputTrackingType = 
             Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.XRModule") ??
-            Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.VRModule");
+            Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.VRModule") ??
+            Type.GetType("UnityEngine.VR.InputTracking, UnityEngine.VRModule") ??
+            Type.GetType("UnityEngine.VR.InputTracking, UnityEngine");
 
         if (inputTrackingType != null)
         {
@@ -94,12 +96,12 @@ public class UuvrCore: MonoBehaviour
             }
             else
             {
-                Console.WriteLine("Failed to get property disablePositionalTracking");
+                Debug.LogWarning("Failed to get property disablePositionalTracking");
             }
         }
         else
         {
-            Console.WriteLine("Failed to get type UnityEngine.XR.InputTracking");
+            Debug.LogWarning("Failed to get type UnityEngine.XR.InputTracking");
         }
     }
 }

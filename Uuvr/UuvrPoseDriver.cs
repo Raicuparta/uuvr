@@ -80,7 +80,10 @@ public class UuvrPoseDriver: UuvrBehaviour
         else
         {
             // TODO: use alternative method for disabling tracking.
-            Debug.LogWarning("Failed to find DisableAutoXRCameraTracking method");
+            Debug.LogWarning("Failed to find DisableAutoXRCameraTracking method. Using SetStereoViewMatrix, which also prevents Unity from auto-tracking cameras, but can cause other issues.");
+            // TODO: this crashes some games? Example Monster Girl Island. Although that game already comes with VR stuff, dunno if could affect.
+            // camera.SetStereoViewMatrix(Camera.StereoscopicEye.Left, camera.worldToCameraMatrix);
+            // camera.SetStereoViewMatrix(Camera.StereoscopicEye.Right, camera.worldToCameraMatrix);
         }
     }
 }
