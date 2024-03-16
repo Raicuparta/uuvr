@@ -41,7 +41,7 @@
 
     <!--  Modern  -->
     <ItemGroup Condition=" '$(UnityGeneration)' == 'modern' ">
-        <ProjectReference Include="..\UuvrXrPlugin\UuvrXrPlugin.csproj" />
+        <ProjectReference Include="..\Uuvr.XR.OpenVR\Uuvr.XR.OpenVR.csproj" />
     </ItemGroup>
 
 </Project>

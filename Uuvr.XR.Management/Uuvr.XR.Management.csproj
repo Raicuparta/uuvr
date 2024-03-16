@@ -12,6 +12,7 @@
         <DebugType>none</DebugType>
         <OutputPath>$(BepInExDir)\mods\$(UnityBackendFolderName)\uuvr-$(UnityBackend)-$(UnityGeneration)\plugins</OutputPath>
         <TargetFramework>net48</TargetFramework>
+        <RootNamespace>UuvrXrManagement</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,12 +23,6 @@
 
     <ItemGroup>
         <PackageReference Include="BepInEx.Core" Version="5.4.16" />
-    </ItemGroup>
-
-
-
-    <ItemGroup>
-      <ProjectReference Include="..\UuvrXrManagement\UuvrXrManagement.csproj" />
     </ItemGroup>
 
 </Project>

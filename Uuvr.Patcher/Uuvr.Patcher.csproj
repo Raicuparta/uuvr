@@ -11,6 +11,7 @@
         <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
         <DebugType>none</DebugType>
         <OutputPath>$(BepInExDir)\mods\$(UnityBackendFolderName)\uuvr-$(UnityBackend)-$(UnityGeneration)\patchers</OutputPath>
+        <RootNamespace>UuvrPatcher</RootNamespace>
     </PropertyGroup>
     
     <ItemGroup>

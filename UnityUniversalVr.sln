@@ -5,13 +5,13 @@ VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uuvr", "Uuvr\Uuvr.csproj", "{D28B08FD-9318-42A7-A475-29001E60189D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UuvrPatcher", "UuvrPatcher\UuvrPatcher.csproj", "{7F7CF87A-01D8-417A-89BB-16C6239FF847}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uuvr.Patcher", "Uuvr.Patcher\Uuvr.Patcher.csproj", "{7F7CF87A-01D8-417A-89BB-16C6239FF847}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UuvrOpenXr", "UuvrOpenXr\UuvrOpenXr.csproj", "{6DBAB490-0743-4FD8-AA9D-C27D683E5725}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uuvr.XR.OpenXR", "Uuvr.XR.OpenXR\Uuvr.XR.OpenXR.csproj", "{6DBAB490-0743-4FD8-AA9D-C27D683E5725}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UuvrXrPlugin", "UuvrXrPlugin\UuvrXrPlugin.csproj", "{82E45DF4-A544-4C1A-9BEF-65291C807ED7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uuvr.XR.OpenVR", "Uuvr.XR.OpenVR\Uuvr.XR.OpenVR.csproj", "{82E45DF4-A544-4C1A-9BEF-65291C807ED7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UuvrXrManagement", "UuvrXrManagement\UuvrXrManagement.csproj", "{A5950B2D-7B9D-444F-B44D-1761950BC8A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uuvr.XR.Management", "Uuvr.XR.Management\Uuvr.XR.Management.csproj", "{A5950B2D-7B9D-444F-B44D-1761950BC8A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
