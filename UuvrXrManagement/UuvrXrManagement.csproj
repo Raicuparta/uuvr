@@ -24,10 +24,4 @@
         <PackageReference Include="BepInEx.Core" Version="5.4.16" />
     </ItemGroup>
 
-
-
-    <ItemGroup>
-      <ProjectReference Include="..\UuvrXrManagement\UuvrXrManagement.csproj" />
-    </ItemGroup>
-
 </Project>

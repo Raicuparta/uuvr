@@ -26,7 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\UuvrOpenXr\UuvrOpenXr.csproj" />
+      <ProjectReference Include="..\UuvrXrManagement\UuvrXrManagement.csproj" />
     </ItemGroup>
 
 </Project>
