@@ -48,7 +48,9 @@ public class VrCamera : UuvrBehaviour
         _childCamera = _childCameraPoseDriver.gameObject.AddComponent<Camera>();
         IgnoredCameras.Add(_childCamera);
         _childCamera.CopyFrom(_parentCamera);
-        SetUpForwardLine();
+        
+        // TODO: add option for this.
+        // SetUpForwardLine();
     }
 
     protected override void OnBeforeRender()
