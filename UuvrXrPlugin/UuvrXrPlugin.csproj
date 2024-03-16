@@ -11,6 +11,8 @@
         <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
         <DebugType>none</DebugType>
         <OutputPath>$(BepInExDir)\mods\$(UnityBackendFolderName)\uuvr-$(UnityBackend)-$(UnityGeneration)\plugins</OutputPath>
+        <TargetFramework>net48</TargetFramework>
+        <DefineConstants>$(DefineConstants);UNITY_2017_2_OR_NEWER;UNITY_2020_1_OR_NEWER;UNITY_2018_3_OR_NEWER</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,29 +21,12 @@
         </Reference>
     </ItemGroup>
 
-    <!--  Il2Cpp  -->
-    <PropertyGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
-        <TargetFramework>netstandard2.1</TargetFramework>
-    </PropertyGroup>
-    <ItemGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
-        <PackageReference Include="BepInEx.IL2CPP" Version="6.0.0-pre.1" />
-        <PackageReference Include="BepInEx.Core" Version="6.0.0-pre.1" />
-    </ItemGroup>
-
-    <!--  Mono  -->
-    <PropertyGroup Condition=" '$(Configuration)' == 'legacy-mono' ">
-        <TargetFramework>net35</TargetFramework>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'modern-mono' ">
-        <TargetFramework>net48</TargetFramework>
-    </PropertyGroup>
-    <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
+    <ItemGroup>
         <PackageReference Include="BepInEx.Core" Version="5.4.16" />
     </ItemGroup>
 
-    <!--  Modern  -->
-    <ItemGroup Condition=" '$(UnityGeneration)' == 'modern' ">
-        <ProjectReference Include="..\UuvrXrPlugin\UuvrXrPlugin.csproj" />
+    <ItemGroup>
+      <ProjectReference Include="..\UuvrOpenXr\UuvrOpenXr.csproj" />
     </ItemGroup>
 
 </Project>

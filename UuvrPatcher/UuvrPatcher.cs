@@ -29,7 +29,7 @@ public class Patcher
     private static readonly List<string> PluginsToDeleteBeforePatch =
         new()
         {
-            "openvr_api", "openxr_loader", "UnityOpenXR"
+            "openvr_api", "openxr_loader", "UnityOpenXR", "ucrtbased.dll", "XRSDKOpenVR"
         };
 
     public static IEnumerable<string> TargetDLLs { get; } = new[] { "Assembly-CSharp.dll" };

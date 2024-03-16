@@ -1,9 +1,10 @@
 ﻿#if MODERN
 
 using System;
+using Unity.XR.OpenVR;
 using UnityEngine;
 using UnityEngine.XR.Management;
-using UnityEngine.XR.OpenXR;
+using Valve.VR;
 
 namespace Uuvr;
 
@@ -11,13 +12,8 @@ public static class VrToggle
 {
     public static bool IsVrEnabled { get; private set; }
 
-    private static OpenXRLoader _openXrLoader;
+    private static OpenVRLoader _xrLoader;
     private static bool _isXrSetUp;
-    private static bool IsInitialized {
-        get {
-            return _openXrLoader != null && _openXrLoader.IsInitialized;
-        }
-    }
 
     public static void ToggleVr()
     {
@@ -35,7 +31,7 @@ public static class VrToggle
             XRGeneralSettings.Instance.Manager.activeLoader.Deinitialize();
         }
 
-        IsVrEnabled = IsInitialized;
+        IsVrEnabled = !IsVrEnabled;
     }
 
     public static void SetVrEnabled(bool vrEnabled)
@@ -54,18 +50,28 @@ public static class VrToggle
             XRGeneralSettings.Instance.Manager.activeLoader.Deinitialize();
         }
 
-        IsVrEnabled = IsInitialized;
+        IsVrEnabled = vrEnabled;
     }
 
     private static void SetUp()
     {
         if (_isXrSetUp) return;
 
+        EVRInitError openVrError = EVRInitError.None;
+        OpenVR.Init(ref openVrError);
+        Debug.LogWarning($"OpenVR Error: {openVrError}");
+        
         XRGeneralSettings? generalSettings = ScriptableObject.CreateInstance<XRGeneralSettings>();
         XRManagerSettings? managerSetings = ScriptableObject.CreateInstance<XRManagerSettings>();
-        _openXrLoader = ScriptableObject.CreateInstance<OpenXRLoader>();
-        OpenXRSettings.Instance.renderMode = OpenXRSettings.RenderMode.MultiPass;
+        _xrLoader = ScriptableObject.CreateInstance<OpenVRLoader>();
 
+        OpenVRSettings? openVrSettings = OpenVRSettings.GetSettings();
+        if (openVrSettings == null) throw new Exception("OpenVRSettings instance is null");
+        openVrSettings.EditorAppKey = "uuvr";
+        openVrSettings.InitializationType = OpenVRSettings.InitializationTypes.Scene;
+        openVrSettings.StereoRenderingMode = OpenVRSettings.StereoRenderingModes.MultiPass;
+        openVrSettings.SetMirrorViewMode(OpenVRSettings.MirrorViewModes.Right);
+        
         generalSettings.Manager = managerSetings;
         #pragma warning disable CS0618
         /*
@@ -73,7 +79,7 @@ public static class VrToggle
          * Should be fine unless the game's Unity version gets majorly updated, in which case the whole mod will be
          * broken, so I'll have to update it anyway.
          */
-        managerSetings.loaders.Add(_openXrLoader);
+        managerSetings.loaders.Add(_xrLoader);
         #pragma warning restore CS0618
 
         managerSetings.InitializeLoaderSync();
