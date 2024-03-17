@@ -21,6 +21,7 @@ public class VrTogglerManager
         }
         
 #if MODERN
+        // TODO: should never pick OpenXR on x86, since it no worky.
         switch(ModConfiguration.Instance.PreferredVrApi.Value)
         {
             case ModConfiguration.VrApi.OpenVr:
