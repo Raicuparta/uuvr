@@ -16,6 +16,16 @@ public class ModConfiguration
         [Description("Child (adds new camera)")]
         Child,
     }
+
+#if MODERN
+    public enum VrApi
+    {
+        [Description("OpenVR")]
+        OpenVR,
+        [Description("OpenXR")]
+        OpenXR,
+    }
+#endif
     
     public enum ScreenSpaceCanvasType
     {
@@ -37,12 +47,24 @@ public class ModConfiguration
     public readonly ConfigEntry<bool> PhysicsMatchHeadsetRefreshRate;
     public readonly ConfigEntry<bool> PatchUi;
     public readonly ConfigEntry<ScreenSpaceCanvasType> ScreenSpaceCanvasTypesToPatch;
+    
+#if MODERN
+    public readonly ConfigEntry<VrApi> PreferredVrApi;
+#endif
 
     public ModConfiguration(ConfigFile config)
     {
         Instance = this;
 
         Config = config;
+        
+#if MODERN
+        PreferredVrApi = config.Bind(
+            "General",
+            "Preferred VR APi",
+            VrApi.OpenVR,
+            "VR API to use. Depending on the game, some APIs might be unavailable, so UUVR will fall back to one that works.");
+#endif
 
         CameraTracking = config.Bind(
             "Camera",

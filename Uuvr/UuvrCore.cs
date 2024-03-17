@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using UnityEngine;
+using Uuvr.VrTogglers;
 
 namespace Uuvr;
 
@@ -17,6 +18,7 @@ public class UuvrCore: MonoBehaviour
     
     private VrUiManager? _vrUi;
     private PropertyInfo? _refreshRateProperty;
+    private VrTogglerManager _vrTogglerManager;
 
     public static void Create()
     {
@@ -46,14 +48,15 @@ public class UuvrCore: MonoBehaviour
         _refreshRateProperty = xrDeviceType.GetProperty("refreshRate");
         
         _vrUi = UuvrBehaviour.Create<VrUiManager>(transform);
-        
-        VrToggle.SetVrEnabled(false);
+
+        _vrTogglerManager = new VrTogglerManager();
+
         SetPositionTrackingEnabled(false);
     }
 
     private void Update()
     {
-        if (_toggleVrKey.UpdateIsDown()) VrToggle.ToggleVr();
+        if (_toggleVrKey.UpdateIsDown()) _vrTogglerManager.ToggleVr();
         UpdatePhysicsRate();
     }
 
