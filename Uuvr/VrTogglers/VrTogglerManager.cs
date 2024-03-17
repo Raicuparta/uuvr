@@ -23,12 +23,12 @@ public class VrTogglerManager
 #if MODERN
         switch(ModConfiguration.Instance.PreferredVrApi.Value)
         {
-            case ModConfiguration.VrApi.OpenVR:
+            case ModConfiguration.VrApi.OpenVr:
             {
                 _toggler = new XrPluginOpenVrToggler();
                 return;
             }
-            case ModConfiguration.VrApi.OpenXR:
+            case ModConfiguration.VrApi.OpenXr:
             {
                 _toggler = new XrPluginOpenXrToggler();
                 return;

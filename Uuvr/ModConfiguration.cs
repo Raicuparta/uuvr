@@ -21,9 +21,9 @@ public class ModConfiguration
     public enum VrApi
     {
         [Description("OpenVR")]
-        OpenVR,
+        OpenVr,
         [Description("OpenXR")]
-        OpenXR,
+        OpenXr,
     }
 #endif
     
@@ -62,7 +62,7 @@ public class ModConfiguration
         PreferredVrApi = config.Bind(
             "General",
             "Preferred VR APi",
-            VrApi.OpenVR,
+            VrApi.OpenXr,
             "VR API to use. Depending on the game, some APIs might be unavailable, so UUVR will fall back to one that works.");
 #endif
 
