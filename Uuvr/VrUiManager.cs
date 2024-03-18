@@ -33,6 +33,7 @@ public class VrUiManager: UuvrBehaviour
     {
         SetUpUi();
         OnSettingChanged();
+        VrUiCursor.Create(transform);
     }
 
     protected override void OnSettingChanged()
