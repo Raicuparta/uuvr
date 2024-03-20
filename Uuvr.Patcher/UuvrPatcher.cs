@@ -111,7 +111,36 @@ public class Patcher
         am.LoadClassDatabaseFromPackage(ggmFile.typeTree.unityVersion);
 
         List<AssetsReplacer> replacers = new();
-
+        
+        // TODO: Read inputs from globalgamemanagers, store map somewhere, patch in-game?
+        // AssetFileInfoEx inputManager = ggmTable.GetAssetInfo(2);
+        // AssetTypeValueField inputManagerBase = am.GetATI(ggmFile, inputManager).GetBaseField();
+        // AssetTypeValueField axes = inputManagerBase.Get("m_Axes").Get("Array");
+        // Console.WriteLine($"#### Found axes: {axes.children.Length}, looping...");
+        //
+        // foreach (AssetTypeValueField? child in axes.children)
+        // {
+        //     int axis = child.Get("axis").value.AsInt();
+        //     int type = child.Get("type").value.AsInt();
+        //     int joyNum = child.Get("joyNum").value.AsInt();
+        //     string? name = child.Get("m_Name").value.AsString();
+        //     string? positiveButton = child.Get("positiveButton").value.AsString();
+        //     string? negativeButton = child.Get("negativeButton").value.AsString();
+        //     string? altNegativeButton = child.Get("altNegativeButton").value.AsString();
+        //     string? altPositiveButton = child.Get("altPositiveButton").value.AsString();
+        //     float gravity = child.Get("gravity").value.AsFloat();
+        //     float dead = child.Get("dead").value.AsFloat();
+        //     float sensitivity = child.Get("sensitivity").value.AsFloat();
+        //     bool snap = child.Get("snap").value.AsBool();
+        //     bool invert = child.Get("invert").value.AsBool();
+        //
+        //     if (string.IsNullOrEmpty(positiveButton)) continue;
+        //
+        //     if (!positiveButton.StartsWith("joystick")) continue;
+        //
+        //     Console.WriteLine($"name:{name} | positiveButton:{positiveButton} ");
+        // }
+        
         AssetFileInfoEx buildSettings = ggmTable.GetAssetInfo(11);
         #pragma warning disable CS0618 // Type or member is obsolete
         AssetTypeValueField buildSettingsBase = am.GetATI(ggmFile, buildSettings).GetBaseField();
