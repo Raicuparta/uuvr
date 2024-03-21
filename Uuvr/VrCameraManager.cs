@@ -34,7 +34,7 @@ public class VrCameraManager: MonoBehaviour
         for (int index = 0; index < Camera.allCamerasCount; index ++)
         {
             Camera camera = _allCameras[index];
-            if (camera == null || !camera.stereoEnabled) continue;
+            if (camera == null || camera.targetTexture != null) continue;
             if (VrCamera.VrCameras.Contains(camera) || VrCamera.IgnoredCameras.Contains(camera)) continue;
             
             camera.gameObject.AddComponent<VrCamera>();
