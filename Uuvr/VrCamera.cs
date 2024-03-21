@@ -11,6 +11,7 @@ public class VrCamera : UuvrBehaviour
 {
     public static readonly HashSet<Camera> VrCameras = new();
     public static readonly HashSet<Camera> IgnoredCameras = new();
+    public static Camera? HighestDepthVrCamera { get; private set; }
     
     private Camera? _parentCamera;
     private UuvrPoseDriver? _parentCameraPoseDriver;
@@ -86,6 +87,9 @@ public class VrCamera : UuvrBehaviour
 
         if (cameraTrackingMode == ModConfiguration.CameraTrackingMode.Child)
         {
+            // TODO: also disable parent camera's rendering, somehow without affecting the game.
+            // Disabling the camera itself is not a good idea, but changing the culling mask could work.
+            // I've noticed that changing the target display also seems to work without having to mess with the mask.
             _childCamera.cullingMask = _parentCamera.cullingMask;
             _childCamera.clearFlags = _parentCamera.clearFlags;
             _childCamera.depth = _parentCamera.depth;
@@ -95,6 +99,12 @@ public class VrCamera : UuvrBehaviour
             _childCamera.cullingMask = 0;
             _childCamera.clearFlags = CameraClearFlags.Nothing;
             _childCamera.depth = -100;
+        }
+
+        Camera cameraForHighestDepth = cameraTrackingMode == ModConfiguration.CameraTrackingMode.Child ? _childCamera : _parentCamera;
+        if (HighestDepthVrCamera == null || cameraForHighestDepth.depth > HighestDepthVrCamera.depth)
+        {
+            HighestDepthVrCamera = cameraForHighestDepth;
         }
     }
 

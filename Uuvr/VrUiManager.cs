@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 using Vector3 = UnityEngine.Vector3;
 
@@ -28,6 +30,7 @@ public class VrUiManager: UuvrBehaviour
         // but really just Unity Explorer.
         "universelib",
     };
+    private UniversalAdditionalCameraData _additionalCameraData;
 
     private void Start()
     {
@@ -62,6 +65,7 @@ public class VrUiManager: UuvrBehaviour
         _uiCaptureCamera.targetTexture = _uiTexture;
         _uiCaptureCamera.depth = 100;
         
+        
         GameObject uiScene = new("VrUiScene")
         {
             transform =
@@ -79,6 +83,9 @@ public class VrUiManager: UuvrBehaviour
         VrCamera.IgnoredCameras.Add(_uiSceneCamera);
         _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
         _uiSceneCamera.depth = 100;
+
+        _additionalCameraData = _uiSceneCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
+        _additionalCameraData.renderType = CameraRenderType.Overlay;
 
         _vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         _vrUiQuad.name = "VrUiQuad";
@@ -101,6 +108,28 @@ public class VrUiManager: UuvrBehaviour
         {
             PatchCanvas(canvas);
         }
+
+        SetUpAdditionalCameraData();
+    }
+
+    private void SetUpAdditionalCameraData()
+    {
+        if (VrCamera.HighestDepthVrCamera == null) return;
+
+        UniversalAdditionalCameraData additionalHighestDepthCameraData = VrCamera.HighestDepthVrCamera.gameObject.GetComponent<UniversalAdditionalCameraData>();
+        if (additionalHighestDepthCameraData == null)
+        {
+            additionalHighestDepthCameraData = VrCamera.HighestDepthVrCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
+        }
+        
+        if (additionalHighestDepthCameraData.cameraStack.Contains(_uiSceneCamera)) return;
+
+        var pipelineAsset = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+        var data = pipelineAsset.GetValue<ForwardRendererData>("scriptableRendererData");
+        data.opaqueLayerMask = -1;
+        data.transparentLayerMask = -1;
+        
+        additionalHighestDepthCameraData.cameraStack.Add(_uiSceneCamera);
     }
 
     private void PatchCanvas(Canvas canvas)
