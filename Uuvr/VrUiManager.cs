@@ -30,7 +30,7 @@ public class VrUiManager: UuvrBehaviour
         // but really just Unity Explorer.
         "universelib",
     };
-    private UniversalAdditionalCameraData _additionalCameraData;
+    private UniversalAdditionalCameraData _additionalSceneCameraData;
 
     private void Start()
     {
@@ -84,8 +84,8 @@ public class VrUiManager: UuvrBehaviour
         _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
         _uiSceneCamera.depth = 100;
 
-        _additionalCameraData = _uiSceneCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
-        _additionalCameraData.renderType = CameraRenderType.Overlay;
+        _additionalSceneCameraData = _uiSceneCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
+        _additionalSceneCameraData.renderType = CameraRenderType.Overlay;
 
         _vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         _vrUiQuad.name = "VrUiQuad";
@@ -98,6 +98,12 @@ public class VrUiManager: UuvrBehaviour
         Renderer renderer = _vrUiQuad.GetComponent<Renderer>();
         renderer.material = Canvas.GetDefaultCanvasMaterial();
         renderer.material.mainTexture = _uiTexture;
+        
+        // TODO setting for this.
+        UniversalRenderPipelineAsset? pipelineAsset = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+        var data = pipelineAsset.GetValue<ForwardRendererData>("scriptableRendererData");
+        data.opaqueLayerMask = -1;
+        data.transparentLayerMask = -1;
     }
 
     private void Update()
@@ -114,7 +120,15 @@ public class VrUiManager: UuvrBehaviour
 
     private void SetUpAdditionalCameraData()
     {
-        if (VrCamera.HighestDepthVrCamera == null) return;
+        if (VrCamera.HighestDepthVrCamera == null)
+        {
+            _additionalSceneCameraData.renderType = CameraRenderType.Base;
+            _uiSceneCamera.clearFlags = CameraClearFlags.Skybox;
+            return;
+        }
+
+        _additionalSceneCameraData.renderType = CameraRenderType.Overlay;
+        _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
 
         UniversalAdditionalCameraData additionalHighestDepthCameraData = VrCamera.HighestDepthVrCamera.gameObject.GetComponent<UniversalAdditionalCameraData>();
         if (additionalHighestDepthCameraData == null)
@@ -123,11 +137,6 @@ public class VrUiManager: UuvrBehaviour
         }
         
         if (additionalHighestDepthCameraData.cameraStack.Contains(_uiSceneCamera)) return;
-
-        var pipelineAsset = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
-        var data = pipelineAsset.GetValue<ForwardRendererData>("scriptableRendererData");
-        data.opaqueLayerMask = -1;
-        data.transparentLayerMask = -1;
         
         additionalHighestDepthCameraData.cameraStack.Add(_uiSceneCamera);
     }
