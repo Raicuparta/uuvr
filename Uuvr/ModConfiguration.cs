@@ -5,7 +5,7 @@ namespace Uuvr;
 
 public class ModConfiguration
 {
-    public static ModConfiguration? Instance;
+    public static ModConfiguration Instance;
     
     public enum CameraTrackingMode
     {
