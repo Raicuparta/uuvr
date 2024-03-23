@@ -23,7 +23,13 @@ public static class Patches
     // [HarmonyPatch(typeof(Camera), nameof(Camera.WorldToViewportPoint), typeof(Vector3))]
     // private static bool FixWorldToViewportPoint(Vector3 position, ref Vector3 __result, Camera __instance)
     // {
-    //     __result = __instance.WorldToViewportPoint(position, Camera.MonoOrStereoscopicEye.Left);;
+    //     var _worldToViewportPointStereoMethod = typeof(Camera).GetMethod("WorldToViewportPoint", new Type[] { typeof(Vector3), typeof(Camera.MonoOrStereoscopicEye) });
+    //     if (_worldToViewportPointStereoMethod == null)
+    //     {
+    //         Debug.LogError("#### FAILED TO FIND THE TYPE!!!");
+    //     }
+    //
+    //     __result = (Vector3) _worldToViewportPointStereoMethod.Invoke(__instance, new object[] { Camera.MonoOrStereoscopicEye.Left });
     //     return false;
     // }
 }
