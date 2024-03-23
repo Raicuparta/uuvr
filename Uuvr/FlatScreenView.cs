@@ -34,17 +34,24 @@ public class FlatScreenView: MonoBehaviour
         _quad.transform.localPosition = Vector3.zero;
         _quad.transform.localRotation = Quaternion.identity;
         _quad.GetComponent<Renderer>().material = _targetMaterial;
-        _quad.layer = LayerHelper.GetVrUiLayer();
+        
+        // TODO: find a layer that's visible by the top camera.
+        // _quad.layer = LayerHelper.GetVrUiLayer();
 
         // This camera is here only to clear the screen.
         _clearCamera = gameObject.AddComponent<Camera>();
         _clearCamera.stereoTargetEye = StereoTargetEyeMask.None;
         _clearCamera.depth = -100;
         _clearCamera.cullingMask = 0;
-        _clearCamera.clearFlags = CameraClearFlags.Color;
+        _clearCamera.clearFlags = CameraClearFlags.Nothing;
         _clearCamera.backgroundColor = Color.clear;
+        
+        // HDR seems to prevent a proper transparent clear (would some times become opaque with this enabled).
+        _clearCamera.allowHDR = false;
+        // This I'm not sure if it helps but since the HDR thing was a problem, might as well.
+        _clearCamera.allowMSAA = false;
 
-        var additionalData = AdditionalCameraData.Create(_clearCamera.gameObject);
+        var additionalData = AdditionalCameraData.Create(_clearCamera);
         additionalData.SetAllowXrRendering(false);
         
         var xrSettingsType =

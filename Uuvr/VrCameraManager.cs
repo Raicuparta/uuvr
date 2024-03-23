@@ -36,7 +36,10 @@ public class VrCameraManager: MonoBehaviour
             Camera camera = _allCameras[index];
             if (camera == null || camera.targetTexture != null || camera.stereoTargetEye == StereoTargetEyeMask.None) continue;
             if (VrCamera.VrCameras.Contains(camera) || VrCamera.IgnoredCameras.Contains(camera)) continue;
+
+            if (AdditionalCameraData.Create(camera).IsOverlay()) continue;
             
+            Debug.Log($"creating vr camera {camera.name}");
             camera.gameObject.AddComponent<VrCamera>();
         }
     }

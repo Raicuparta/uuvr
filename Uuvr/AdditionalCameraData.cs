@@ -26,7 +26,7 @@ public class AdditionalCameraData: MonoBehaviour
 
     private object? _additionalCameraData;
 
-    public static AdditionalCameraData Create(GameObject gameObject)
+    public static AdditionalCameraData Create(Camera camera)
     {
         if (_additionalCameraDataType == null)
         {
@@ -36,7 +36,7 @@ public class AdditionalCameraData: MonoBehaviour
             _allowXrRenderingProperty = _additionalCameraDataType?.GetProperty("allowXRRendering");
         }
 
-        return gameObject.GetComponent<AdditionalCameraData>() ?? gameObject.AddComponent<AdditionalCameraData>();
+        return camera.gameObject.GetComponent<AdditionalCameraData>() ?? camera.gameObject.AddComponent<AdditionalCameraData>();
     }
     
     private void Awake()
@@ -52,6 +52,11 @@ public class AdditionalCameraData: MonoBehaviour
     public void SetRenderTypeOverlay()
     {
         _renderTypeProperty?.SetValue(_additionalCameraData, RenderTypeOverlay);
+    }
+
+    public bool IsOverlay()
+    {
+        return (int) _renderTypeProperty.GetValue(_additionalCameraData) == RenderTypeOverlay;
     }
 
     public List<Camera> GetCameraStack()

@@ -4,6 +4,7 @@ using Il2CppSystem.Collections.Generic;
 using System.Collections.Generic;
 #endif
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Uuvr;
 
@@ -11,13 +12,20 @@ public class VrCamera : UuvrBehaviour
 {
     public static readonly HashSet<Camera> VrCameras = new();
     public static readonly HashSet<Camera> IgnoredCameras = new();
-    public static Camera? HighestDepthVrCamera { get; private set; }
+    public static VrCamera? HighestDepthVrCamera { get; private set; }
     
-    private Camera? _parentCamera;
+    public Camera? ParentCamera { get; private set; }
+    public Camera? CameraInUse {
+        get {
+            return ModConfiguration.Instance.CameraTracking.Value == ModConfiguration.CameraTrackingMode.Child ? _childCamera : ParentCamera;
+        }
+    }
+
     private UuvrPoseDriver? _parentCameraPoseDriver;
     private Camera? _childCamera;
     private UuvrPoseDriver? _childCameraPoseDriver;
     private LineRenderer _forwardLine;
+    private AdditionalCameraData _additionalData;
     // private int _originalCullingMask = -2;
 
 #if CPP
@@ -29,13 +37,13 @@ public class VrCamera : UuvrBehaviour
     protected override void Awake()
     {
         base.Awake();
-        _parentCamera = GetComponent<Camera>();
-        VrCameras.Add(_parentCamera);
+        ParentCamera = GetComponent<Camera>();
+        VrCameras.Add(ParentCamera);
     }
 
     private void OnDestroy()
     {
-        VrCameras.Remove(_parentCamera);
+        VrCameras.Remove(ParentCamera);
     }
 
     private void Start()
@@ -43,13 +51,13 @@ public class VrCamera : UuvrBehaviour
         // TODO: setting for disabling post processing, antialiasing, etc.
 
         VrCameraOffset rotationNullifier = Create<VrCameraOffset>(transform);
-        _parentCameraPoseDriver = _parentCamera.gameObject.AddComponent<UuvrPoseDriver>();
+        _parentCameraPoseDriver = ParentCamera.gameObject.AddComponent<UuvrPoseDriver>();
         
         _childCameraPoseDriver = Create<UuvrPoseDriver>(rotationNullifier.transform);
         _childCameraPoseDriver.name = "VrChildCamera";
         _childCamera = _childCameraPoseDriver.gameObject.AddComponent<Camera>();
         IgnoredCameras.Add(_childCamera);
-        _childCamera.CopyFrom(_parentCamera);
+        _childCamera.CopyFrom(ParentCamera);
         
         // TODO: add option for this.
         // SetUpForwardLine();
@@ -77,9 +85,16 @@ public class VrCamera : UuvrBehaviour
 
     private void Update()
     {
+        if (_additionalData == null)
+        {
+            _additionalData = AdditionalCameraData.Create(CameraInUse);
+        }
+        
+        if (_additionalData.IsOverlay()) Destroy(this);
+        
         if (ModConfiguration.Instance.OverrideDepth.Value)
         {
-            _parentCamera.depth = ModConfiguration.Instance.VrCameraDepth.Value;
+            ParentCamera.depth = ModConfiguration.Instance.VrCameraDepth.Value;
         }
         
         ModConfiguration.CameraTrackingMode cameraTrackingMode = ModConfiguration.Instance.CameraTracking.Value;
@@ -103,9 +118,9 @@ public class VrCamera : UuvrBehaviour
             // Disabling the camera itself is not a good idea, but changing the culling mask could work.
             // I've noticed that changing the target display also seems to work without having to mess with the mask.
             // _childCamera.cullingMask = _originalCullingMask;
-            _childCamera.cullingMask = _parentCamera.cullingMask;
-            _childCamera.clearFlags = _parentCamera.clearFlags;
-            _childCamera.depth = _parentCamera.depth;
+            _childCamera.cullingMask = ParentCamera.cullingMask;
+            _childCamera.clearFlags = ParentCamera.clearFlags;
+            _childCamera.depth = ParentCamera.depth;
         }
         else
         {
@@ -116,10 +131,9 @@ public class VrCamera : UuvrBehaviour
             _childCamera.depth = -100;
         }
 
-        Camera cameraForHighestDepth = cameraTrackingMode == ModConfiguration.CameraTrackingMode.Child ? _childCamera : _parentCamera;
-        if (HighestDepthVrCamera == null || cameraForHighestDepth.depth > HighestDepthVrCamera.depth)
+        if (HighestDepthVrCamera == null || ParentCamera.depth > HighestDepthVrCamera.CameraInUse.depth)
         {
-            HighestDepthVrCamera = cameraForHighestDepth;
+            HighestDepthVrCamera = this;
         }
     }
 
@@ -127,19 +141,19 @@ public class VrCamera : UuvrBehaviour
     {
         if (ModConfiguration.Instance.CameraTracking.Value != ModConfiguration.CameraTrackingMode.Relative) return;
         
-        Camera.StereoscopicEye eye = _parentCamera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? Camera.StereoscopicEye.Left : Camera.StereoscopicEye.Right;
+        Camera.StereoscopicEye eye = ParentCamera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? Camera.StereoscopicEye.Left : Camera.StereoscopicEye.Right;
        
         // A bit confused by this.
         // worldToCameraMatrix by itself almost works perfectly, but it breaks culling.
         // I expected SetStereoViewMatrix by itself to be enough, but it was even more broken (although culling did work).
         // So I'm just doing both I guess.
-        _parentCamera.worldToCameraMatrix = _childCamera.GetStereoViewMatrix(eye);
+        ParentCamera.worldToCameraMatrix = _childCamera.GetStereoViewMatrix(eye);
 
         if (ModConfiguration.Instance.RelativeCameraSetStereoView.Value)
         {
             // Some times setting worldToCameraMatrix is enough, some times not. I'm not sure why, need to learn more.
             // Some times it's actually better not to call SetStereoViewMatrix, since it messes up the shadows. Like in Aragami.
-            _parentCamera.SetStereoViewMatrix(eye, _parentCamera.worldToCameraMatrix);
+            ParentCamera.SetStereoViewMatrix(eye, ParentCamera.worldToCameraMatrix);
         }
         
         // TODO: reset camera matrices and everything else on disabling VR

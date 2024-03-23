@@ -20,6 +20,7 @@ public class VrUiManager: UuvrBehaviour
     private static Camera? _uiSceneCamera;
     private RenderTexture? _uiTexture;
     private GameObject? _vrUiQuad;
+    private GameObject? _uiScene;
     
     private readonly List<string> _ignoredCanvases = new()
     {
@@ -63,7 +64,7 @@ public class VrUiManager: UuvrBehaviour
         _uiCaptureCamera.depth = 100;
         
         
-        GameObject uiScene = new("VrUiScene")
+        _uiScene = new("VrUiScene")
         {
             transform =
             {
@@ -76,21 +77,21 @@ public class VrUiManager: UuvrBehaviour
         };
 
         // TODO: use Overlay camera type in URP and HDRP
-        _uiSceneCamera = Create<UuvrPoseDriver>(uiScene.transform).gameObject.AddComponent<Camera>();
+        _uiSceneCamera = Create<UuvrPoseDriver>(_uiScene.transform).gameObject.AddComponent<Camera>();
         VrCamera.IgnoredCameras.Add(_uiSceneCamera);
         _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
         _uiSceneCamera.depth = 100;
         
-        _additionalSceneCameraData = AdditionalCameraData.Create(_uiSceneCamera.gameObject);
+        _additionalSceneCameraData = AdditionalCameraData.Create(_uiSceneCamera);
         _additionalSceneCameraData.SetRenderTypeOverlay();
         
-        var flatScreenView = FlatScreenView.Create(uiScene.transform);
+        var flatScreenView = FlatScreenView.Create(_uiScene.transform);
         flatScreenView.transform.localPosition = Vector3.forward * 2f;
         flatScreenView.transform.localRotation = Quaternion.identity;
         
         _vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         _vrUiQuad.name = "VrUiQuad";
-        _vrUiQuad.transform.parent = uiScene.transform;
+        _vrUiQuad.transform.parent = _uiScene.transform;
         _vrUiQuad.transform.localPosition = Vector3.forward * 2f;
         float quadWidth = 1.8f;
         float quadHeight = quadWidth * uiTextureAspectRatio;
@@ -117,6 +118,13 @@ public class VrUiManager: UuvrBehaviour
         }
 
         SetUpAdditionalCameraData();
+
+        if (VrCamera.HighestDepthVrCamera != null && VrCamera.HighestDepthVrCamera.ParentCamera != null)
+        {
+            _uiScene.transform.SetParent(VrCamera.HighestDepthVrCamera.ParentCamera.transform, false);
+            _uiScene.transform.localPosition = Vector3.zero;
+            _uiScene.transform.localRotation = Quaternion.identity;
+        }
     }
 
     private void SetUpAdditionalCameraData()
@@ -131,7 +139,7 @@ public class VrUiManager: UuvrBehaviour
         _additionalSceneCameraData.SetRenderTypeOverlay();
         _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
     
-        var additionalHighestDepthCameraData = AdditionalCameraData.Create(VrCamera.HighestDepthVrCamera.gameObject);
+        var additionalHighestDepthCameraData = AdditionalCameraData.Create(VrCamera.HighestDepthVrCamera.CameraInUse);
         if (additionalHighestDepthCameraData.GetCameraStack().Contains(_uiSceneCamera)) return;
         
         additionalHighestDepthCameraData.GetCameraStack().Add(_uiSceneCamera);
