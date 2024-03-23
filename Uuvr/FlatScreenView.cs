@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 
 namespace Uuvr;
 
@@ -45,8 +44,8 @@ public class FlatScreenView: MonoBehaviour
         _clearCamera.clearFlags = CameraClearFlags.Color;
         _clearCamera.backgroundColor = Color.clear;
 
-        var additionalData = _clearCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
-        additionalData.allowXRRendering = false;
+        var additionalData = AdditionalCameraData.Create(_clearCamera.gameObject);
+        additionalData.SetAllowXrRendering(false);
         
         var xrSettingsType =
             Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.XRModule") ??
