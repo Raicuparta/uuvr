@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
+// using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 using Vector3 = UnityEngine.Vector3;
 
@@ -30,7 +31,7 @@ public class VrUiManager: UuvrBehaviour
         // but really just Unity Explorer.
         "universelib",
     };
-    private UniversalAdditionalCameraData _additionalSceneCameraData;
+    // private UniversalAdditionalCameraData _additionalSceneCameraData;
 
     private void Start()
     {
@@ -53,7 +54,13 @@ public class VrUiManager: UuvrBehaviour
     {
         // In some cases it might be useful to base the render texture dimensions on HMD,
         // but I'm guessing that's rare.
-        // _uiTexture = new RenderTexture(XRSettings.eyeTextureWidth, XRSettings.eyeTextureHeight, 16, RenderTextureFormat.ARGB32);
+        
+        // var _xrSettingsType =
+        //     Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.XRModule") ??
+        //     Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.VRModule") ??
+        //     Type.GetType("UnityEngine.VR.VRSettings, UnityEngine");
+        
+        // _uiTexture = new RenderTexture((int) _xrSettingsType.GetProperty("eyeTextureWidth").GetValue(null, null), (int) _xrSettingsType.GetProperty("eyeTextureHeight").GetValue(null, null), 16, RenderTextureFormat.ARGB32);
         _uiTexture = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.ARGB32);
         float uiTextureAspectRatio =  (float) _uiTexture.height / _uiTexture.width;
 
@@ -84,9 +91,15 @@ public class VrUiManager: UuvrBehaviour
         _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
         _uiSceneCamera.depth = 100;
 
-        _additionalSceneCameraData = _uiSceneCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
-        _additionalSceneCameraData.renderType = CameraRenderType.Overlay;
-
+        // _additionalSceneCameraData = _uiSceneCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
+        // _additionalSceneCameraData.renderType = CameraRenderType.Overlay;
+        
+        
+        
+        var flatScreenView = FlatScreenView.Create(uiScene.transform);
+        flatScreenView.transform.localPosition = Vector3.forward * 2f;
+        flatScreenView.transform.localRotation = Quaternion.identity;
+        
         _vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         _vrUiQuad.name = "VrUiQuad";
         _vrUiQuad.transform.parent = uiScene.transform;
@@ -100,10 +113,10 @@ public class VrUiManager: UuvrBehaviour
         renderer.material.mainTexture = _uiTexture;
         
         // TODO setting for this.
-        UniversalRenderPipelineAsset? pipelineAsset = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
-        var data = pipelineAsset.GetValue<ForwardRendererData>("scriptableRendererData");
-        data.opaqueLayerMask = -1;
-        data.transparentLayerMask = -1;
+        // UniversalRenderPipelineAsset? pipelineAsset = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+        // var data = pipelineAsset.GetValue<ForwardRendererData>("scriptableRendererData");
+        // data.opaqueLayerMask = -1;
+        // data.transparentLayerMask = -1;
     }
 
     private void Update()
@@ -115,31 +128,31 @@ public class VrUiManager: UuvrBehaviour
             PatchCanvas(canvas);
         }
 
-        SetUpAdditionalCameraData();
+        // SetUpAdditionalCameraData();
     }
 
-    private void SetUpAdditionalCameraData()
-    {
-        if (VrCamera.HighestDepthVrCamera == null)
-        {
-            _additionalSceneCameraData.renderType = CameraRenderType.Base;
-            _uiSceneCamera.clearFlags = CameraClearFlags.Skybox;
-            return;
-        }
-
-        _additionalSceneCameraData.renderType = CameraRenderType.Overlay;
-        _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
-
-        UniversalAdditionalCameraData additionalHighestDepthCameraData = VrCamera.HighestDepthVrCamera.gameObject.GetComponent<UniversalAdditionalCameraData>();
-        if (additionalHighestDepthCameraData == null)
-        {
-            additionalHighestDepthCameraData = VrCamera.HighestDepthVrCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
-        }
-        
-        if (additionalHighestDepthCameraData.cameraStack.Contains(_uiSceneCamera)) return;
-        
-        additionalHighestDepthCameraData.cameraStack.Add(_uiSceneCamera);
-    }
+    // private void SetUpAdditionalCameraData()
+    // {
+    //     if (VrCamera.HighestDepthVrCamera == null)
+    //     {
+    //         _additionalSceneCameraData.renderType = CameraRenderType.Base;
+    //         _uiSceneCamera.clearFlags = CameraClearFlags.Skybox;
+    //         return;
+    //     }
+    //
+    //     _additionalSceneCameraData.renderType = CameraRenderType.Overlay;
+    //     _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
+    //
+    //     UniversalAdditionalCameraData additionalHighestDepthCameraData = VrCamera.HighestDepthVrCamera.gameObject.GetComponent<UniversalAdditionalCameraData>();
+    //     if (additionalHighestDepthCameraData == null)
+    //     {
+    //         additionalHighestDepthCameraData = VrCamera.HighestDepthVrCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
+    //     }
+    //     
+    //     if (additionalHighestDepthCameraData.cameraStack.Contains(_uiSceneCamera)) return;
+    //     
+    //     additionalHighestDepthCameraData.cameraStack.Add(_uiSceneCamera);
+    // }
 
     private void PatchCanvas(Canvas canvas)
     {

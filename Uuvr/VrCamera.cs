@@ -18,6 +18,7 @@ public class VrCamera : UuvrBehaviour
     private Camera? _childCamera;
     private UuvrPoseDriver? _childCameraPoseDriver;
     private LineRenderer _forwardLine;
+    // private int _originalCullingMask = -2;
 
 #if CPP
     public VrCamera(System.IntPtr pointer) : base(pointer)
@@ -87,15 +88,29 @@ public class VrCamera : UuvrBehaviour
 
         if (cameraTrackingMode == ModConfiguration.CameraTrackingMode.Child)
         {
+            // TODO: culling mask stuff is useful, but was breaking in Smushi.
+            // if (_originalCullingMask == -2)
+            // {
+            //     _originalCullingMask = _parentCamera.cullingMask;
+            // }
+            // Kind of hacky way to reduce the performance penalty of having two cameras enabled.
+            // This way I don't have to mess with the culling mask of the original camera.
+            // Actually disabling the camera could cause issues with game scripts that read that value.
+            // _parentCamera.cullingMask = 0;
+            
+            
             // TODO: also disable parent camera's rendering, somehow without affecting the game.
             // Disabling the camera itself is not a good idea, but changing the culling mask could work.
             // I've noticed that changing the target display also seems to work without having to mess with the mask.
+            // _childCamera.cullingMask = _originalCullingMask;
             _childCamera.cullingMask = _parentCamera.cullingMask;
             _childCamera.clearFlags = _parentCamera.clearFlags;
             _childCamera.depth = _parentCamera.depth;
         }
         else
         {
+            // _parentCamera.cullingMask = _originalCullingMask;
+            // _originalCullingMask = -2;
             _childCamera.cullingMask = 0;
             _childCamera.clearFlags = CameraClearFlags.Nothing;
             _childCamera.depth = -100;
