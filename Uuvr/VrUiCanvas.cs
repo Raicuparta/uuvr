@@ -93,6 +93,8 @@ public class VrUiCanvas: UuvrBehaviour
         }
 
         _isPatched = true;
+        
+        // TODO: if using alternative ui patching for overlays, have option to resize camera mode canvases.
     }
 
     private void UndoPatch()
