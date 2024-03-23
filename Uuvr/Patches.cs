@@ -29,7 +29,8 @@ public static class Patches
     //         Debug.LogError("#### FAILED TO FIND THE TYPE!!!");
     //     }
     //
-    //     __result = (Vector3) _worldToViewportPointStereoMethod.Invoke(__instance, new object[] { Camera.MonoOrStereoscopicEye.Left });
+    //     __result = (Vector3) _worldToViewportPointStereoMethod.Invoke(__instance, new object[] { position, Camera.MonoOrStereoscopicEye.Left });
+    //     Debug.Log($"Is {__result}");
     //     return false;
     // }
 }
