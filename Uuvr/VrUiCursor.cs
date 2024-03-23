@@ -1,17 +1,16 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System;
+using System.Collections;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Uuvr;
 
-// TODO: make it work with new input system too.
-// TODO: render an actual cursor.
 // TODO: add setting to toggle this.
-// TODO: change cursor visibility based on real cursor.
 public class VrUiCursor: MonoBehaviour
 {
-    public Canvas CursorCanvas { get; private set; }
-    private Image _image;
-
     public static void Create(Transform parent)
     {
         new GameObject(nameof(VrUiCursor))
@@ -25,24 +24,43 @@ public class VrUiCursor: MonoBehaviour
         }.AddComponent<VrUiCursor>();
     }
     
-    private void Start()
+    private IEnumerator Start()
     {
-        CursorCanvas = gameObject.AddComponent<Canvas>();
-        CursorCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        CursorCanvas.sortingOrder = short.MaxValue;
+        // I don't really know what I'm waiting for, but setting this too early made the cursor invisible.
+        yield return new WaitForSeconds(3);
         
-        _image = new GameObject("VrUiCursorImage").AddComponent<Image>();
-        _image.transform.parent = transform;
-        _image.transform.localRotation = Quaternion.identity;
-        _image.color = Color.white;
-        _image.raycastTarget = false;
-        _image.transform.localScale = Vector3.one * 0.2f;
+        // When I load the bmp like this and use it as a texture, it shows up upside down for some reason.
+        // So I just flipped the cursor vertically in the actual bmp. Yeah dunno.
+        var bitmap = new Bitmap(Path.Combine(UuvrPlugin.ModFolderPath, "Assets", "cursor.bmp"));
+        BitmapData bmpdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+        int numbytes = bmpdata.Stride * bitmap.Height;
+        byte[] imageBytes = new byte[numbytes];
+        IntPtr ptr = bmpdata.Scan0;
+     
+        Marshal.Copy(ptr, imageBytes, 0, numbytes);
+     
+        bitmap.UnlockBits(bmpdata);
+        
+        Texture2D texture = new Texture2D(48, 48, TextureFormat.RGBA32, false);
+        texture.LoadRawTextureData(imageBytes);
+        texture.Apply();
+        
+        Cursor.SetCursor(texture, new Vector2(2, 5), CursorMode.ForceSoftware);
     }
-
-    private void Update()
+    
+    public static byte[] BitmapToByteArray(Bitmap bitmap)
     {
-        if (CursorCanvas == null) return;
-
-        _image.transform.localPosition =  Input.mousePosition - new Vector3(CursorCanvas.pixelRect.center.x, CursorCanvas.pixelRect.center.y, 0);
+        BitmapData bmpdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+        int numbytes = bmpdata.Stride * bitmap.Height;
+        byte[] bytedata = new byte[numbytes];
+        IntPtr ptr = bmpdata.Scan0;
+     
+        Marshal.Copy(ptr, bytedata, 0, numbytes);
+     
+        bitmap.UnlockBits(bmpdata);
+     
+        return bytedata;
+     
     }
+
 }

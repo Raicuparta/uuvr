@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.IO;
+using System.Reflection;
 using BepInEx;
 using HarmonyLib;
 
@@ -25,6 +26,7 @@ public class UuvrPlugin
 : BaseUnityPlugin
 #endif
 {
+    public static string ModFolderPath { get; private set; }
     
 #if CPP
     public override void Load()
@@ -32,6 +34,8 @@ public class UuvrPlugin
     private void Awake()
 #endif
     {
+        ModFolderPath = Path.GetDirectoryName(Info.Location);
+        
         new ModConfiguration(Config);
         Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
         
