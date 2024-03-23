@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Uuvr;
 
@@ -27,10 +28,9 @@ public class FlatScreenView: MonoBehaviour
     
     private void Start()
     {
-        StartCoroutine(EndOfFrameCoroutine());
         _targetMaterial = new Material(Canvas.GetDefaultCanvasMaterial());
         _quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        Destroy(_quad.GetComponent<Collider>());
+        // Destroy(_quad.GetComponent<Collider>());
         _quad.transform.parent = transform;
         _quad.transform.localPosition = Vector3.zero;
         _quad.transform.localRotation = Quaternion.identity;
@@ -44,6 +44,9 @@ public class FlatScreenView: MonoBehaviour
         _clearCamera.cullingMask = 0;
         _clearCamera.clearFlags = CameraClearFlags.Color;
         _clearCamera.backgroundColor = Color.clear;
+
+        var additionalData = _clearCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
+        additionalData.allowXRRendering = false;
         
         var xrSettingsType =
             Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.XRModule") ??
@@ -53,6 +56,8 @@ public class FlatScreenView: MonoBehaviour
         // This method of projecting the UI onto a texture basically just copies what's currently on the flat screen.
         // We don't want the game itself to show up there, only the UI. So we disable mirroring the VR view to the flat screen.
         xrSettingsType.GetProperty("showDeviceView").SetValue(null, false, null);
+        
+        StartCoroutine(EndOfFrameCoroutine());
     }
 
     private void SetUp()
@@ -61,8 +66,8 @@ public class FlatScreenView: MonoBehaviour
         _targetMaterial.mainTexture = _targetTexture;
         _commandBuffer = new CommandBuffer();
         _commandBuffer.name = "UUVR UI";
-        _commandBuffer.Clear();
-        _commandBuffer.Blit(BuiltinRenderTextureType.None, _targetTexture);
+        _commandBuffer.Blit(BuiltinRenderTextureType.CameraTarget, _targetTexture);
+        
         
         // TODO: I don't understand why I need to flip some of these values.
         // When I tried in the Unity Editor, I had to flip the widgh.
@@ -74,18 +79,12 @@ public class FlatScreenView: MonoBehaviour
     {
         while (true)
         {
+            if (_commandBuffer == null || Screen.width != _targetTexture.width || Screen.height != _targetTexture.height)
+            {
+                SetUp();
+            }
             yield return new WaitForEndOfFrame();
-            UpdateCommandBuffer();
+            Graphics.ExecuteCommandBuffer(_commandBuffer);
         }
-    }
-     
-    private void UpdateCommandBuffer()
-    {
-        if (_commandBuffer == null || Screen.width != _targetTexture.width || Screen.height != _targetTexture.height)
-        {
-            SetUp();
-        }
-        
-        Graphics.ExecuteCommandBuffer(_commandBuffer);
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
-// using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 using Vector3 = UnityEngine.Vector3;
 
@@ -31,7 +31,7 @@ public class VrUiManager: UuvrBehaviour
         // but really just Unity Explorer.
         "universelib",
     };
-    // private UniversalAdditionalCameraData _additionalSceneCameraData;
+    private UniversalAdditionalCameraData _additionalSceneCameraData;
 
     private void Start()
     {
@@ -52,15 +52,6 @@ public class VrUiManager: UuvrBehaviour
 
     private void SetUpUi()
     {
-        // In some cases it might be useful to base the render texture dimensions on HMD,
-        // but I'm guessing that's rare.
-        
-        // var _xrSettingsType =
-        //     Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.XRModule") ??
-        //     Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.VRModule") ??
-        //     Type.GetType("UnityEngine.VR.VRSettings, UnityEngine");
-        
-        // _uiTexture = new RenderTexture((int) _xrSettingsType.GetProperty("eyeTextureWidth").GetValue(null, null), (int) _xrSettingsType.GetProperty("eyeTextureHeight").GetValue(null, null), 16, RenderTextureFormat.ARGB32);
         _uiTexture = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.ARGB32);
         float uiTextureAspectRatio =  (float) _uiTexture.height / _uiTexture.width;
 
@@ -91,8 +82,8 @@ public class VrUiManager: UuvrBehaviour
         _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
         _uiSceneCamera.depth = 100;
 
-        // _additionalSceneCameraData = _uiSceneCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
-        // _additionalSceneCameraData.renderType = CameraRenderType.Overlay;
+        _additionalSceneCameraData = _uiSceneCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
+        _additionalSceneCameraData.renderType = CameraRenderType.Overlay;
         
         
         
@@ -128,31 +119,31 @@ public class VrUiManager: UuvrBehaviour
             PatchCanvas(canvas);
         }
 
-        // SetUpAdditionalCameraData();
+        SetUpAdditionalCameraData();
     }
 
-    // private void SetUpAdditionalCameraData()
-    // {
-    //     if (VrCamera.HighestDepthVrCamera == null)
-    //     {
-    //         _additionalSceneCameraData.renderType = CameraRenderType.Base;
-    //         _uiSceneCamera.clearFlags = CameraClearFlags.Skybox;
-    //         return;
-    //     }
-    //
-    //     _additionalSceneCameraData.renderType = CameraRenderType.Overlay;
-    //     _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
-    //
-    //     UniversalAdditionalCameraData additionalHighestDepthCameraData = VrCamera.HighestDepthVrCamera.gameObject.GetComponent<UniversalAdditionalCameraData>();
-    //     if (additionalHighestDepthCameraData == null)
-    //     {
-    //         additionalHighestDepthCameraData = VrCamera.HighestDepthVrCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
-    //     }
-    //     
-    //     if (additionalHighestDepthCameraData.cameraStack.Contains(_uiSceneCamera)) return;
-    //     
-    //     additionalHighestDepthCameraData.cameraStack.Add(_uiSceneCamera);
-    // }
+    private void SetUpAdditionalCameraData()
+    {
+        if (VrCamera.HighestDepthVrCamera == null)
+        {
+            _additionalSceneCameraData.renderType = CameraRenderType.Base;
+            _uiSceneCamera.clearFlags = CameraClearFlags.Skybox;
+            return;
+        }
+    
+        _additionalSceneCameraData.renderType = CameraRenderType.Overlay;
+        _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
+    
+        UniversalAdditionalCameraData additionalHighestDepthCameraData = VrCamera.HighestDepthVrCamera.gameObject.GetComponent<UniversalAdditionalCameraData>();
+        if (additionalHighestDepthCameraData == null)
+        {
+            additionalHighestDepthCameraData = VrCamera.HighestDepthVrCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
+        }
+        
+        if (additionalHighestDepthCameraData.cameraStack.Contains(_uiSceneCamera)) return;
+        
+        additionalHighestDepthCameraData.cameraStack.Add(_uiSceneCamera);
+    }
 
     private void PatchCanvas(Canvas canvas)
     {
