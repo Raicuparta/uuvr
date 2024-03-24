@@ -21,7 +21,7 @@ public class VrUiCanvas: UuvrBehaviour
 
     public static void Create(Canvas _canvas, Camera uiCaptureCamera)
     {
-        VrUiCanvas instance = _canvas.gameObject.AddComponent<VrUiCanvas>();
+        var instance = _canvas.gameObject.AddComponent<VrUiCanvas>();
         instance._canvas = _canvas;
         instance._uiCaptureCamera = uiCaptureCamera;
     }
@@ -33,7 +33,7 @@ public class VrUiCanvas: UuvrBehaviour
 
     protected override void OnSettingChanged()
     {
-        bool shouldPatch = ShouldPatchScreenSpaceCanvas() && ModConfiguration.Instance.PatchUi.Value;
+        var shouldPatch = ShouldPatchScreenSpaceCanvas() && ModConfiguration.Instance.PatchUi.Value;
         
         if (shouldPatch && !_isPatched)
         {
@@ -47,7 +47,7 @@ public class VrUiCanvas: UuvrBehaviour
 
     private bool ShouldPatchScreenSpaceCanvas()
     {
-        bool isScreenSpace = _originalRenderMode == RenderMode.ScreenSpaceCamera;
+        var isScreenSpace = _originalRenderMode == RenderMode.ScreenSpaceCamera;
 
         return ModConfiguration.Instance.ScreenSpaceCanvasTypesToPatch.Value switch
         {

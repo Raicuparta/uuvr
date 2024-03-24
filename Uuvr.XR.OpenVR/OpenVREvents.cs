@@ -50,7 +50,7 @@ namespace Unity.XR.OpenVR
 
             if (lazyLoadEvents == false)
             {
-                for (int eventIndex = 0; eventIndex < events.Length; eventIndex++)
+                for (var eventIndex = 0; eventIndex < events.Length; eventIndex++)
                 {
                     events[eventIndex] = new OpenVREvent();
                 }
@@ -80,7 +80,7 @@ namespace Unity.XR.OpenVR
                 return;
             }
 
-            int eventIndex = (int)eventType;
+            var eventIndex = (int)eventType;
             if (preloadedEvents == false && events[eventIndex] == null)
             {
                 events[eventIndex] = new OpenVREvent();
@@ -100,7 +100,7 @@ namespace Unity.XR.OpenVR
         }
         public void Remove(EVREventType eventType, UnityAction<VREvent_t> action)
         {
-            int eventIndex = (int)eventType;
+            var eventIndex = (int)eventType;
             if (preloadedEvents || events[eventIndex] != null)
             {
                 events[eventIndex].RemoveListener(action);
@@ -116,16 +116,16 @@ namespace Unity.XR.OpenVR
         {
             if (Valve.VR.OpenVR.System != null && enabled)
             {
-                for (int eventIndex = 0; eventIndex < maxEventsPerUpdate; eventIndex++)
+                for (var eventIndex = 0; eventIndex < maxEventsPerUpdate; eventIndex++)
                 {
                     if (Valve.VR.OpenVR.System == null || !Valve.VR.OpenVR.System.PollNextEvent(ref vrEvent, vrEventSize))
                         break;
 
-                    int uEventType = (int)vrEvent.eventType;
+                    var uEventType = (int)vrEvent.eventType;
 
                     if (debugLogAllEvents)
                     {
-                        EVREventType eventType = (EVREventType)uEventType;
+                        var eventType = (EVREventType)uEventType;
                         Debug.Log(string.Format("[{0}] {1}", Time.frameCount, eventType.ToString()));
                     }
 

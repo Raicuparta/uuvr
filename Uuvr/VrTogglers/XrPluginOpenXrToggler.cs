@@ -9,7 +9,7 @@ public class XrPluginOpenXrToggler: XrPluginToggler
 {
     protected override XRLoader CreateLoader()
     {
-        OpenXRLoader xrLoader = ScriptableObject.CreateInstance<OpenXRLoader>();
+        var xrLoader = ScriptableObject.CreateInstance<OpenXRLoader>();
         OpenXRSettings.Instance.renderMode = OpenXRSettings.RenderMode.MultiPass;
         return xrLoader;
     }

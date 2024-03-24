@@ -10,11 +10,11 @@ public class XrPluginOpenVrToggler: XrPluginToggler
 {
     protected override XRLoader CreateLoader()
     {
-        OpenVRLoader? xrLoader = ScriptableObject.CreateInstance<OpenVRLoader>();
+        var xrLoader = ScriptableObject.CreateInstance<OpenVRLoader>();
 
         xrLoader.Initialize();
 
-        OpenVRSettings? openVrSettings = OpenVRSettings.GetSettings();
+        var openVrSettings = OpenVRSettings.GetSettings();
         if (openVrSettings == null) throw new Exception("OpenVRSettings instance is null");
         openVrSettings.EditorAppKey = "uuvr";
         openVrSettings.InitializationType = OpenVRSettings.InitializationTypes.Scene;

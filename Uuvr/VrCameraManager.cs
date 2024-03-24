@@ -31,9 +31,9 @@ public class VrCameraManager: MonoBehaviour
         }
         Camera.GetAllCameras(_allCameras);
         
-        for (int index = 0; index < Camera.allCamerasCount; index ++)
+        for (var index = 0; index < Camera.allCamerasCount; index ++)
         {
-            Camera camera = _allCameras[index];
+            var camera = _allCameras[index];
             if (camera == null || camera.targetTexture != null || camera.stereoTargetEye == StereoTargetEyeMask.None) continue;
             if (VrCamera.VrCameras.Contains(camera) || VrCamera.IgnoredCameras.Contains(camera)) continue;
 

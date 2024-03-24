@@ -12,7 +12,7 @@ public static class LayerHelper
     // In that case, we need to fall back to something else.
     private static int FindFreeLayer()
     {
-        for (int layer = 31; layer >= 0; layer--)
+        for (var layer = 31; layer >= 0; layer--)
         {
             if (LayerMask.LayerToName(layer).Length != 0) continue;
 
@@ -36,14 +36,14 @@ public static class LayerHelper
 
     public static int GetVrUiLayer()
     {
-        int layerOverride = ModConfiguration.Instance.VrUiLayerOverride.Value;
+        var layerOverride = ModConfiguration.Instance.VrUiLayerOverride.Value;
         return layerOverride > -1 ? layerOverride : GetFreeLayerCached();
     }
 
     public static void SetLayerRecursive(Transform transform, int layer)
     {
         // Not using the usual foreach Transform etc because it fails in silly il2cpp.
-        for (int index = 0; index < transform.childCount; index++)
+        for (var index = 0; index < transform.childCount; index++)
         {
             var child = transform.GetChild(index);
             SetLayerRecursive(child, layer);

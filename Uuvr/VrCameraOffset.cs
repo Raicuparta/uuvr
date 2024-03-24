@@ -31,7 +31,7 @@ public class VrCameraOffset: UuvrBehaviour
     {
         if (ModConfiguration.Instance.AlignCameraToHorizon.Value)
         {
-            Vector3 forward = Vector3.ProjectOnPlane(transform.parent.forward, Vector3.up);
+            var forward = Vector3.ProjectOnPlane(transform.parent.forward, Vector3.up);
             transform.LookAt(transform.position + forward, Vector3.up);
         }
         else

@@ -53,7 +53,7 @@ namespace Unity.XR.OpenVR
         public const string ActionManifestFileName = "legacy_manifest.json";
         public static string GetStreamingSteamVRPath(bool create = true)
         {
-            string path = System.IO.Path.Combine(Application.streamingAssetsPath, StreamingAssetsFolderName);
+            var path = System.IO.Path.Combine(Application.streamingAssetsPath, StreamingAssetsFolderName);
 
             if (create)
             {
@@ -106,7 +106,7 @@ namespace Unity.XR.OpenVR
 
         private static string CleanProductName()
         {
-            string productName = Application.productName;
+            var productName = Application.productName;
             if (string.IsNullOrEmpty(productName))
                 productName = "unnamed_product";
             else
@@ -115,8 +115,8 @@ namespace Unity.XR.OpenVR
                 productName = productName.ToLower();
                 productName = string.Concat(productName.Normalize(NormalizationForm.FormD).Where(
                     c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark));
-                byte[] bytes = Encoding.ASCII.GetBytes(productName);
-                char[] chars = Encoding.ASCII.GetChars(bytes);
+                var bytes = Encoding.ASCII.GetBytes(productName);
+                var chars = Encoding.ASCII.GetChars(bytes);
                 productName = new String(chars).Replace("?", "");
                 if (productName.Length == 0)
                 {
@@ -144,14 +144,14 @@ namespace Unity.XR.OpenVR
 
         public bool InitializeActionManifestFileRelativeFilePath()
         {
-            string oldPath = ActionManifestFileRelativeFilePath;
+            var oldPath = ActionManifestFileRelativeFilePath;
             string newPath;
 
             if (OpenVRHelpers.IsUsingSteamVRInput())
             {
                 newPath = System.IO.Path.Combine(OpenVRSettings.GetStreamingSteamVRPath(false), OpenVRHelpers.GetActionManifestNameFromPlugin());
                 
-                string fullpath = System.IO.Path.GetFullPath(".");
+                var fullpath = System.IO.Path.GetFullPath(".");
                 newPath = newPath.Remove(0, fullpath.Length + 1);
 
                 if (newPath.StartsWith("Assets"))

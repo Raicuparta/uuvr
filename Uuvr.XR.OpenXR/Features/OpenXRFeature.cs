@@ -263,7 +263,7 @@ namespace UnityEngine.XR.OpenXR.Features
         /// <param name="userPath">OpenXR User Path (eg: /user/hand/left)</param>
         /// <returns>A path to the interaction profile, or XrPath.none if the path could not be retrieved.</returns>
         protected static ulong GetCurrentInteractionProfile(ulong userPath) =>
-            Internal_GetCurrentInteractionProfile(userPath, out ulong profileId) ? profileId : 0ul;
+            Internal_GetCurrentInteractionProfile(userPath, out var profileId) ? profileId : 0ul;
 
         /// <summary>
         /// Returns the path of the current interaction profile for the given user path.
@@ -278,7 +278,7 @@ namespace UnityEngine.XR.OpenXR.Features
         /// </summary>
         /// <returns>Current app space</returns>
         protected static ulong GetCurrentAppSpace() =>
-            Internal_GetAppSpace(out ulong appSpaceId) ? appSpaceId : 0ul;
+            Internal_GetAppSpace(out var appSpaceId) ? appSpaceId : 0ul;
 
         /// <summary>
         /// Returns viewConfigurationType for the given renderPass index.

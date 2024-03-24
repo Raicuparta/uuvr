@@ -20,10 +20,10 @@ public class UuvrPoseDriver: UuvrBehaviour
     protected override void Awake()
     {
         base.Awake();
-        Type? inputTrackingType = Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.XRModule") ??
-                                 Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.VRModule") ??
-                                 Type.GetType("UnityEngine.VR.InputTracking, UnityEngine.VRModule") ??
-                                 Type.GetType("UnityEngine.VR.InputTracking, UnityEngine");
+        var inputTrackingType = Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.XRModule") ??
+                                Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.VRModule") ??
+                                Type.GetType("UnityEngine.VR.InputTracking, UnityEngine.VRModule") ??
+                                Type.GetType("UnityEngine.VR.InputTracking, UnityEngine");
 
         _trackingRotationMethod = inputTrackingType?.GetMethod("GetLocalRotation");
 
@@ -63,15 +63,15 @@ public class UuvrPoseDriver: UuvrBehaviour
 
     private void DisableCameraAutoTracking()
     {
-        Camera camera = GetComponent<Camera>();
+        var camera = GetComponent<Camera>();
         if (!camera) return;
         
-        Type? xrDeviceType = Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.XRModule") ??
-                            Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.VRModule") ??
-                            Type.GetType("UnityEngine.VR.VRDevice, UnityEngine.VRModule") ??
-                            Type.GetType("UnityEngine.VR.VRDevice, UnityEngine");
+        var xrDeviceType = Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.XRModule") ??
+                           Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.VRModule") ??
+                           Type.GetType("UnityEngine.VR.VRDevice, UnityEngine.VRModule") ??
+                           Type.GetType("UnityEngine.VR.VRDevice, UnityEngine");
 
-        MethodInfo? cameraTrackingDisablingMethod = xrDeviceType?.GetMethod("DisableAutoXRCameraTracking");
+        var cameraTrackingDisablingMethod = xrDeviceType?.GetMethod("DisableAutoXRCameraTracking");
 
         if (cameraTrackingDisablingMethod != null)
         {

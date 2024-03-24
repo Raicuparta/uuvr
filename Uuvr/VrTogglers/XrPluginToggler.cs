@@ -35,15 +35,15 @@ public abstract class XrPluginToggler: VrToggler
     protected override bool EnableVr()
     {
         _managerSetings.StartSubsystems();
-        bool initializationSuccess = _managerSetings.activeLoader.Initialize();
-        bool startSuccess = _managerSetings.activeLoader.Start();
+        var initializationSuccess = _managerSetings.activeLoader.Initialize();
+        var startSuccess = _managerSetings.activeLoader.Start();
         return initializationSuccess && startSuccess;
     }
 
     protected override bool DisableVr()
     {
-        bool stopSuccess = _managerSetings.activeLoader.Stop();
-        bool deinitializationSuccess = _managerSetings.activeLoader.Deinitialize();
+        var stopSuccess = _managerSetings.activeLoader.Stop();
+        var deinitializationSuccess = _managerSetings.activeLoader.Deinitialize();
         return stopSuccess && deinitializationSuccess;
     }
 

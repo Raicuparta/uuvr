@@ -48,14 +48,14 @@ public class Patcher
     {
         Console.WriteLine("Patching UUVR...");
 
-        string installerPath = Assembly.GetExecutingAssembly().Location;
+        var installerPath = Assembly.GetExecutingAssembly().Location;
 
-        string gameExePath = Process.GetCurrentProcess().MainModule.FileName;
+        var gameExePath = Process.GetCurrentProcess().MainModule.FileName;
 
-        string gamePath = Path.GetDirectoryName(gameExePath);
-        string gameName = Path.GetFileNameWithoutExtension(gameExePath);
-        string dataPath = Path.Combine(gamePath, $"{gameName}_Data/");
-        string patcherPath = Path.GetDirectoryName(installerPath);
+        var gamePath = Path.GetDirectoryName(gameExePath);
+        var gameName = Path.GetFileNameWithoutExtension(gameExePath);
+        var dataPath = Path.Combine(gamePath, $"{gameName}_Data/");
+        var patcherPath = Path.GetDirectoryName(installerPath);
         
         CopyFilesToGame(patcherPath, dataPath);
 
@@ -72,9 +72,9 @@ public class Patcher
 
     private static string GetGlobalSettingsFilePath(string dataPath)
     {
-        foreach (string globalSettingsFielName in GlobalSettingsFileNames)
+        foreach (var globalSettingsFielName in GlobalSettingsFileNames)
         {
-            string path = Path.Combine(dataPath, globalSettingsFielName);
+            var path = Path.Combine(dataPath, globalSettingsFielName);
             if (File.Exists(path))
             {
                 return path;
@@ -87,7 +87,7 @@ public class Patcher
     private static string CreateGlobalSettingsBackup(string globalSettingsFilePath)
     {
         Console.WriteLine($"Backing up '{globalSettingsFilePath}'...");
-        string backupPath = globalSettingsFilePath + ".bak";
+        var backupPath = globalSettingsFilePath + ".bak";
         if (File.Exists(backupPath))
         {
             Console.WriteLine($"Backup already exists.");
@@ -105,9 +105,9 @@ public class Patcher
 
         AssetsManager am = new();
         am.LoadClassPackage(classDataPath);
-        AssetsFileInstance ggm = am.LoadAssetsFile(globalSettingsBackupPath, false);
-        AssetsFile ggmFile = ggm.file;
-        AssetsFileTable ggmTable = ggm.table;
+        var ggm = am.LoadAssetsFile(globalSettingsBackupPath, false);
+        var ggmFile = ggm.file;
+        var ggmTable = ggm.table;
         am.LoadClassDatabaseFromPackage(ggmFile.typeTree.unityVersion);
 
         List<AssetsReplacer> replacers = new();
@@ -141,12 +141,12 @@ public class Patcher
         //     Console.WriteLine($"name:{name} | positiveButton:{positiveButton} ");
         // }
         
-        AssetFileInfoEx buildSettings = ggmTable.GetAssetInfo(11);
+        var buildSettings = ggmTable.GetAssetInfo(11);
         #pragma warning disable CS0618 // Type or member is obsolete
-        AssetTypeValueField buildSettingsBase = am.GetATI(ggmFile, buildSettings).GetBaseField();
+        var buildSettingsBase = am.GetATI(ggmFile, buildSettings).GetBaseField();
         #pragma warning restore CS0618 // Type or member is obsolete
-        AssetTypeValueField enabledVRDevices = buildSettingsBase.Get("enabledVRDevices").Get("Array");
-        AssetTypeTemplateField stringTemplate = enabledVRDevices.templateField.children[1];
+        var enabledVRDevices = buildSettingsBase.Get("enabledVRDevices").Get("Array");
+        var stringTemplate = enabledVRDevices.templateField.children[1];
         AssetTypeValueField[] vrDevicesList = { StringField("OpenVR", stringTemplate) };
         enabledVRDevices.SetChildrenList(vrDevicesList);
 
@@ -170,21 +170,21 @@ public class Patcher
 
     private static void CopyFilesToGame(string patcherPath, string dataPath)
     {
-        string copyToGameFolderPath = Path.Combine(patcherPath, "CopyToGame");
+        var copyToGameFolderPath = Path.Combine(patcherPath, "CopyToGame");
 
         Console.WriteLine($"Copying mod files to game... These files get overwritten every time the game starts. If you want to change them manually, replace them in the mod folder instead: {copyToGameFolderPath}");
 
         CopyDirectory(Path.Combine(copyToGameFolderPath, "Data"), dataPath);
 
-        string gamePluginsPath = Path.Combine(dataPath, "Plugins");
+        var gamePluginsPath = Path.Combine(dataPath, "Plugins");
         Directory.CreateDirectory(gamePluginsPath);
 
-        string uuvrPluginsPath = Path.Combine(copyToGameFolderPath, "Plugins");
+        var uuvrPluginsPath = Path.Combine(copyToGameFolderPath, "Plugins");
 
         DeleteExistingVrPlugins(gamePluginsPath);
 
         // IntPtr size is 4 on x86, 8 on x64.
-        bool is64Bit = IntPtr.Size == 8;
+        var is64Bit = IntPtr.Size == 8;
         Console.WriteLine($"Detected game as being {(is64Bit ? "x64" : "x86")}");
 
         // Unity plugins are often in a subfolder of the Plugins folder, but they also get detected from the root folder,
@@ -197,7 +197,7 @@ public class Patcher
     // So we should make sure to nuke them all before replacing with our own.
     private static void DeleteExistingVrPlugins(string gamePluginsPath)
     {
-        IEnumerable<string> pluginPaths = Directory
+        var pluginPaths = Directory
             .GetFiles(gamePluginsPath, "*.dll", SearchOption.AllDirectories)
             .Where(pluginPath => PluginsToDeleteBeforePatch
                 .Select(pluginToDelete => $"{pluginToDelete.ToLower()}.dll")
@@ -205,7 +205,7 @@ public class Patcher
 
         Console.WriteLine($"### Found {pluginPaths.Count()} plugins");
 
-        foreach (string pluginPath in pluginPaths)
+        foreach (var pluginPath in pluginPaths)
         {
             try
             {
@@ -225,19 +225,19 @@ public class Patcher
         if (!dir.Exists)
             throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
 
-        DirectoryInfo[] dirs = dir.GetDirectories();
+        var dirs = dir.GetDirectories();
 
         Directory.CreateDirectory(destinationDir);
 
-        foreach (FileInfo file in dir.GetFiles())
+        foreach (var file in dir.GetFiles())
         {
-            string targetFilePath = Path.Combine(destinationDir, file.Name);
+            var targetFilePath = Path.Combine(destinationDir, file.Name);
             file.CopyTo(targetFilePath, true);
         }
 
-        foreach (DirectoryInfo subDir in dirs)
+        foreach (var subDir in dirs)
         {
-            string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
+            var newDestinationDir = Path.Combine(destinationDir, subDir.Name);
             CopyDirectory(subDir.FullName, newDestinationDir);
         }
 

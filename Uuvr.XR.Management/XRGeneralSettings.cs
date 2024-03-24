@@ -72,7 +72,7 @@ namespace UnityEngine.XR.Management
 
         static void Quit()
         {
-            XRGeneralSettings instance = XRGeneralSettings.Instance;
+            var instance = XRGeneralSettings.Instance;
             if (instance == null)
                 return;
 
@@ -92,7 +92,7 @@ namespace UnityEngine.XR.Management
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         internal static void AttemptInitializeXRSDKOnLoad()
         {
-            XRGeneralSettings instance = XRGeneralSettings.Instance;
+            var instance = XRGeneralSettings.Instance;
             if (instance == null || !instance.InitManagerOnStart)
                 return;
 
@@ -102,7 +102,7 @@ namespace UnityEngine.XR.Management
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
         internal static void AttemptStartXRSDKOnBeforeSplashScreen()
         {
-            XRGeneralSettings instance = XRGeneralSettings.Instance;
+            var instance = XRGeneralSettings.Instance;
             if (instance == null || !instance.InitManagerOnStart)
                 return;
 

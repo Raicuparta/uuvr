@@ -43,7 +43,7 @@ public class VrUiManager: UuvrBehaviour
     protected override void OnSettingChanged()
     {
         base.OnSettingChanged();
-        int uiLayer = LayerHelper.GetVrUiLayer();
+        var uiLayer = LayerHelper.GetVrUiLayer();
         
         _uiCaptureCamera.cullingMask = 1 << uiLayer;
         _uiSceneCamera.cullingMask = 1 << uiLayer;
@@ -53,7 +53,7 @@ public class VrUiManager: UuvrBehaviour
     private void SetUpUi()
     {
         _uiTexture = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.ARGB32);
-        float uiTextureAspectRatio =  (float) _uiTexture.height / _uiTexture.width;
+        var uiTextureAspectRatio =  (float) _uiTexture.height / _uiTexture.width;
 
         _uiCaptureCamera = new GameObject("VrUiCaptureCamera").AddComponent<Camera>();
         VrCamera.IgnoredCameras.Add(_uiCaptureCamera);
@@ -93,8 +93,8 @@ public class VrUiManager: UuvrBehaviour
         _vrUiQuad.name = "VrUiQuad";
         _vrUiQuad.transform.parent = _uiScene.transform;
         _vrUiQuad.transform.localPosition = Vector3.forward * 2f;
-        float quadWidth = 1.8f;
-        float quadHeight = quadWidth * uiTextureAspectRatio;
+        var quadWidth = 1.8f;
+        var quadHeight = quadWidth * uiTextureAspectRatio;
         _vrUiQuad.transform.localScale = new Vector3(quadWidth, quadHeight, 1f);
 
         var renderer = _vrUiQuad.GetComponent<Renderer>();

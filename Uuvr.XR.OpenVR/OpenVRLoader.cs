@@ -303,7 +303,7 @@ namespace Unity.XR.OpenVR
                         var key = split[0];
                         if (key == "MirrorViewMode")
                         {
-                            string stringMode = split[1];
+                            var stringMode = split[1];
                             var mode = OpenVRSettings.MirrorViewModes.None;
                             if (stringMode.Equals("left", System.StringComparison.CurrentCultureIgnoreCase))
                                 mode = OpenVRSettings.MirrorViewModes.Left;

@@ -394,10 +394,10 @@ namespace UnityEngine.XR.OpenXR
         private void SetApplicationInfo()
         {
             var md5 = MD5.Create();
-            byte[] data = md5.ComputeHash(Encoding.UTF8.GetBytes(Application.version));
+            var data = md5.ComputeHash(Encoding.UTF8.GetBytes(Application.version));
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(data);
-            uint applicationVersionHash = BitConverter.ToUInt32(data, 0);
+            var applicationVersionHash = BitConverter.ToUInt32(data, 0);
 
             Internal_SetApplicationInfo(Application.productName, Application.version, applicationVersionHash, Application.unityVersion);
         }
@@ -410,7 +410,7 @@ namespace UnityEngine.XR.OpenXR
 
         private bool LoadOpenXRSymbols()
         {
-            string loaderPath = "openxr_loader";
+            var loaderPath = "openxr_loader";
             if (!Internal_LoadOpenXRLibrary(StringToWCHAR_T(loaderPath)))
                 return false;
 

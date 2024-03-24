@@ -350,7 +350,7 @@ namespace UnityEngine.XR.Management
         private bool CheckGraphicsAPICompatibility(XRLoader loader)
         {
             var deviceType = SystemInfo.graphicsDeviceType;
-            List<GraphicsDeviceType> supportedDeviceTypes = loader.GetSupportedGraphicsDeviceTypes(false);
+            var supportedDeviceTypes = loader.GetSupportedGraphicsDeviceTypes(false);
 
             // To help with backward compatibility, if the compatibility list is empty we assume that it does not implement the GetSupportedGraphicsDeviceTypes method
             // Therefore we revert to the previous behavior of building or starting the loader regardless of gfx api settings.

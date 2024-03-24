@@ -2012,9 +2012,9 @@ public class Utils
 			return IntPtr.Zero;
 		}
 
-		int size = System.Text.Encoding.UTF8.GetByteCount(managedString) + 1;
+		var size = System.Text.Encoding.UTF8.GetByteCount(managedString) + 1;
 		if (buffer.Length < size) buffer = new byte[size];
-		int written = System.Text.Encoding.UTF8.GetBytes(managedString, 0, managedString.Length, buffer, 0);
+		var written = System.Text.Encoding.UTF8.GetBytes(managedString, 0, managedString.Length, buffer, 0);
 		buffer[written] = 0x00; // null terminate
 		var nativeUtf8 = Marshal.AllocHGlobal(written+1);
 		Marshal.Copy(buffer, 0, nativeUtf8, written+1);
@@ -2051,7 +2051,7 @@ public class CVRSystem
 	}
 	public bool ComputeDistortion(EVREye eEye,float fU,float fV,ref DistortionCoordinates_t pDistortionCoordinates)
 	{
-		bool result = FnTable.ComputeDistortion(eEye,fU,fV,ref pDistortionCoordinates);
+		var result = FnTable.ComputeDistortion(eEye,fU,fV,ref pDistortionCoordinates);
 		return result;
 	}
 	public HmdMatrix34_t GetEyeToHeadTransform(EVREye eEye)
@@ -2063,12 +2063,12 @@ public class CVRSystem
 	{
 		pfSecondsSinceLastVsync = 0;
 		pulFrameCounter = 0;
-		bool result = FnTable.GetTimeSinceLastVsync(ref pfSecondsSinceLastVsync,ref pulFrameCounter);
+		var result = FnTable.GetTimeSinceLastVsync(ref pfSecondsSinceLastVsync,ref pulFrameCounter);
 		return result;
 	}
 	public int GetD3D9AdapterIndex()
 	{
-		int result = FnTable.GetD3D9AdapterIndex();
+		var result = FnTable.GetD3D9AdapterIndex();
 		return result;
 	}
 	public void GetDXGIOutputInfo(ref int pnAdapterIndex)
@@ -2083,12 +2083,12 @@ public class CVRSystem
 	}
 	public bool IsDisplayOnDesktop()
 	{
-		bool result = FnTable.IsDisplayOnDesktop();
+		var result = FnTable.IsDisplayOnDesktop();
 		return result;
 	}
 	public bool SetDisplayVisibility(bool bIsVisibleOnDesktop)
 	{
-		bool result = FnTable.SetDisplayVisibility(bIsVisibleOnDesktop);
+		var result = FnTable.SetDisplayVisibility(bIsVisibleOnDesktop);
 		return result;
 	}
 	public void GetDeviceToAbsoluteTrackingPose(ETrackingUniverseOrigin eOrigin,float fPredictedSecondsToPhotonsFromNow,TrackedDevicePose_t [] pTrackedDevicePoseArray)
@@ -2107,7 +2107,7 @@ public class CVRSystem
 	}
 	public uint GetSortedTrackedDeviceIndicesOfClass(ETrackedDeviceClass eTrackedDeviceClass,uint [] punTrackedDeviceIndexArray,uint unRelativeToTrackedDeviceIndex)
 	{
-		uint result = FnTable.GetSortedTrackedDeviceIndicesOfClass(eTrackedDeviceClass,punTrackedDeviceIndexArray,(uint) punTrackedDeviceIndexArray.Length,unRelativeToTrackedDeviceIndex);
+		var result = FnTable.GetSortedTrackedDeviceIndicesOfClass(eTrackedDeviceClass,punTrackedDeviceIndexArray,(uint) punTrackedDeviceIndexArray.Length,unRelativeToTrackedDeviceIndex);
 		return result;
 	}
 	public EDeviceActivityLevel GetTrackedDeviceActivityLevel(uint unDeviceId)
@@ -2121,7 +2121,7 @@ public class CVRSystem
 	}
 	public uint GetTrackedDeviceIndexForControllerRole(ETrackedControllerRole unDeviceType)
 	{
-		uint result = FnTable.GetTrackedDeviceIndexForControllerRole(unDeviceType);
+		var result = FnTable.GetTrackedDeviceIndexForControllerRole(unDeviceType);
 		return result;
 	}
 	public ETrackedControllerRole GetControllerRoleForTrackedDeviceIndex(uint unDeviceIndex)
@@ -2136,27 +2136,27 @@ public class CVRSystem
 	}
 	public bool IsTrackedDeviceConnected(uint unDeviceIndex)
 	{
-		bool result = FnTable.IsTrackedDeviceConnected(unDeviceIndex);
+		var result = FnTable.IsTrackedDeviceConnected(unDeviceIndex);
 		return result;
 	}
 	public bool GetBoolTrackedDeviceProperty(uint unDeviceIndex,ETrackedDeviceProperty prop,ref ETrackedPropertyError pError)
 	{
-		bool result = FnTable.GetBoolTrackedDeviceProperty(unDeviceIndex,prop,ref pError);
+		var result = FnTable.GetBoolTrackedDeviceProperty(unDeviceIndex,prop,ref pError);
 		return result;
 	}
 	public float GetFloatTrackedDeviceProperty(uint unDeviceIndex,ETrackedDeviceProperty prop,ref ETrackedPropertyError pError)
 	{
-		float result = FnTable.GetFloatTrackedDeviceProperty(unDeviceIndex,prop,ref pError);
+		var result = FnTable.GetFloatTrackedDeviceProperty(unDeviceIndex,prop,ref pError);
 		return result;
 	}
 	public int GetInt32TrackedDeviceProperty(uint unDeviceIndex,ETrackedDeviceProperty prop,ref ETrackedPropertyError pError)
 	{
-		int result = FnTable.GetInt32TrackedDeviceProperty(unDeviceIndex,prop,ref pError);
+		var result = FnTable.GetInt32TrackedDeviceProperty(unDeviceIndex,prop,ref pError);
 		return result;
 	}
 	public ulong GetUint64TrackedDeviceProperty(uint unDeviceIndex,ETrackedDeviceProperty prop,ref ETrackedPropertyError pError)
 	{
-		ulong result = FnTable.GetUint64TrackedDeviceProperty(unDeviceIndex,prop,ref pError);
+		var result = FnTable.GetUint64TrackedDeviceProperty(unDeviceIndex,prop,ref pError);
 		return result;
 	}
 	public HmdMatrix34_t GetMatrix34TrackedDeviceProperty(uint unDeviceIndex,ETrackedDeviceProperty prop,ref ETrackedPropertyError pError)
@@ -2166,12 +2166,12 @@ public class CVRSystem
 	}
 	public uint GetArrayTrackedDeviceProperty(uint unDeviceIndex,ETrackedDeviceProperty prop,uint propType,IntPtr pBuffer,uint unBufferSize,ref ETrackedPropertyError pError)
 	{
-		uint result = FnTable.GetArrayTrackedDeviceProperty(unDeviceIndex,prop,propType,pBuffer,unBufferSize,ref pError);
+		var result = FnTable.GetArrayTrackedDeviceProperty(unDeviceIndex,prop,propType,pBuffer,unBufferSize,ref pError);
 		return result;
 	}
 	public uint GetStringTrackedDeviceProperty(uint unDeviceIndex,ETrackedDeviceProperty prop,System.Text.StringBuilder pchValue,uint unBufferSize,ref ETrackedPropertyError pError)
 	{
-		uint result = FnTable.GetStringTrackedDeviceProperty(unDeviceIndex,prop,pchValue,unBufferSize,ref pError);
+		var result = FnTable.GetStringTrackedDeviceProperty(unDeviceIndex,prop,pchValue,unBufferSize,ref pError);
 		return result;
 	}
 	public string GetPropErrorNameFromEnum(ETrackedPropertyError error)
@@ -2201,18 +2201,18 @@ public class CVRSystem
 			var event_packed = new VREvent_t_Packed();
 			u.pPollNextEventPacked = null;
 			u.pPollNextEvent = FnTable.PollNextEvent;
-			bool packed_result = u.pPollNextEventPacked(ref event_packed,(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VREvent_t_Packed)));
+			var packed_result = u.pPollNextEventPacked(ref event_packed,(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VREvent_t_Packed)));
 
 			event_packed.Unpack(ref pEvent);
 			return packed_result;
 		}
 #endif
-		bool result = FnTable.PollNextEvent(ref pEvent,uncbVREvent);
+		var result = FnTable.PollNextEvent(ref pEvent,uncbVREvent);
 		return result;
 	}
 	public bool PollNextEventWithPose(ETrackingUniverseOrigin eOrigin,ref VREvent_t pEvent,uint uncbVREvent,ref TrackedDevicePose_t pTrackedDevicePose)
 	{
-		bool result = FnTable.PollNextEventWithPose(eOrigin,ref pEvent,uncbVREvent,ref pTrackedDevicePose);
+		var result = FnTable.PollNextEventWithPose(eOrigin,ref pEvent,uncbVREvent,ref pTrackedDevicePose);
 		return result;
 	}
 	public string GetEventTypeNameFromEnum(EVREventType eType)
@@ -2247,13 +2247,13 @@ public class CVRSystem
 			var state_packed = new VRControllerState_t_Packed(pControllerState);
 			u.pGetControllerStatePacked = null;
 			u.pGetControllerState = FnTable.GetControllerState;
-			bool packed_result = u.pGetControllerStatePacked(unControllerDeviceIndex,ref state_packed,(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VRControllerState_t_Packed)));
+			var packed_result = u.pGetControllerStatePacked(unControllerDeviceIndex,ref state_packed,(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VRControllerState_t_Packed)));
 
 			state_packed.Unpack(ref pControllerState);
 			return packed_result;
 		}
 #endif
-		bool result = FnTable.GetControllerState(unControllerDeviceIndex,ref pControllerState,unControllerStateSize);
+		var result = FnTable.GetControllerState(unControllerDeviceIndex,ref pControllerState,unControllerStateSize);
 		return result;
 	}
 // This is a terrible hack to workaround the fact that VRControllerState_t and VREvent_t were
@@ -2278,13 +2278,13 @@ public class CVRSystem
 			var state_packed = new VRControllerState_t_Packed(pControllerState);
 			u.pGetControllerStateWithPosePacked = null;
 			u.pGetControllerStateWithPose = FnTable.GetControllerStateWithPose;
-			bool packed_result = u.pGetControllerStateWithPosePacked(eOrigin,unControllerDeviceIndex,ref state_packed,(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VRControllerState_t_Packed)),ref pTrackedDevicePose);
+			var packed_result = u.pGetControllerStateWithPosePacked(eOrigin,unControllerDeviceIndex,ref state_packed,(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VRControllerState_t_Packed)),ref pTrackedDevicePose);
 
 			state_packed.Unpack(ref pControllerState);
 			return packed_result;
 		}
 #endif
-		bool result = FnTable.GetControllerStateWithPose(eOrigin,unControllerDeviceIndex,ref pControllerState,unControllerStateSize,ref pTrackedDevicePose);
+		var result = FnTable.GetControllerStateWithPose(eOrigin,unControllerDeviceIndex,ref pControllerState,unControllerStateSize,ref pTrackedDevicePose);
 		return result;
 	}
 	public void TriggerHapticPulse(uint unControllerDeviceIndex,uint unAxisId,ushort usDurationMicroSec)
@@ -2303,22 +2303,22 @@ public class CVRSystem
 	}
 	public bool IsInputAvailable()
 	{
-		bool result = FnTable.IsInputAvailable();
+		var result = FnTable.IsInputAvailable();
 		return result;
 	}
 	public bool IsSteamVRDrawingControllers()
 	{
-		bool result = FnTable.IsSteamVRDrawingControllers();
+		var result = FnTable.IsSteamVRDrawingControllers();
 		return result;
 	}
 	public bool ShouldApplicationPause()
 	{
-		bool result = FnTable.ShouldApplicationPause();
+		var result = FnTable.ShouldApplicationPause();
 		return result;
 	}
 	public bool ShouldApplicationReduceRenderingWork()
 	{
-		bool result = FnTable.ShouldApplicationReduceRenderingWork();
+		var result = FnTable.ShouldApplicationReduceRenderingWork();
 		return result;
 	}
 	public EVRFirmwareError PerformFirmwareUpdate(uint unDeviceIndex)
@@ -2332,7 +2332,7 @@ public class CVRSystem
 	}
 	public uint GetAppContainerFilePaths(System.Text.StringBuilder pchBuffer,uint unBufferSize)
 	{
-		uint result = FnTable.GetAppContainerFilePaths(pchBuffer,unBufferSize);
+		var result = FnTable.GetAppContainerFilePaths(pchBuffer,unBufferSize);
 		return result;
 	}
 	public string GetRuntimeVersion()
@@ -2486,13 +2486,13 @@ public class CVRApplications
 	public bool IsApplicationInstalled(string pchAppKey)
 	{
 		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		bool result = FnTable.IsApplicationInstalled(pchAppKeyUtf8);
+		var result = FnTable.IsApplicationInstalled(pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public uint GetApplicationCount()
 	{
-		uint result = FnTable.GetApplicationCount();
+		var result = FnTable.GetApplicationCount();
 		return result;
 	}
 	public EVRApplicationError GetApplicationKeyByIndex(uint unApplicationIndex,System.Text.StringBuilder pchAppKeyBuffer,uint unAppKeyBufferLen)
@@ -2540,7 +2540,7 @@ public class CVRApplications
 	public bool CancelApplicationLaunch(string pchAppKey)
 	{
 		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		bool result = FnTable.CancelApplicationLaunch(pchAppKeyUtf8);
+		var result = FnTable.CancelApplicationLaunch(pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
@@ -2554,7 +2554,7 @@ public class CVRApplications
 	public uint GetApplicationProcessId(string pchAppKey)
 	{
 		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		uint result = FnTable.GetApplicationProcessId(pchAppKeyUtf8);
+		var result = FnTable.GetApplicationProcessId(pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
@@ -2566,21 +2566,21 @@ public class CVRApplications
 	public uint GetApplicationPropertyString(string pchAppKey,EVRApplicationProperty eProperty,System.Text.StringBuilder pchPropertyValueBuffer,uint unPropertyValueBufferLen,ref EVRApplicationError peError)
 	{
 		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		uint result = FnTable.GetApplicationPropertyString(pchAppKeyUtf8,eProperty,pchPropertyValueBuffer,unPropertyValueBufferLen,ref peError);
+		var result = FnTable.GetApplicationPropertyString(pchAppKeyUtf8,eProperty,pchPropertyValueBuffer,unPropertyValueBufferLen,ref peError);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public bool GetApplicationPropertyBool(string pchAppKey,EVRApplicationProperty eProperty,ref EVRApplicationError peError)
 	{
 		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		bool result = FnTable.GetApplicationPropertyBool(pchAppKeyUtf8,eProperty,ref peError);
+		var result = FnTable.GetApplicationPropertyBool(pchAppKeyUtf8,eProperty,ref peError);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public ulong GetApplicationPropertyUint64(string pchAppKey,EVRApplicationProperty eProperty,ref EVRApplicationError peError)
 	{
 		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		ulong result = FnTable.GetApplicationPropertyUint64(pchAppKeyUtf8,eProperty,ref peError);
+		var result = FnTable.GetApplicationPropertyUint64(pchAppKeyUtf8,eProperty,ref peError);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
@@ -2594,7 +2594,7 @@ public class CVRApplications
 	public bool GetApplicationAutoLaunch(string pchAppKey)
 	{
 		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		bool result = FnTable.GetApplicationAutoLaunch(pchAppKeyUtf8);
+		var result = FnTable.GetApplicationAutoLaunch(pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
@@ -2610,27 +2610,27 @@ public class CVRApplications
 	public bool GetDefaultApplicationForMimeType(string pchMimeType,System.Text.StringBuilder pchAppKeyBuffer,uint unAppKeyBufferLen)
 	{
 		var pchMimeTypeUtf8 = Utils.ToUtf8(pchMimeType);
-		bool result = FnTable.GetDefaultApplicationForMimeType(pchMimeTypeUtf8,pchAppKeyBuffer,unAppKeyBufferLen);
+		var result = FnTable.GetDefaultApplicationForMimeType(pchMimeTypeUtf8,pchAppKeyBuffer,unAppKeyBufferLen);
 		Marshal.FreeHGlobal(pchMimeTypeUtf8);
 		return result;
 	}
 	public bool GetApplicationSupportedMimeTypes(string pchAppKey,System.Text.StringBuilder pchMimeTypesBuffer,uint unMimeTypesBuffer)
 	{
 		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		bool result = FnTable.GetApplicationSupportedMimeTypes(pchAppKeyUtf8,pchMimeTypesBuffer,unMimeTypesBuffer);
+		var result = FnTable.GetApplicationSupportedMimeTypes(pchAppKeyUtf8,pchMimeTypesBuffer,unMimeTypesBuffer);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public uint GetApplicationsThatSupportMimeType(string pchMimeType,System.Text.StringBuilder pchAppKeysThatSupportBuffer,uint unAppKeysThatSupportBuffer)
 	{
 		var pchMimeTypeUtf8 = Utils.ToUtf8(pchMimeType);
-		uint result = FnTable.GetApplicationsThatSupportMimeType(pchMimeTypeUtf8,pchAppKeysThatSupportBuffer,unAppKeysThatSupportBuffer);
+		var result = FnTable.GetApplicationsThatSupportMimeType(pchMimeTypeUtf8,pchAppKeysThatSupportBuffer,unAppKeysThatSupportBuffer);
 		Marshal.FreeHGlobal(pchMimeTypeUtf8);
 		return result;
 	}
 	public uint GetApplicationLaunchArguments(uint unHandle,System.Text.StringBuilder pchArgs,uint unArgs)
 	{
-		uint result = FnTable.GetApplicationLaunchArguments(unHandle,pchArgs,unArgs);
+		var result = FnTable.GetApplicationLaunchArguments(unHandle,pchArgs,unArgs);
 		return result;
 	}
 	public EVRApplicationError GetStartingApplication(System.Text.StringBuilder pchAppKeyBuffer,uint unAppKeyBufferLen)
@@ -2668,7 +2668,7 @@ public class CVRApplications
 	}
 	public uint GetCurrentSceneProcessId()
 	{
-		uint result = FnTable.GetCurrentSceneProcessId();
+		var result = FnTable.GetCurrentSceneProcessId();
 		return result;
 	}
 }
@@ -2690,12 +2690,12 @@ public class CVRChaperone
 	{
 		pSizeX = 0;
 		pSizeZ = 0;
-		bool result = FnTable.GetPlayAreaSize(ref pSizeX,ref pSizeZ);
+		var result = FnTable.GetPlayAreaSize(ref pSizeX,ref pSizeZ);
 		return result;
 	}
 	public bool GetPlayAreaRect(ref HmdQuad_t rect)
 	{
-		bool result = FnTable.GetPlayAreaRect(ref rect);
+		var result = FnTable.GetPlayAreaRect(ref rect);
 		return result;
 	}
 	public void ReloadInfo()
@@ -2712,7 +2712,7 @@ public class CVRChaperone
 	}
 	public bool AreBoundsVisible()
 	{
-		bool result = FnTable.AreBoundsVisible();
+		var result = FnTable.AreBoundsVisible();
 		return result;
 	}
 	public void ForceBoundsVisible(bool bForce)
@@ -2735,7 +2735,7 @@ public class CVRChaperoneSetup
 	}
 	public bool CommitWorkingCopy(EChaperoneConfigFile configFile)
 	{
-		bool result = FnTable.CommitWorkingCopy(configFile);
+		var result = FnTable.CommitWorkingCopy(configFile);
 		return result;
 	}
 	public void RevertWorkingCopy()
@@ -2746,18 +2746,18 @@ public class CVRChaperoneSetup
 	{
 		pSizeX = 0;
 		pSizeZ = 0;
-		bool result = FnTable.GetWorkingPlayAreaSize(ref pSizeX,ref pSizeZ);
+		var result = FnTable.GetWorkingPlayAreaSize(ref pSizeX,ref pSizeZ);
 		return result;
 	}
 	public bool GetWorkingPlayAreaRect(ref HmdQuad_t rect)
 	{
-		bool result = FnTable.GetWorkingPlayAreaRect(ref rect);
+		var result = FnTable.GetWorkingPlayAreaRect(ref rect);
 		return result;
 	}
 	public bool GetWorkingCollisionBoundsInfo(out HmdQuad_t [] pQuadsBuffer)
 	{
 		uint punQuadsCount = 0;
-		bool result = FnTable.GetWorkingCollisionBoundsInfo(null,ref punQuadsCount);
+		var result = FnTable.GetWorkingCollisionBoundsInfo(null,ref punQuadsCount);
 		pQuadsBuffer= new HmdQuad_t[punQuadsCount];
 		result = FnTable.GetWorkingCollisionBoundsInfo(pQuadsBuffer,ref punQuadsCount);
 		return result;
@@ -2765,19 +2765,19 @@ public class CVRChaperoneSetup
 	public bool GetLiveCollisionBoundsInfo(out HmdQuad_t [] pQuadsBuffer)
 	{
 		uint punQuadsCount = 0;
-		bool result = FnTable.GetLiveCollisionBoundsInfo(null,ref punQuadsCount);
+		var result = FnTable.GetLiveCollisionBoundsInfo(null,ref punQuadsCount);
 		pQuadsBuffer= new HmdQuad_t[punQuadsCount];
 		result = FnTable.GetLiveCollisionBoundsInfo(pQuadsBuffer,ref punQuadsCount);
 		return result;
 	}
 	public bool GetWorkingSeatedZeroPoseToRawTrackingPose(ref HmdMatrix34_t pmatSeatedZeroPoseToRawTrackingPose)
 	{
-		bool result = FnTable.GetWorkingSeatedZeroPoseToRawTrackingPose(ref pmatSeatedZeroPoseToRawTrackingPose);
+		var result = FnTable.GetWorkingSeatedZeroPoseToRawTrackingPose(ref pmatSeatedZeroPoseToRawTrackingPose);
 		return result;
 	}
 	public bool GetWorkingStandingZeroPoseToRawTrackingPose(ref HmdMatrix34_t pmatStandingZeroPoseToRawTrackingPose)
 	{
-		bool result = FnTable.GetWorkingStandingZeroPoseToRawTrackingPose(ref pmatStandingZeroPoseToRawTrackingPose);
+		var result = FnTable.GetWorkingStandingZeroPoseToRawTrackingPose(ref pmatStandingZeroPoseToRawTrackingPose);
 		return result;
 	}
 	public void SetWorkingPlayAreaSize(float sizeX,float sizeZ)
@@ -2806,19 +2806,19 @@ public class CVRChaperoneSetup
 	}
 	public bool GetLiveSeatedZeroPoseToRawTrackingPose(ref HmdMatrix34_t pmatSeatedZeroPoseToRawTrackingPose)
 	{
-		bool result = FnTable.GetLiveSeatedZeroPoseToRawTrackingPose(ref pmatSeatedZeroPoseToRawTrackingPose);
+		var result = FnTable.GetLiveSeatedZeroPoseToRawTrackingPose(ref pmatSeatedZeroPoseToRawTrackingPose);
 		return result;
 	}
 	public bool ExportLiveToBuffer(System.Text.StringBuilder pBuffer,ref uint pnBufferLength)
 	{
 		pnBufferLength = 0;
-		bool result = FnTable.ExportLiveToBuffer(pBuffer,ref pnBufferLength);
+		var result = FnTable.ExportLiveToBuffer(pBuffer,ref pnBufferLength);
 		return result;
 	}
 	public bool ImportFromBufferToWorking(string pBuffer,uint nImportFlags)
 	{
 		var pBufferUtf8 = Utils.ToUtf8(pBuffer);
-		bool result = FnTable.ImportFromBufferToWorking(pBufferUtf8,nImportFlags);
+		var result = FnTable.ImportFromBufferToWorking(pBufferUtf8,nImportFlags);
 		Marshal.FreeHGlobal(pBufferUtf8);
 		return result;
 	}
@@ -2883,17 +2883,17 @@ public class CVRCompositor
 	}
 	public bool GetFrameTiming(ref Compositor_FrameTiming pTiming,uint unFramesAgo)
 	{
-		bool result = FnTable.GetFrameTiming(ref pTiming,unFramesAgo);
+		var result = FnTable.GetFrameTiming(ref pTiming,unFramesAgo);
 		return result;
 	}
 	public uint GetFrameTimings(Compositor_FrameTiming [] pTiming)
 	{
-		uint result = FnTable.GetFrameTimings(pTiming,(uint) pTiming.Length);
+		var result = FnTable.GetFrameTimings(pTiming,(uint) pTiming.Length);
 		return result;
 	}
 	public float GetFrameTimeRemaining()
 	{
-		float result = FnTable.GetFrameTimeRemaining();
+		var result = FnTable.GetFrameTimeRemaining();
 		return result;
 	}
 	public void GetCumulativeStats(ref Compositor_CumulativeStats pStats,uint nStatsSizeInBytes)
@@ -2915,7 +2915,7 @@ public class CVRCompositor
 	}
 	public float GetCurrentGridAlpha()
 	{
-		float result = FnTable.GetCurrentGridAlpha();
+		var result = FnTable.GetCurrentGridAlpha();
 		return result;
 	}
 	public EVRCompositorError SetSkyboxOverride(Texture_t [] pTextures)
@@ -2941,22 +2941,22 @@ public class CVRCompositor
 	}
 	public bool IsFullscreen()
 	{
-		bool result = FnTable.IsFullscreen();
+		var result = FnTable.IsFullscreen();
 		return result;
 	}
 	public uint GetCurrentSceneFocusProcess()
 	{
-		uint result = FnTable.GetCurrentSceneFocusProcess();
+		var result = FnTable.GetCurrentSceneFocusProcess();
 		return result;
 	}
 	public uint GetLastFrameRenderer()
 	{
-		uint result = FnTable.GetLastFrameRenderer();
+		var result = FnTable.GetLastFrameRenderer();
 		return result;
 	}
 	public bool CanRenderScene()
 	{
-		bool result = FnTable.CanRenderScene();
+		var result = FnTable.CanRenderScene();
 		return result;
 	}
 	public void ShowMirrorWindow()
@@ -2969,7 +2969,7 @@ public class CVRCompositor
 	}
 	public bool IsMirrorWindowVisible()
 	{
-		bool result = FnTable.IsMirrorWindowVisible();
+		var result = FnTable.IsMirrorWindowVisible();
 		return result;
 	}
 	public void CompositorDumpImages()
@@ -2978,7 +2978,7 @@ public class CVRCompositor
 	}
 	public bool ShouldAppRenderWithLowResources()
 	{
-		bool result = FnTable.ShouldAppRenderWithLowResources();
+		var result = FnTable.ShouldAppRenderWithLowResources();
 		return result;
 	}
 	public void ForceInterleavedReprojectionOn(bool bOverride)
@@ -3010,7 +3010,7 @@ public class CVRCompositor
 	}
 	public bool ReleaseSharedGLTexture(uint glTextureId,IntPtr glSharedTextureHandle)
 	{
-		bool result = FnTable.ReleaseSharedGLTexture(glTextureId,glSharedTextureHandle);
+		var result = FnTable.ReleaseSharedGLTexture(glTextureId,glSharedTextureHandle);
 		return result;
 	}
 	public void LockGLSharedTextureForAccess(IntPtr glSharedTextureHandle)
@@ -3023,12 +3023,12 @@ public class CVRCompositor
 	}
 	public uint GetVulkanInstanceExtensionsRequired(System.Text.StringBuilder pchValue,uint unBufferSize)
 	{
-		uint result = FnTable.GetVulkanInstanceExtensionsRequired(pchValue,unBufferSize);
+		var result = FnTable.GetVulkanInstanceExtensionsRequired(pchValue,unBufferSize);
 		return result;
 	}
 	public uint GetVulkanDeviceExtensionsRequired(IntPtr pPhysicalDevice,System.Text.StringBuilder pchValue,uint unBufferSize)
 	{
-		uint result = FnTable.GetVulkanDeviceExtensionsRequired(pPhysicalDevice,pchValue,unBufferSize);
+		var result = FnTable.GetVulkanDeviceExtensionsRequired(pPhysicalDevice,pchValue,unBufferSize);
 		return result;
 	}
 	public void SetExplicitTimingMode(EVRCompositorTimingMode eTimingMode)
@@ -3042,17 +3042,17 @@ public class CVRCompositor
 	}
 	public bool IsMotionSmoothingEnabled()
 	{
-		bool result = FnTable.IsMotionSmoothingEnabled();
+		var result = FnTable.IsMotionSmoothingEnabled();
 		return result;
 	}
 	public bool IsMotionSmoothingSupported()
 	{
-		bool result = FnTable.IsMotionSmoothingSupported();
+		var result = FnTable.IsMotionSmoothingSupported();
 		return result;
 	}
 	public bool IsCurrentSceneFocusAppLoading()
 	{
-		bool result = FnTable.IsCurrentSceneFocusAppLoading();
+		var result = FnTable.IsCurrentSceneFocusAppLoading();
 		return result;
 	}
 	public EVRCompositorError SetStageOverride_Async(string pchRenderModelPath,ref HmdMatrix34_t pTransform,ref Compositor_StageRenderSettings pRenderSettings,uint nSizeOfRenderSettings)
@@ -3068,7 +3068,7 @@ public class CVRCompositor
 	}
 	public bool GetCompositorBenchmarkResults(ref Compositor_BenchmarkResults pBenchmarkResults,uint nSizeOfBenchmarkResults)
 	{
-		bool result = FnTable.GetCompositorBenchmarkResults(ref pBenchmarkResults,nSizeOfBenchmarkResults);
+		var result = FnTable.GetCompositorBenchmarkResults(ref pBenchmarkResults,nSizeOfBenchmarkResults);
 		return result;
 	}
 	public EVRCompositorError GetLastPosePredictionIDs(ref uint pRenderPosePredictionID,ref uint pGamePosePredictionID)
@@ -3118,12 +3118,12 @@ public class CVROverlay
 	}
 	public uint GetOverlayKey(ulong ulOverlayHandle,System.Text.StringBuilder pchValue,uint unBufferSize,ref EVROverlayError pError)
 	{
-		uint result = FnTable.GetOverlayKey(ulOverlayHandle,pchValue,unBufferSize,ref pError);
+		var result = FnTable.GetOverlayKey(ulOverlayHandle,pchValue,unBufferSize,ref pError);
 		return result;
 	}
 	public uint GetOverlayName(ulong ulOverlayHandle,System.Text.StringBuilder pchValue,uint unBufferSize,ref EVROverlayError pError)
 	{
-		uint result = FnTable.GetOverlayName(ulOverlayHandle,pchValue,unBufferSize,ref pError);
+		var result = FnTable.GetOverlayName(ulOverlayHandle,pchValue,unBufferSize,ref pError);
 		return result;
 	}
 	public EVROverlayError SetOverlayName(ulong ulOverlayHandle,string pchName)
@@ -3152,7 +3152,7 @@ public class CVROverlay
 	}
 	public uint GetOverlayRenderingPid(ulong ulOverlayHandle)
 	{
-		uint result = FnTable.GetOverlayRenderingPid(ulOverlayHandle);
+		var result = FnTable.GetOverlayRenderingPid(ulOverlayHandle);
 		return result;
 	}
 	public EVROverlayError SetOverlayFlag(ulong ulOverlayHandle,VROverlayFlags eOverlayFlag,bool bEnabled)
@@ -3337,7 +3337,7 @@ public class CVROverlay
 	}
 	public bool IsOverlayVisible(ulong ulOverlayHandle)
 	{
-		bool result = FnTable.IsOverlayVisible(ulOverlayHandle);
+		var result = FnTable.IsOverlayVisible(ulOverlayHandle);
 		return result;
 	}
 	public EVROverlayError GetTransformForOverlayCoordinates(ulong ulOverlayHandle,ETrackingUniverseOrigin eTrackingOrigin,HmdVector2_t coordinatesInOverlay,ref HmdMatrix34_t pmatTransform)
@@ -3372,13 +3372,13 @@ public class CVROverlay
 			var event_packed = new VREvent_t_Packed();
 			u.pPollNextOverlayEventPacked = null;
 			u.pPollNextOverlayEvent = FnTable.PollNextOverlayEvent;
-			bool packed_result = u.pPollNextOverlayEventPacked(ulOverlayHandle,ref event_packed,(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VREvent_t_Packed)));
+			var packed_result = u.pPollNextOverlayEventPacked(ulOverlayHandle,ref event_packed,(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VREvent_t_Packed)));
 
 			event_packed.Unpack(ref pEvent);
 			return packed_result;
 		}
 #endif
-		bool result = FnTable.PollNextOverlayEvent(ulOverlayHandle,ref pEvent,uncbVREvent);
+		var result = FnTable.PollNextOverlayEvent(ulOverlayHandle,ref pEvent,uncbVREvent);
 		return result;
 	}
 	public EVROverlayError GetOverlayInputMethod(ulong ulOverlayHandle,ref VROverlayInputMethod peInputMethod)
@@ -3403,12 +3403,12 @@ public class CVROverlay
 	}
 	public bool ComputeOverlayIntersection(ulong ulOverlayHandle,ref VROverlayIntersectionParams_t pParams,ref VROverlayIntersectionResults_t pResults)
 	{
-		bool result = FnTable.ComputeOverlayIntersection(ulOverlayHandle,ref pParams,ref pResults);
+		var result = FnTable.ComputeOverlayIntersection(ulOverlayHandle,ref pParams,ref pResults);
 		return result;
 	}
 	public bool IsHoverTargetOverlay(ulong ulOverlayHandle)
 	{
-		bool result = FnTable.IsHoverTargetOverlay(ulOverlayHandle);
+		var result = FnTable.IsHoverTargetOverlay(ulOverlayHandle);
 		return result;
 	}
 	public EVROverlayError SetOverlayIntersectionMask(ulong ulOverlayHandle,ref VROverlayIntersectionMaskPrimitive_t pMaskPrimitives,uint unNumMaskPrimitives,uint unPrimitiveSize)
@@ -3491,12 +3491,12 @@ public class CVROverlay
 	}
 	public bool IsDashboardVisible()
 	{
-		bool result = FnTable.IsDashboardVisible();
+		var result = FnTable.IsDashboardVisible();
 		return result;
 	}
 	public bool IsActiveDashboardOverlay(ulong ulOverlayHandle)
 	{
-		bool result = FnTable.IsActiveDashboardOverlay(ulOverlayHandle);
+		var result = FnTable.IsActiveDashboardOverlay(ulOverlayHandle);
 		return result;
 	}
 	public EVROverlayError SetDashboardOverlaySceneProcess(ulong ulOverlayHandle,uint unProcessId)
@@ -3518,7 +3518,7 @@ public class CVROverlay
 	}
 	public uint GetPrimaryDashboardDevice()
 	{
-		uint result = FnTable.GetPrimaryDashboardDevice();
+		var result = FnTable.GetPrimaryDashboardDevice();
 		return result;
 	}
 	public EVROverlayError ShowKeyboard(int eInputMode,int eLineInputMode,uint unFlags,string pchDescription,uint unCharMax,string pchExistingText,ulong uUserValue)
@@ -3541,7 +3541,7 @@ public class CVROverlay
 	}
 	public uint GetKeyboardText(System.Text.StringBuilder pchText,uint cchText)
 	{
-		uint result = FnTable.GetKeyboardText(pchText,cchText);
+		var result = FnTable.GetKeyboardText(pchText,cchText);
 		return result;
 	}
 	public void HideKeyboard()
@@ -3603,7 +3603,7 @@ public class CVROverlayView
 	}
 	public bool IsViewingPermitted(ulong ulOverlayHandle)
 	{
-		bool result = FnTable.IsViewingPermitted(ulOverlayHandle);
+		var result = FnTable.IsViewingPermitted(ulOverlayHandle);
 		return result;
 	}
 }
@@ -3632,7 +3632,7 @@ public class CVRHeadsetView
 	}
 	public uint GetHeadsetViewMode()
 	{
-		uint result = FnTable.GetHeadsetViewMode();
+		var result = FnTable.GetHeadsetViewMode();
 		return result;
 	}
 	public void SetHeadsetViewCropped(bool bCropped)
@@ -3641,12 +3641,12 @@ public class CVRHeadsetView
 	}
 	public bool GetHeadsetViewCropped()
 	{
-		bool result = FnTable.GetHeadsetViewCropped();
+		var result = FnTable.GetHeadsetViewCropped();
 		return result;
 	}
 	public float GetHeadsetViewAspectRatio()
 	{
-		float result = FnTable.GetHeadsetViewAspectRatio();
+		var result = FnTable.GetHeadsetViewAspectRatio();
 		return result;
 	}
 	public void SetHeadsetViewBlendRange(float flStartPct,float flEndPct)
@@ -3705,25 +3705,25 @@ public class CVRRenderModels
 	}
 	public uint GetRenderModelName(uint unRenderModelIndex,System.Text.StringBuilder pchRenderModelName,uint unRenderModelNameLen)
 	{
-		uint result = FnTable.GetRenderModelName(unRenderModelIndex,pchRenderModelName,unRenderModelNameLen);
+		var result = FnTable.GetRenderModelName(unRenderModelIndex,pchRenderModelName,unRenderModelNameLen);
 		return result;
 	}
 	public uint GetRenderModelCount()
 	{
-		uint result = FnTable.GetRenderModelCount();
+		var result = FnTable.GetRenderModelCount();
 		return result;
 	}
 	public uint GetComponentCount(string pchRenderModelName)
 	{
 		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
-		uint result = FnTable.GetComponentCount(pchRenderModelNameUtf8);
+		var result = FnTable.GetComponentCount(pchRenderModelNameUtf8);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		return result;
 	}
 	public uint GetComponentName(string pchRenderModelName,uint unComponentIndex,System.Text.StringBuilder pchComponentName,uint unComponentNameLen)
 	{
 		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
-		uint result = FnTable.GetComponentName(pchRenderModelNameUtf8,unComponentIndex,pchComponentName,unComponentNameLen);
+		var result = FnTable.GetComponentName(pchRenderModelNameUtf8,unComponentIndex,pchComponentName,unComponentNameLen);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		return result;
 	}
@@ -3731,7 +3731,7 @@ public class CVRRenderModels
 	{
 		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
 		var pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
-		ulong result = FnTable.GetComponentButtonMask(pchRenderModelNameUtf8,pchComponentNameUtf8);
+		var result = FnTable.GetComponentButtonMask(pchRenderModelNameUtf8,pchComponentNameUtf8);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		Marshal.FreeHGlobal(pchComponentNameUtf8);
 		return result;
@@ -3740,7 +3740,7 @@ public class CVRRenderModels
 	{
 		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
 		var pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
-		uint result = FnTable.GetComponentRenderModelName(pchRenderModelNameUtf8,pchComponentNameUtf8,pchComponentRenderModelName,unComponentRenderModelNameLen);
+		var result = FnTable.GetComponentRenderModelName(pchRenderModelNameUtf8,pchComponentNameUtf8,pchComponentRenderModelName,unComponentRenderModelNameLen);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		Marshal.FreeHGlobal(pchComponentNameUtf8);
 		return result;
@@ -3749,7 +3749,7 @@ public class CVRRenderModels
 	{
 		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
 		var pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
-		bool result = FnTable.GetComponentStateForDevicePath(pchRenderModelNameUtf8,pchComponentNameUtf8,devicePath,ref pState,ref pComponentState);
+		var result = FnTable.GetComponentStateForDevicePath(pchRenderModelNameUtf8,pchComponentNameUtf8,devicePath,ref pState,ref pComponentState);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		Marshal.FreeHGlobal(pchComponentNameUtf8);
 		return result;
@@ -3778,13 +3778,13 @@ public class CVRRenderModels
 			var state_packed = new VRControllerState_t_Packed(pControllerState);
 			u.pGetComponentStatePacked = null;
 			u.pGetComponentState = FnTable.GetComponentState;
-			bool packed_result = u.pGetComponentStatePacked(pchRenderModelNameUtf8,pchComponentNameUtf8,ref state_packed,ref pState,ref pComponentState);
+			var packed_result = u.pGetComponentStatePacked(pchRenderModelNameUtf8,pchComponentNameUtf8,ref state_packed,ref pState,ref pComponentState);
 
 			state_packed.Unpack(ref pControllerState);
 			return packed_result;
 		}
 #endif
-		bool result = FnTable.GetComponentState(pchRenderModelNameUtf8,pchComponentNameUtf8,ref pControllerState,ref pState,ref pComponentState);
+		var result = FnTable.GetComponentState(pchRenderModelNameUtf8,pchComponentNameUtf8,ref pControllerState,ref pState,ref pComponentState);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		Marshal.FreeHGlobal(pchComponentNameUtf8);
 		return result;
@@ -3793,7 +3793,7 @@ public class CVRRenderModels
 	{
 		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
 		var pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
-		bool result = FnTable.RenderModelHasComponent(pchRenderModelNameUtf8,pchComponentNameUtf8);
+		var result = FnTable.RenderModelHasComponent(pchRenderModelNameUtf8,pchComponentNameUtf8);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		Marshal.FreeHGlobal(pchComponentNameUtf8);
 		return result;
@@ -3801,14 +3801,14 @@ public class CVRRenderModels
 	public uint GetRenderModelThumbnailURL(string pchRenderModelName,System.Text.StringBuilder pchThumbnailURL,uint unThumbnailURLLen,ref EVRRenderModelError peError)
 	{
 		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
-		uint result = FnTable.GetRenderModelThumbnailURL(pchRenderModelNameUtf8,pchThumbnailURL,unThumbnailURLLen,ref peError);
+		var result = FnTable.GetRenderModelThumbnailURL(pchRenderModelNameUtf8,pchThumbnailURL,unThumbnailURLLen,ref peError);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		return result;
 	}
 	public uint GetRenderModelOriginalPath(string pchRenderModelName,System.Text.StringBuilder pchOriginalPath,uint unOriginalPathLen,ref EVRRenderModelError peError)
 	{
 		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
-		uint result = FnTable.GetRenderModelOriginalPath(pchRenderModelNameUtf8,pchOriginalPath,unOriginalPathLen,ref peError);
+		var result = FnTable.GetRenderModelOriginalPath(pchRenderModelNameUtf8,pchOriginalPath,unOriginalPathLen,ref peError);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		return result;
 	}
@@ -3893,7 +3893,7 @@ public class CVRSettings
 	{
 		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
 		var pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
-		bool result = FnTable.GetBool(pchSectionUtf8,pchSettingsKeyUtf8,ref peError);
+		var result = FnTable.GetBool(pchSectionUtf8,pchSettingsKeyUtf8,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 		Marshal.FreeHGlobal(pchSettingsKeyUtf8);
 		return result;
@@ -3902,7 +3902,7 @@ public class CVRSettings
 	{
 		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
 		var pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
-		int result = FnTable.GetInt32(pchSectionUtf8,pchSettingsKeyUtf8,ref peError);
+		var result = FnTable.GetInt32(pchSectionUtf8,pchSettingsKeyUtf8,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 		Marshal.FreeHGlobal(pchSettingsKeyUtf8);
 		return result;
@@ -3911,7 +3911,7 @@ public class CVRSettings
 	{
 		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
 		var pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
-		float result = FnTable.GetFloat(pchSectionUtf8,pchSettingsKeyUtf8,ref peError);
+		var result = FnTable.GetFloat(pchSectionUtf8,pchSettingsKeyUtf8,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 		Marshal.FreeHGlobal(pchSettingsKeyUtf8);
 		return result;
@@ -3970,7 +3970,7 @@ public class CVRScreenshots
 	}
 	public uint GetScreenshotPropertyFilename(uint screenshotHandle,EVRScreenshotPropertyFilenames filenameType,System.Text.StringBuilder pchFilename,uint cchFilename,ref EVRScreenshotError pError)
 	{
-		uint result = FnTable.GetScreenshotPropertyFilename(screenshotHandle,filenameType,pchFilename,cchFilename,ref pError);
+		var result = FnTable.GetScreenshotPropertyFilename(screenshotHandle,filenameType,pchFilename,cchFilename,ref pError);
 		return result;
 	}
 	public EVRScreenshotError UpdateScreenshotProgress(uint screenshotHandle,float flProgress)
@@ -4010,7 +4010,7 @@ public class CVRResources
 	public uint LoadSharedResource(string pchResourceName,string pchBuffer,uint unBufferLen)
 	{
 		var pchResourceNameUtf8 = Utils.ToUtf8(pchResourceName);
-		uint result = FnTable.LoadSharedResource(pchResourceNameUtf8,pchBuffer,unBufferLen);
+		var result = FnTable.LoadSharedResource(pchResourceNameUtf8,pchBuffer,unBufferLen);
 		Marshal.FreeHGlobal(pchResourceNameUtf8);
 		return result;
 	}
@@ -4018,7 +4018,7 @@ public class CVRResources
 	{
 		var pchResourceNameUtf8 = Utils.ToUtf8(pchResourceName);
 		var pchResourceTypeDirectoryUtf8 = Utils.ToUtf8(pchResourceTypeDirectory);
-		uint result = FnTable.GetResourceFullPath(pchResourceNameUtf8,pchResourceTypeDirectoryUtf8,pchPathBuffer,unBufferLen);
+		var result = FnTable.GetResourceFullPath(pchResourceNameUtf8,pchResourceTypeDirectoryUtf8,pchPathBuffer,unBufferLen);
 		Marshal.FreeHGlobal(pchResourceNameUtf8);
 		Marshal.FreeHGlobal(pchResourceTypeDirectoryUtf8);
 		return result;
@@ -4035,24 +4035,24 @@ public class CVRDriverManager
 	}
 	public uint GetDriverCount()
 	{
-		uint result = FnTable.GetDriverCount();
+		var result = FnTable.GetDriverCount();
 		return result;
 	}
 	public uint GetDriverName(uint nDriver,System.Text.StringBuilder pchValue,uint unBufferSize)
 	{
-		uint result = FnTable.GetDriverName(nDriver,pchValue,unBufferSize);
+		var result = FnTable.GetDriverName(nDriver,pchValue,unBufferSize);
 		return result;
 	}
 	public ulong GetDriverHandle(string pchDriverName)
 	{
 		var pchDriverNameUtf8 = Utils.ToUtf8(pchDriverName);
-		ulong result = FnTable.GetDriverHandle(pchDriverNameUtf8);
+		var result = FnTable.GetDriverHandle(pchDriverNameUtf8);
 		Marshal.FreeHGlobal(pchDriverNameUtf8);
 		return result;
 	}
 	public bool IsEnabled(uint nDriver)
 	{
-		bool result = FnTable.IsEnabled(nDriver);
+		var result = FnTable.IsEnabled(nDriver);
 		return result;
 	}
 }
@@ -4230,7 +4230,7 @@ public class CVRInput
 	}
 	public bool IsUsingLegacyInput()
 	{
-		bool result = FnTable.IsUsingLegacyInput();
+		var result = FnTable.IsUsingLegacyInput();
 		return result;
 	}
 	public EVRInputError OpenBindingUI(string pchAppKey,ulong ulActionSetHandle,ulong ulDeviceHandle,bool bShowOnDesktop)
@@ -4281,12 +4281,12 @@ public class CVRIOBuffer
 	}
 	public ulong PropertyContainer(ulong ulBuffer)
 	{
-		ulong result = FnTable.PropertyContainer(ulBuffer);
+		var result = FnTable.PropertyContainer(ulBuffer);
 		return result;
 	}
 	public bool HasReaders(ulong ulBuffer)
 	{
-		bool result = FnTable.HasReaders(ulBuffer);
+		var result = FnTable.HasReaders(ulBuffer);
 		return result;
 	}
 }
@@ -4357,7 +4357,7 @@ public class CVRDebug
 	public uint DriverDebugRequest(uint unDeviceIndex,string pchRequest,System.Text.StringBuilder pchResponseBuffer,uint unResponseBufferSize)
 	{
 		var pchRequestUtf8 = Utils.ToUtf8(pchRequest);
-		uint result = FnTable.DriverDebugRequest(unDeviceIndex,pchRequestUtf8,pchResponseBuffer,unResponseBufferSize);
+		var result = FnTable.DriverDebugRequest(unDeviceIndex,pchRequestUtf8,pchResponseBuffer,unResponseBufferSize);
 		Marshal.FreeHGlobal(pchRequestUtf8);
 		return result;
 	}
@@ -4388,7 +4388,7 @@ public class CVRProperties
 	}
 	public ulong TrackedDeviceToPropertyContainer(uint nDevice)
 	{
-		ulong result = FnTable.TrackedDeviceToPropertyContainer(nDevice);
+		var result = FnTable.TrackedDeviceToPropertyContainer(nDevice);
 		return result;
 	}
 }
@@ -7571,7 +7571,7 @@ public class OpenVR
 			uint pathSize = 512;
 			uint requiredPathSize = 512;
 			var path = new System.Text.StringBuilder((int)pathSize);
-			bool success = OpenVRInterop.GetRuntimePath(path, pathSize, ref requiredPathSize);
+			var success = OpenVRInterop.GetRuntimePath(path, pathSize, ref requiredPathSize);
 			if (success == false)
 			{
 				return null;
@@ -8306,7 +8306,7 @@ public class OpenVR
 		if (peError != EVRInitError.None)
 			return null;
 
-		bool bInterfaceValid = IsInterfaceVersionValid(IVRSystem_Version);
+		var bInterfaceValid = IsInterfaceVersionValid(IVRSystem_Version);
 		if (!bInterfaceValid)
 		{
 			ShutdownInternal();

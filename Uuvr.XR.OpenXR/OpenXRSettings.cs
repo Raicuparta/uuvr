@@ -21,7 +21,7 @@ namespace UnityEngine.XR.OpenXR
 
         private static OpenXRSettings GetInstance(bool useActiveBuildTarget)
         {
-            OpenXRSettings settings = s_RuntimeInstance;
+            var settings = s_RuntimeInstance;
             if (settings == null)
                 settings = ScriptableObject.CreateInstance<OpenXRSettings>();
 

@@ -42,27 +42,27 @@ namespace Unity.XR.OpenVR
 
         public static string GetActionManifestPathFromPlugin()
         {
-            Type steamvrInputType = GetType("SteamVR_Input");
-            MethodInfo getPathMethod = steamvrInputType.GetMethod("GetActionsFilePath");
-            object path = getPathMethod.Invoke(null, new object[] { false });
+            var steamvrInputType = GetType("SteamVR_Input");
+            var getPathMethod = steamvrInputType.GetMethod("GetActionsFilePath");
+            var path = getPathMethod.Invoke(null, new object[] { false });
 
             return (string)path;
         }
 
         public static string GetActionManifestNameFromPlugin()
         {
-            Type steamvrInputType = GetType("SteamVR_Input");
-            MethodInfo getPathMethod = steamvrInputType.GetMethod("GetActionsFileName");
-            object path = getPathMethod.Invoke(null, null);
+            var steamvrInputType = GetType("SteamVR_Input");
+            var getPathMethod = steamvrInputType.GetMethod("GetActionsFileName");
+            var path = getPathMethod.Invoke(null, null);
 
             return (string)path;
         }
 
         public static string GetEditorAppKeyFromPlugin()
         {
-            Type steamvrInputType = GetType("SteamVR_Input");
-            MethodInfo getPathMethod = steamvrInputType.GetMethod("GetEditorAppKey");
-            object path = getPathMethod.Invoke(null, null);
+            var steamvrInputType = GetType("SteamVR_Input");
+            var getPathMethod = steamvrInputType.GetMethod("GetEditorAppKey");
+            var path = getPathMethod.Invoke(null, null);
 
             return (string)path;
         }

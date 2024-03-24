@@ -40,10 +40,10 @@ public class UuvrCore: MonoBehaviour
 
     private void Start()
     {
-        Type? xrDeviceType = Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.XRModule") ??
-                             Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.VRModule") ??
-                             Type.GetType("UnityEngine.VR.VRDevice, UnityEngine.VRModule") ??
-                             Type.GetType("UnityEngine.VR.VRDevice, UnityEngine");
+        var xrDeviceType = Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.XRModule") ??
+                           Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.VRModule") ??
+                           Type.GetType("UnityEngine.VR.VRDevice, UnityEngine.VRModule") ??
+                           Type.GetType("UnityEngine.VR.VRDevice, UnityEngine");
 
         _refreshRateProperty = xrDeviceType?.GetProperty("refreshRate");
         
@@ -69,7 +69,7 @@ public class UuvrCore: MonoBehaviour
 
         if (_refreshRateProperty == null) return;
 
-        float headsetRefreshRate = (float)_refreshRateProperty.GetValue(null, null);
+        var headsetRefreshRate = (float)_refreshRateProperty.GetValue(null, null);
         if (headsetRefreshRate <= 0) return;
 
         if (ModConfiguration.Instance.PhysicsMatchHeadsetRefreshRate.Value)
@@ -84,7 +84,7 @@ public class UuvrCore: MonoBehaviour
 
     private static void SetPositionTrackingEnabled(bool positionTrackingEnabled)
     {
-        Type? inputTrackingType = 
+        var inputTrackingType = 
             Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.XRModule") ??
             Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.VRModule") ??
             Type.GetType("UnityEngine.VR.InputTracking, UnityEngine.VRModule") ??
@@ -92,7 +92,7 @@ public class UuvrCore: MonoBehaviour
 
         if (inputTrackingType != null)
         {
-            PropertyInfo? disablePositionalTrackingProperty = inputTrackingType.GetProperty("disablePositionalTracking");
+            var disablePositionalTrackingProperty = inputTrackingType.GetProperty("disablePositionalTracking");
             if (disablePositionalTrackingProperty != null)
             {
                 disablePositionalTrackingProperty.SetValue(null, !positionTrackingEnabled, null);

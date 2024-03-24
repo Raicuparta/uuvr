@@ -33,8 +33,8 @@ public class VrUiCursor: MonoBehaviour
         // So I just flipped the cursor vertically in the actual bmp. Yeah dunno.
         var bitmap = new Bitmap(Path.Combine(UuvrPlugin.ModFolderPath, "Assets", "cursor.bmp"));
         var bmpdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
-        int numbytes = bmpdata.Stride * bitmap.Height;
-        byte[] imageBytes = new byte[numbytes];
+        var numbytes = bmpdata.Stride * bitmap.Height;
+        var imageBytes = new byte[numbytes];
         var ptr = bmpdata.Scan0;
      
         Marshal.Copy(ptr, imageBytes, 0, numbytes);

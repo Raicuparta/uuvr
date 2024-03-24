@@ -50,7 +50,7 @@ public class VrCamera : UuvrBehaviour
     {
         // TODO: setting for disabling post processing, antialiasing, etc.
 
-        VrCameraOffset rotationNullifier = Create<VrCameraOffset>(transform);
+        var rotationNullifier = Create<VrCameraOffset>(transform);
         _parentCameraPoseDriver = ParentCamera.gameObject.AddComponent<UuvrPoseDriver>();
         
         _childCameraPoseDriver = Create<UuvrPoseDriver>(rotationNullifier.transform);
@@ -97,7 +97,7 @@ public class VrCamera : UuvrBehaviour
             ParentCamera.depth = ModConfiguration.Instance.VrCameraDepth.Value;
         }
         
-        ModConfiguration.CameraTrackingMode cameraTrackingMode = ModConfiguration.Instance.CameraTracking.Value;
+        var cameraTrackingMode = ModConfiguration.Instance.CameraTracking.Value;
         _parentCameraPoseDriver.enabled = cameraTrackingMode == ModConfiguration.CameraTrackingMode.Absolute;
         _childCameraPoseDriver.gameObject.SetActive(cameraTrackingMode != ModConfiguration.CameraTrackingMode.Absolute);
 
@@ -141,7 +141,7 @@ public class VrCamera : UuvrBehaviour
     {
         if (ModConfiguration.Instance.CameraTracking.Value != ModConfiguration.CameraTrackingMode.Relative) return;
         
-        Camera.StereoscopicEye eye = ParentCamera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? Camera.StereoscopicEye.Left : Camera.StereoscopicEye.Right;
+        var eye = ParentCamera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? Camera.StereoscopicEye.Left : Camera.StereoscopicEye.Right;
        
         // A bit confused by this.
         // worldToCameraMatrix by itself almost works perfectly, but it breaks culling.
