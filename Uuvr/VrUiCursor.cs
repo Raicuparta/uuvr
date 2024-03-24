@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -8,22 +7,18 @@ using UnityEngine;
 
 namespace Uuvr;
 
-// TODO: add setting to toggle this.
-public class VrUiCursor: MonoBehaviour
+// The mouse cursor isn't visible in the VR UI plane, unless it's being rendered in software mode.
+// So we use a custom mouse cursor graphic and render that.
+// TODO: Look into games that already do this, and possibly revert it to hardware mouse.
+// Might need to patch the cursor methods to prevent it.
+public class VrUiCursor: UuvrBehaviour
 {
-    public static void Create(Transform parent)
+#if CPP
+    public VrUiCursor(IntPtr pointer) : base(pointer)
     {
-        new GameObject(nameof(VrUiCursor))
-        {
-            transform =
-            {
-                localPosition = Vector3.zero,
-                localRotation = Quaternion.identity,
-                parent = parent
-            }
-        }.AddComponent<VrUiCursor>();
     }
-    
+#endif
+
     private IEnumerator Start()
     {
         // I don't really know what I'm waiting for, but setting this too early made the cursor invisible.

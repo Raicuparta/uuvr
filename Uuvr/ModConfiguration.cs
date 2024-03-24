@@ -46,6 +46,7 @@ public class ModConfiguration
     public readonly ConfigEntry<bool> OverrideDepth;
     public readonly ConfigEntry<bool> PhysicsMatchHeadsetRefreshRate;
     public readonly ConfigEntry<bool> PatchUi;
+    public readonly ConfigEntry<bool> RenderMouseCursor;
     public readonly ConfigEntry<ScreenSpaceCanvasType> ScreenSpaceCanvasTypesToPatch;
     
 #if MODERN
