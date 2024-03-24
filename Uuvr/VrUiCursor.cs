@@ -32,35 +32,19 @@ public class VrUiCursor: MonoBehaviour
         // When I load the bmp like this and use it as a texture, it shows up upside down for some reason.
         // So I just flipped the cursor vertically in the actual bmp. Yeah dunno.
         var bitmap = new Bitmap(Path.Combine(UuvrPlugin.ModFolderPath, "Assets", "cursor.bmp"));
-        BitmapData bmpdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+        var bmpdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
         int numbytes = bmpdata.Stride * bitmap.Height;
         byte[] imageBytes = new byte[numbytes];
-        IntPtr ptr = bmpdata.Scan0;
+        var ptr = bmpdata.Scan0;
      
         Marshal.Copy(ptr, imageBytes, 0, numbytes);
      
         bitmap.UnlockBits(bmpdata);
         
-        Texture2D texture = new Texture2D(48, 48, TextureFormat.RGBA32, false);
+        var texture = new Texture2D(48, 48, TextureFormat.RGBA32, false);
         texture.LoadRawTextureData(imageBytes);
         texture.Apply();
         
         Cursor.SetCursor(texture, new Vector2(2, 5), CursorMode.ForceSoftware);
     }
-    
-    public static byte[] BitmapToByteArray(Bitmap bitmap)
-    {
-        BitmapData bmpdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
-        int numbytes = bmpdata.Stride * bitmap.Height;
-        byte[] bytedata = new byte[numbytes];
-        IntPtr ptr = bmpdata.Scan0;
-     
-        Marshal.Copy(ptr, bytedata, 0, numbytes);
-     
-        bitmap.UnlockBits(bmpdata);
-     
-        return bytedata;
-     
-    }
-
 }

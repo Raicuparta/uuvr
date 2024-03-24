@@ -142,7 +142,7 @@ namespace Unity.XR.OpenVR
             
             CreateSubsystem<XRDisplaySubsystemDescriptor, XRDisplaySubsystem>(s_DisplaySubsystemDescriptors, "OpenVR Display");
 
-            EVRInitError result = GetInitializationResult();
+            var result = GetInitializationResult();
             if (result != EVRInitError.None)
             {
                 DestroySubsystem<XRDisplaySubsystem>();
@@ -304,7 +304,7 @@ namespace Unity.XR.OpenVR
                         if (key == "MirrorViewMode")
                         {
                             string stringMode = split[1];
-                            OpenVRSettings.MirrorViewModes mode = OpenVRSettings.MirrorViewModes.None;
+                            var mode = OpenVRSettings.MirrorViewModes.None;
                             if (stringMode.Equals("left", System.StringComparison.CurrentCultureIgnoreCase))
                                 mode = OpenVRSettings.MirrorViewModes.Left;
                             else if (stringMode.Equals("right", System.StringComparison.CurrentCultureIgnoreCase))

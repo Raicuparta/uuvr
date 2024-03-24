@@ -97,7 +97,7 @@ public class VrUiManager: UuvrBehaviour
         float quadHeight = quadWidth * uiTextureAspectRatio;
         _vrUiQuad.transform.localScale = new Vector3(quadWidth, quadHeight, 1f);
 
-        Renderer renderer = _vrUiQuad.GetComponent<Renderer>();
+        var renderer = _vrUiQuad.GetComponent<Renderer>();
         renderer.material = Canvas.GetDefaultCanvasMaterial();
         renderer.material.mainTexture = _uiTexture;
         
@@ -112,7 +112,7 @@ public class VrUiManager: UuvrBehaviour
     {
         if (_uiTexture == null) SetUpUi();
         
-        foreach (Canvas canvas in GraphicRegistry.instance.m_Graphics.Keys)
+        foreach (var canvas in GraphicRegistry.instance.m_Graphics.Keys)
         {
             PatchCanvas(canvas);
         }

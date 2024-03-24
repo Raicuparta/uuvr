@@ -2016,7 +2016,7 @@ public class Utils
 		if (buffer.Length < size) buffer = new byte[size];
 		int written = System.Text.Encoding.UTF8.GetBytes(managedString, 0, managedString.Length, buffer, 0);
 		buffer[written] = 0x00; // null terminate
-		IntPtr nativeUtf8 = Marshal.AllocHGlobal(written+1);
+		var nativeUtf8 = Marshal.AllocHGlobal(written+1);
 		Marshal.Copy(buffer, 0, nativeUtf8, written+1);
 		return nativeUtf8;
 	}
@@ -2038,7 +2038,7 @@ public class CVRSystem
 	}
 	public HmdMatrix44_t GetProjectionMatrix(EVREye eEye,float fNearZ,float fFarZ)
 	{
-		HmdMatrix44_t result = FnTable.GetProjectionMatrix(eEye,fNearZ,fFarZ);
+		var result = FnTable.GetProjectionMatrix(eEye,fNearZ,fFarZ);
 		return result;
 	}
 	public void GetProjectionRaw(EVREye eEye,ref float pfLeft,ref float pfRight,ref float pfTop,ref float pfBottom)
@@ -2056,7 +2056,7 @@ public class CVRSystem
 	}
 	public HmdMatrix34_t GetEyeToHeadTransform(EVREye eEye)
 	{
-		HmdMatrix34_t result = FnTable.GetEyeToHeadTransform(eEye);
+		var result = FnTable.GetEyeToHeadTransform(eEye);
 		return result;
 	}
 	public bool GetTimeSinceLastVsync(ref float pfSecondsSinceLastVsync,ref ulong pulFrameCounter)
@@ -2097,12 +2097,12 @@ public class CVRSystem
 	}
 	public HmdMatrix34_t GetSeatedZeroPoseToStandingAbsoluteTrackingPose()
 	{
-		HmdMatrix34_t result = FnTable.GetSeatedZeroPoseToStandingAbsoluteTrackingPose();
+		var result = FnTable.GetSeatedZeroPoseToStandingAbsoluteTrackingPose();
 		return result;
 	}
 	public HmdMatrix34_t GetRawZeroPoseToStandingAbsoluteTrackingPose()
 	{
-		HmdMatrix34_t result = FnTable.GetRawZeroPoseToStandingAbsoluteTrackingPose();
+		var result = FnTable.GetRawZeroPoseToStandingAbsoluteTrackingPose();
 		return result;
 	}
 	public uint GetSortedTrackedDeviceIndicesOfClass(ETrackedDeviceClass eTrackedDeviceClass,uint [] punTrackedDeviceIndexArray,uint unRelativeToTrackedDeviceIndex)
@@ -2112,7 +2112,7 @@ public class CVRSystem
 	}
 	public EDeviceActivityLevel GetTrackedDeviceActivityLevel(uint unDeviceId)
 	{
-		EDeviceActivityLevel result = FnTable.GetTrackedDeviceActivityLevel(unDeviceId);
+		var result = FnTable.GetTrackedDeviceActivityLevel(unDeviceId);
 		return result;
 	}
 	public void ApplyTransform(ref TrackedDevicePose_t pOutputPose,ref TrackedDevicePose_t pTrackedDevicePose,ref HmdMatrix34_t pTransform)
@@ -2126,12 +2126,12 @@ public class CVRSystem
 	}
 	public ETrackedControllerRole GetControllerRoleForTrackedDeviceIndex(uint unDeviceIndex)
 	{
-		ETrackedControllerRole result = FnTable.GetControllerRoleForTrackedDeviceIndex(unDeviceIndex);
+		var result = FnTable.GetControllerRoleForTrackedDeviceIndex(unDeviceIndex);
 		return result;
 	}
 	public ETrackedDeviceClass GetTrackedDeviceClass(uint unDeviceIndex)
 	{
-		ETrackedDeviceClass result = FnTable.GetTrackedDeviceClass(unDeviceIndex);
+		var result = FnTable.GetTrackedDeviceClass(unDeviceIndex);
 		return result;
 	}
 	public bool IsTrackedDeviceConnected(uint unDeviceIndex)
@@ -2161,7 +2161,7 @@ public class CVRSystem
 	}
 	public HmdMatrix34_t GetMatrix34TrackedDeviceProperty(uint unDeviceIndex,ETrackedDeviceProperty prop,ref ETrackedPropertyError pError)
 	{
-		HmdMatrix34_t result = FnTable.GetMatrix34TrackedDeviceProperty(unDeviceIndex,prop,ref pError);
+		var result = FnTable.GetMatrix34TrackedDeviceProperty(unDeviceIndex,prop,ref pError);
 		return result;
 	}
 	public uint GetArrayTrackedDeviceProperty(uint unDeviceIndex,ETrackedDeviceProperty prop,uint propType,IntPtr pBuffer,uint unBufferSize,ref ETrackedPropertyError pError)
@@ -2176,7 +2176,7 @@ public class CVRSystem
 	}
 	public string GetPropErrorNameFromEnum(ETrackedPropertyError error)
 	{
-		IntPtr result = FnTable.GetPropErrorNameFromEnum(error);
+		var result = FnTable.GetPropErrorNameFromEnum(error);
 		return Marshal.PtrToStringAnsi(result);
 	}
 // This is a terrible hack to workaround the fact that VRControllerState_t and VREvent_t were
@@ -2198,7 +2198,7 @@ public class CVRSystem
 				(System.Environment.OSVersion.Platform == System.PlatformID.Unix))
 		{
 			PollNextEventUnion u;
-			VREvent_t_Packed event_packed = new VREvent_t_Packed();
+			var event_packed = new VREvent_t_Packed();
 			u.pPollNextEventPacked = null;
 			u.pPollNextEvent = FnTable.PollNextEvent;
 			bool packed_result = u.pPollNextEventPacked(ref event_packed,(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VREvent_t_Packed)));
@@ -2217,12 +2217,12 @@ public class CVRSystem
 	}
 	public string GetEventTypeNameFromEnum(EVREventType eType)
 	{
-		IntPtr result = FnTable.GetEventTypeNameFromEnum(eType);
+		var result = FnTable.GetEventTypeNameFromEnum(eType);
 		return Marshal.PtrToStringAnsi(result);
 	}
 	public HiddenAreaMesh_t GetHiddenAreaMesh(EVREye eEye,EHiddenAreaMeshType type)
 	{
-		HiddenAreaMesh_t result = FnTable.GetHiddenAreaMesh(eEye,type);
+		var result = FnTable.GetHiddenAreaMesh(eEye,type);
 		return result;
 	}
 // This is a terrible hack to workaround the fact that VRControllerState_t and VREvent_t were
@@ -2244,7 +2244,7 @@ public class CVRSystem
 				(System.Environment.OSVersion.Platform == System.PlatformID.Unix))
 		{
 			GetControllerStateUnion u;
-			VRControllerState_t_Packed state_packed = new VRControllerState_t_Packed(pControllerState);
+			var state_packed = new VRControllerState_t_Packed(pControllerState);
 			u.pGetControllerStatePacked = null;
 			u.pGetControllerState = FnTable.GetControllerState;
 			bool packed_result = u.pGetControllerStatePacked(unControllerDeviceIndex,ref state_packed,(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VRControllerState_t_Packed)));
@@ -2275,7 +2275,7 @@ public class CVRSystem
 				(System.Environment.OSVersion.Platform == System.PlatformID.Unix))
 		{
 			GetControllerStateWithPoseUnion u;
-			VRControllerState_t_Packed state_packed = new VRControllerState_t_Packed(pControllerState);
+			var state_packed = new VRControllerState_t_Packed(pControllerState);
 			u.pGetControllerStateWithPosePacked = null;
 			u.pGetControllerStateWithPose = FnTable.GetControllerStateWithPose;
 			bool packed_result = u.pGetControllerStateWithPosePacked(eOrigin,unControllerDeviceIndex,ref state_packed,(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VRControllerState_t_Packed)),ref pTrackedDevicePose);
@@ -2293,12 +2293,12 @@ public class CVRSystem
 	}
 	public string GetButtonIdNameFromEnum(EVRButtonId eButtonId)
 	{
-		IntPtr result = FnTable.GetButtonIdNameFromEnum(eButtonId);
+		var result = FnTable.GetButtonIdNameFromEnum(eButtonId);
 		return Marshal.PtrToStringAnsi(result);
 	}
 	public string GetControllerAxisTypeNameFromEnum(EVRControllerAxisType eAxisType)
 	{
-		IntPtr result = FnTable.GetControllerAxisTypeNameFromEnum(eAxisType);
+		var result = FnTable.GetControllerAxisTypeNameFromEnum(eAxisType);
 		return Marshal.PtrToStringAnsi(result);
 	}
 	public bool IsInputAvailable()
@@ -2323,7 +2323,7 @@ public class CVRSystem
 	}
 	public EVRFirmwareError PerformFirmwareUpdate(uint unDeviceIndex)
 	{
-		EVRFirmwareError result = FnTable.PerformFirmwareUpdate(unDeviceIndex);
+		var result = FnTable.PerformFirmwareUpdate(unDeviceIndex);
 		return result;
 	}
 	public void AcknowledgeQuit_Exiting()
@@ -2337,7 +2337,7 @@ public class CVRSystem
 	}
 	public string GetRuntimeVersion()
 	{
-		IntPtr result = FnTable.GetRuntimeVersion();
+		var result = FnTable.GetRuntimeVersion();
 		return Marshal.PtrToStringAnsi(result);
 	}
 }
@@ -2384,13 +2384,13 @@ public class CVRTrackedCamera
 	}
 	public string GetCameraErrorNameFromEnum(EVRTrackedCameraError eCameraError)
 	{
-		IntPtr result = FnTable.GetCameraErrorNameFromEnum(eCameraError);
+		var result = FnTable.GetCameraErrorNameFromEnum(eCameraError);
 		return Marshal.PtrToStringAnsi(result);
 	}
 	public EVRTrackedCameraError HasCamera(uint nDeviceIndex,ref bool pHasCamera)
 	{
 		pHasCamera = false;
-		EVRTrackedCameraError result = FnTable.HasCamera(nDeviceIndex,ref pHasCamera);
+		var result = FnTable.HasCamera(nDeviceIndex,ref pHasCamera);
 		return result;
 	}
 	public EVRTrackedCameraError GetCameraFrameSize(uint nDeviceIndex,EVRTrackedCameraFrameType eFrameType,ref uint pnWidth,ref uint pnHeight,ref uint pnFrameBufferSize)
@@ -2398,56 +2398,56 @@ public class CVRTrackedCamera
 		pnWidth = 0;
 		pnHeight = 0;
 		pnFrameBufferSize = 0;
-		EVRTrackedCameraError result = FnTable.GetCameraFrameSize(nDeviceIndex,eFrameType,ref pnWidth,ref pnHeight,ref pnFrameBufferSize);
+		var result = FnTable.GetCameraFrameSize(nDeviceIndex,eFrameType,ref pnWidth,ref pnHeight,ref pnFrameBufferSize);
 		return result;
 	}
 	public EVRTrackedCameraError GetCameraIntrinsics(uint nDeviceIndex,uint nCameraIndex,EVRTrackedCameraFrameType eFrameType,ref HmdVector2_t pFocalLength,ref HmdVector2_t pCenter)
 	{
-		EVRTrackedCameraError result = FnTable.GetCameraIntrinsics(nDeviceIndex,nCameraIndex,eFrameType,ref pFocalLength,ref pCenter);
+		var result = FnTable.GetCameraIntrinsics(nDeviceIndex,nCameraIndex,eFrameType,ref pFocalLength,ref pCenter);
 		return result;
 	}
 	public EVRTrackedCameraError GetCameraProjection(uint nDeviceIndex,uint nCameraIndex,EVRTrackedCameraFrameType eFrameType,float flZNear,float flZFar,ref HmdMatrix44_t pProjection)
 	{
-		EVRTrackedCameraError result = FnTable.GetCameraProjection(nDeviceIndex,nCameraIndex,eFrameType,flZNear,flZFar,ref pProjection);
+		var result = FnTable.GetCameraProjection(nDeviceIndex,nCameraIndex,eFrameType,flZNear,flZFar,ref pProjection);
 		return result;
 	}
 	public EVRTrackedCameraError AcquireVideoStreamingService(uint nDeviceIndex,ref ulong pHandle)
 	{
 		pHandle = 0;
-		EVRTrackedCameraError result = FnTable.AcquireVideoStreamingService(nDeviceIndex,ref pHandle);
+		var result = FnTable.AcquireVideoStreamingService(nDeviceIndex,ref pHandle);
 		return result;
 	}
 	public EVRTrackedCameraError ReleaseVideoStreamingService(ulong hTrackedCamera)
 	{
-		EVRTrackedCameraError result = FnTable.ReleaseVideoStreamingService(hTrackedCamera);
+		var result = FnTable.ReleaseVideoStreamingService(hTrackedCamera);
 		return result;
 	}
 	public EVRTrackedCameraError GetVideoStreamFrameBuffer(ulong hTrackedCamera,EVRTrackedCameraFrameType eFrameType,IntPtr pFrameBuffer,uint nFrameBufferSize,ref CameraVideoStreamFrameHeader_t pFrameHeader,uint nFrameHeaderSize)
 	{
-		EVRTrackedCameraError result = FnTable.GetVideoStreamFrameBuffer(hTrackedCamera,eFrameType,pFrameBuffer,nFrameBufferSize,ref pFrameHeader,nFrameHeaderSize);
+		var result = FnTable.GetVideoStreamFrameBuffer(hTrackedCamera,eFrameType,pFrameBuffer,nFrameBufferSize,ref pFrameHeader,nFrameHeaderSize);
 		return result;
 	}
 	public EVRTrackedCameraError GetVideoStreamTextureSize(uint nDeviceIndex,EVRTrackedCameraFrameType eFrameType,ref VRTextureBounds_t pTextureBounds,ref uint pnWidth,ref uint pnHeight)
 	{
 		pnWidth = 0;
 		pnHeight = 0;
-		EVRTrackedCameraError result = FnTable.GetVideoStreamTextureSize(nDeviceIndex,eFrameType,ref pTextureBounds,ref pnWidth,ref pnHeight);
+		var result = FnTable.GetVideoStreamTextureSize(nDeviceIndex,eFrameType,ref pTextureBounds,ref pnWidth,ref pnHeight);
 		return result;
 	}
 	public EVRTrackedCameraError GetVideoStreamTextureD3D11(ulong hTrackedCamera,EVRTrackedCameraFrameType eFrameType,IntPtr pD3D11DeviceOrResource,ref IntPtr ppD3D11ShaderResourceView,ref CameraVideoStreamFrameHeader_t pFrameHeader,uint nFrameHeaderSize)
 	{
-		EVRTrackedCameraError result = FnTable.GetVideoStreamTextureD3D11(hTrackedCamera,eFrameType,pD3D11DeviceOrResource,ref ppD3D11ShaderResourceView,ref pFrameHeader,nFrameHeaderSize);
+		var result = FnTable.GetVideoStreamTextureD3D11(hTrackedCamera,eFrameType,pD3D11DeviceOrResource,ref ppD3D11ShaderResourceView,ref pFrameHeader,nFrameHeaderSize);
 		return result;
 	}
 	public EVRTrackedCameraError GetVideoStreamTextureGL(ulong hTrackedCamera,EVRTrackedCameraFrameType eFrameType,ref uint pglTextureId,ref CameraVideoStreamFrameHeader_t pFrameHeader,uint nFrameHeaderSize)
 	{
 		pglTextureId = 0;
-		EVRTrackedCameraError result = FnTable.GetVideoStreamTextureGL(hTrackedCamera,eFrameType,ref pglTextureId,ref pFrameHeader,nFrameHeaderSize);
+		var result = FnTable.GetVideoStreamTextureGL(hTrackedCamera,eFrameType,ref pglTextureId,ref pFrameHeader,nFrameHeaderSize);
 		return result;
 	}
 	public EVRTrackedCameraError ReleaseVideoStreamTextureGL(ulong hTrackedCamera,uint glTextureId)
 	{
-		EVRTrackedCameraError result = FnTable.ReleaseVideoStreamTextureGL(hTrackedCamera,glTextureId);
+		var result = FnTable.ReleaseVideoStreamTextureGL(hTrackedCamera,glTextureId);
 		return result;
 	}
 	public void SetCameraTrackingSpace(ETrackingUniverseOrigin eUniverse)
@@ -2456,7 +2456,7 @@ public class CVRTrackedCamera
 	}
 	public ETrackingUniverseOrigin GetCameraTrackingSpace()
 	{
-		ETrackingUniverseOrigin result = FnTable.GetCameraTrackingSpace();
+		var result = FnTable.GetCameraTrackingSpace();
 		return result;
 	}
 }
@@ -2471,21 +2471,21 @@ public class CVRApplications
 	}
 	public EVRApplicationError AddApplicationManifest(string pchApplicationManifestFullPath,bool bTemporary)
 	{
-		IntPtr pchApplicationManifestFullPathUtf8 = Utils.ToUtf8(pchApplicationManifestFullPath);
-		EVRApplicationError result = FnTable.AddApplicationManifest(pchApplicationManifestFullPathUtf8,bTemporary);
+		var pchApplicationManifestFullPathUtf8 = Utils.ToUtf8(pchApplicationManifestFullPath);
+		var result = FnTable.AddApplicationManifest(pchApplicationManifestFullPathUtf8,bTemporary);
 		Marshal.FreeHGlobal(pchApplicationManifestFullPathUtf8);
 		return result;
 	}
 	public EVRApplicationError RemoveApplicationManifest(string pchApplicationManifestFullPath)
 	{
-		IntPtr pchApplicationManifestFullPathUtf8 = Utils.ToUtf8(pchApplicationManifestFullPath);
-		EVRApplicationError result = FnTable.RemoveApplicationManifest(pchApplicationManifestFullPathUtf8);
+		var pchApplicationManifestFullPathUtf8 = Utils.ToUtf8(pchApplicationManifestFullPath);
+		var result = FnTable.RemoveApplicationManifest(pchApplicationManifestFullPathUtf8);
 		Marshal.FreeHGlobal(pchApplicationManifestFullPathUtf8);
 		return result;
 	}
 	public bool IsApplicationInstalled(string pchAppKey)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
 		bool result = FnTable.IsApplicationInstalled(pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
@@ -2497,133 +2497,133 @@ public class CVRApplications
 	}
 	public EVRApplicationError GetApplicationKeyByIndex(uint unApplicationIndex,System.Text.StringBuilder pchAppKeyBuffer,uint unAppKeyBufferLen)
 	{
-		EVRApplicationError result = FnTable.GetApplicationKeyByIndex(unApplicationIndex,pchAppKeyBuffer,unAppKeyBufferLen);
+		var result = FnTable.GetApplicationKeyByIndex(unApplicationIndex,pchAppKeyBuffer,unAppKeyBufferLen);
 		return result;
 	}
 	public EVRApplicationError GetApplicationKeyByProcessId(uint unProcessId,System.Text.StringBuilder pchAppKeyBuffer,uint unAppKeyBufferLen)
 	{
-		EVRApplicationError result = FnTable.GetApplicationKeyByProcessId(unProcessId,pchAppKeyBuffer,unAppKeyBufferLen);
+		var result = FnTable.GetApplicationKeyByProcessId(unProcessId,pchAppKeyBuffer,unAppKeyBufferLen);
 		return result;
 	}
 	public EVRApplicationError LaunchApplication(string pchAppKey)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		EVRApplicationError result = FnTable.LaunchApplication(pchAppKeyUtf8);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var result = FnTable.LaunchApplication(pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public EVRApplicationError LaunchTemplateApplication(string pchTemplateAppKey,string pchNewAppKey,AppOverrideKeys_t [] pKeys)
 	{
-		IntPtr pchTemplateAppKeyUtf8 = Utils.ToUtf8(pchTemplateAppKey);
-		IntPtr pchNewAppKeyUtf8 = Utils.ToUtf8(pchNewAppKey);
-		EVRApplicationError result = FnTable.LaunchTemplateApplication(pchTemplateAppKeyUtf8,pchNewAppKeyUtf8,pKeys,(uint) pKeys.Length);
+		var pchTemplateAppKeyUtf8 = Utils.ToUtf8(pchTemplateAppKey);
+		var pchNewAppKeyUtf8 = Utils.ToUtf8(pchNewAppKey);
+		var result = FnTable.LaunchTemplateApplication(pchTemplateAppKeyUtf8,pchNewAppKeyUtf8,pKeys,(uint) pKeys.Length);
 		Marshal.FreeHGlobal(pchTemplateAppKeyUtf8);
 		Marshal.FreeHGlobal(pchNewAppKeyUtf8);
 		return result;
 	}
 	public EVRApplicationError LaunchApplicationFromMimeType(string pchMimeType,string pchArgs)
 	{
-		IntPtr pchMimeTypeUtf8 = Utils.ToUtf8(pchMimeType);
-		IntPtr pchArgsUtf8 = Utils.ToUtf8(pchArgs);
-		EVRApplicationError result = FnTable.LaunchApplicationFromMimeType(pchMimeTypeUtf8,pchArgsUtf8);
+		var pchMimeTypeUtf8 = Utils.ToUtf8(pchMimeType);
+		var pchArgsUtf8 = Utils.ToUtf8(pchArgs);
+		var result = FnTable.LaunchApplicationFromMimeType(pchMimeTypeUtf8,pchArgsUtf8);
 		Marshal.FreeHGlobal(pchMimeTypeUtf8);
 		Marshal.FreeHGlobal(pchArgsUtf8);
 		return result;
 	}
 	public EVRApplicationError LaunchDashboardOverlay(string pchAppKey)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		EVRApplicationError result = FnTable.LaunchDashboardOverlay(pchAppKeyUtf8);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var result = FnTable.LaunchDashboardOverlay(pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public bool CancelApplicationLaunch(string pchAppKey)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
 		bool result = FnTable.CancelApplicationLaunch(pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public EVRApplicationError IdentifyApplication(uint unProcessId,string pchAppKey)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		EVRApplicationError result = FnTable.IdentifyApplication(unProcessId,pchAppKeyUtf8);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var result = FnTable.IdentifyApplication(unProcessId,pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public uint GetApplicationProcessId(string pchAppKey)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
 		uint result = FnTable.GetApplicationProcessId(pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public string GetApplicationsErrorNameFromEnum(EVRApplicationError error)
 	{
-		IntPtr result = FnTable.GetApplicationsErrorNameFromEnum(error);
+		var result = FnTable.GetApplicationsErrorNameFromEnum(error);
 		return Marshal.PtrToStringAnsi(result);
 	}
 	public uint GetApplicationPropertyString(string pchAppKey,EVRApplicationProperty eProperty,System.Text.StringBuilder pchPropertyValueBuffer,uint unPropertyValueBufferLen,ref EVRApplicationError peError)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
 		uint result = FnTable.GetApplicationPropertyString(pchAppKeyUtf8,eProperty,pchPropertyValueBuffer,unPropertyValueBufferLen,ref peError);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public bool GetApplicationPropertyBool(string pchAppKey,EVRApplicationProperty eProperty,ref EVRApplicationError peError)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
 		bool result = FnTable.GetApplicationPropertyBool(pchAppKeyUtf8,eProperty,ref peError);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public ulong GetApplicationPropertyUint64(string pchAppKey,EVRApplicationProperty eProperty,ref EVRApplicationError peError)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
 		ulong result = FnTable.GetApplicationPropertyUint64(pchAppKeyUtf8,eProperty,ref peError);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public EVRApplicationError SetApplicationAutoLaunch(string pchAppKey,bool bAutoLaunch)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		EVRApplicationError result = FnTable.SetApplicationAutoLaunch(pchAppKeyUtf8,bAutoLaunch);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var result = FnTable.SetApplicationAutoLaunch(pchAppKeyUtf8,bAutoLaunch);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public bool GetApplicationAutoLaunch(string pchAppKey)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
 		bool result = FnTable.GetApplicationAutoLaunch(pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public EVRApplicationError SetDefaultApplicationForMimeType(string pchAppKey,string pchMimeType)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		IntPtr pchMimeTypeUtf8 = Utils.ToUtf8(pchMimeType);
-		EVRApplicationError result = FnTable.SetDefaultApplicationForMimeType(pchAppKeyUtf8,pchMimeTypeUtf8);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var pchMimeTypeUtf8 = Utils.ToUtf8(pchMimeType);
+		var result = FnTable.SetDefaultApplicationForMimeType(pchAppKeyUtf8,pchMimeTypeUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchMimeTypeUtf8);
 		return result;
 	}
 	public bool GetDefaultApplicationForMimeType(string pchMimeType,System.Text.StringBuilder pchAppKeyBuffer,uint unAppKeyBufferLen)
 	{
-		IntPtr pchMimeTypeUtf8 = Utils.ToUtf8(pchMimeType);
+		var pchMimeTypeUtf8 = Utils.ToUtf8(pchMimeType);
 		bool result = FnTable.GetDefaultApplicationForMimeType(pchMimeTypeUtf8,pchAppKeyBuffer,unAppKeyBufferLen);
 		Marshal.FreeHGlobal(pchMimeTypeUtf8);
 		return result;
 	}
 	public bool GetApplicationSupportedMimeTypes(string pchAppKey,System.Text.StringBuilder pchMimeTypesBuffer,uint unMimeTypesBuffer)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
 		bool result = FnTable.GetApplicationSupportedMimeTypes(pchAppKeyUtf8,pchMimeTypesBuffer,unMimeTypesBuffer);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public uint GetApplicationsThatSupportMimeType(string pchMimeType,System.Text.StringBuilder pchAppKeysThatSupportBuffer,uint unAppKeysThatSupportBuffer)
 	{
-		IntPtr pchMimeTypeUtf8 = Utils.ToUtf8(pchMimeType);
+		var pchMimeTypeUtf8 = Utils.ToUtf8(pchMimeType);
 		uint result = FnTable.GetApplicationsThatSupportMimeType(pchMimeTypeUtf8,pchAppKeysThatSupportBuffer,unAppKeysThatSupportBuffer);
 		Marshal.FreeHGlobal(pchMimeTypeUtf8);
 		return result;
@@ -2635,32 +2635,32 @@ public class CVRApplications
 	}
 	public EVRApplicationError GetStartingApplication(System.Text.StringBuilder pchAppKeyBuffer,uint unAppKeyBufferLen)
 	{
-		EVRApplicationError result = FnTable.GetStartingApplication(pchAppKeyBuffer,unAppKeyBufferLen);
+		var result = FnTable.GetStartingApplication(pchAppKeyBuffer,unAppKeyBufferLen);
 		return result;
 	}
 	public EVRSceneApplicationState GetSceneApplicationState()
 	{
-		EVRSceneApplicationState result = FnTable.GetSceneApplicationState();
+		var result = FnTable.GetSceneApplicationState();
 		return result;
 	}
 	public EVRApplicationError PerformApplicationPrelaunchCheck(string pchAppKey)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		EVRApplicationError result = FnTable.PerformApplicationPrelaunchCheck(pchAppKeyUtf8);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var result = FnTable.PerformApplicationPrelaunchCheck(pchAppKeyUtf8);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public string GetSceneApplicationStateNameFromEnum(EVRSceneApplicationState state)
 	{
-		IntPtr result = FnTable.GetSceneApplicationStateNameFromEnum(state);
+		var result = FnTable.GetSceneApplicationStateNameFromEnum(state);
 		return Marshal.PtrToStringAnsi(result);
 	}
 	public EVRApplicationError LaunchInternalProcess(string pchBinaryPath,string pchArguments,string pchWorkingDirectory)
 	{
-		IntPtr pchBinaryPathUtf8 = Utils.ToUtf8(pchBinaryPath);
-		IntPtr pchArgumentsUtf8 = Utils.ToUtf8(pchArguments);
-		IntPtr pchWorkingDirectoryUtf8 = Utils.ToUtf8(pchWorkingDirectory);
-		EVRApplicationError result = FnTable.LaunchInternalProcess(pchBinaryPathUtf8,pchArgumentsUtf8,pchWorkingDirectoryUtf8);
+		var pchBinaryPathUtf8 = Utils.ToUtf8(pchBinaryPath);
+		var pchArgumentsUtf8 = Utils.ToUtf8(pchArguments);
+		var pchWorkingDirectoryUtf8 = Utils.ToUtf8(pchWorkingDirectory);
+		var result = FnTable.LaunchInternalProcess(pchBinaryPathUtf8,pchArgumentsUtf8,pchWorkingDirectoryUtf8);
 		Marshal.FreeHGlobal(pchBinaryPathUtf8);
 		Marshal.FreeHGlobal(pchArgumentsUtf8);
 		Marshal.FreeHGlobal(pchWorkingDirectoryUtf8);
@@ -2683,7 +2683,7 @@ public class CVRChaperone
 	}
 	public ChaperoneCalibrationState GetCalibrationState()
 	{
-		ChaperoneCalibrationState result = FnTable.GetCalibrationState();
+		var result = FnTable.GetCalibrationState();
 		return result;
 	}
 	public bool GetPlayAreaSize(ref float pSizeX,ref float pSizeZ)
@@ -2817,7 +2817,7 @@ public class CVRChaperoneSetup
 	}
 	public bool ImportFromBufferToWorking(string pBuffer,uint nImportFlags)
 	{
-		IntPtr pBufferUtf8 = Utils.ToUtf8(pBuffer);
+		var pBufferUtf8 = Utils.ToUtf8(pBuffer);
 		bool result = FnTable.ImportFromBufferToWorking(pBufferUtf8,nImportFlags);
 		Marshal.FreeHGlobal(pBufferUtf8);
 		return result;
@@ -2850,27 +2850,27 @@ public class CVRCompositor
 	}
 	public ETrackingUniverseOrigin GetTrackingSpace()
 	{
-		ETrackingUniverseOrigin result = FnTable.GetTrackingSpace();
+		var result = FnTable.GetTrackingSpace();
 		return result;
 	}
 	public EVRCompositorError WaitGetPoses(TrackedDevicePose_t [] pRenderPoseArray,TrackedDevicePose_t [] pGamePoseArray)
 	{
-		EVRCompositorError result = FnTable.WaitGetPoses(pRenderPoseArray,(uint) pRenderPoseArray.Length,pGamePoseArray,(uint) pGamePoseArray.Length);
+		var result = FnTable.WaitGetPoses(pRenderPoseArray,(uint) pRenderPoseArray.Length,pGamePoseArray,(uint) pGamePoseArray.Length);
 		return result;
 	}
 	public EVRCompositorError GetLastPoses(TrackedDevicePose_t [] pRenderPoseArray,TrackedDevicePose_t [] pGamePoseArray)
 	{
-		EVRCompositorError result = FnTable.GetLastPoses(pRenderPoseArray,(uint) pRenderPoseArray.Length,pGamePoseArray,(uint) pGamePoseArray.Length);
+		var result = FnTable.GetLastPoses(pRenderPoseArray,(uint) pRenderPoseArray.Length,pGamePoseArray,(uint) pGamePoseArray.Length);
 		return result;
 	}
 	public EVRCompositorError GetLastPoseForTrackedDeviceIndex(uint unDeviceIndex,ref TrackedDevicePose_t pOutputPose,ref TrackedDevicePose_t pOutputGamePose)
 	{
-		EVRCompositorError result = FnTable.GetLastPoseForTrackedDeviceIndex(unDeviceIndex,ref pOutputPose,ref pOutputGamePose);
+		var result = FnTable.GetLastPoseForTrackedDeviceIndex(unDeviceIndex,ref pOutputPose,ref pOutputGamePose);
 		return result;
 	}
 	public EVRCompositorError Submit(EVREye eEye,ref Texture_t pTexture,ref VRTextureBounds_t pBounds,EVRSubmitFlags nSubmitFlags)
 	{
-		EVRCompositorError result = FnTable.Submit(eEye,ref pTexture,ref pBounds,nSubmitFlags);
+		var result = FnTable.Submit(eEye,ref pTexture,ref pBounds,nSubmitFlags);
 		return result;
 	}
 	public void ClearLastSubmittedFrame()
@@ -2906,7 +2906,7 @@ public class CVRCompositor
 	}
 	public HmdColor_t GetCurrentFadeColor(bool bBackground)
 	{
-		HmdColor_t result = FnTable.GetCurrentFadeColor(bBackground);
+		var result = FnTable.GetCurrentFadeColor(bBackground);
 		return result;
 	}
 	public void FadeGrid(float fSeconds,bool bFadeGridIn)
@@ -2920,7 +2920,7 @@ public class CVRCompositor
 	}
 	public EVRCompositorError SetSkyboxOverride(Texture_t [] pTextures)
 	{
-		EVRCompositorError result = FnTable.SetSkyboxOverride(pTextures,(uint) pTextures.Length);
+		var result = FnTable.SetSkyboxOverride(pTextures,(uint) pTextures.Length);
 		return result;
 	}
 	public void ClearSkyboxOverride()
@@ -2995,7 +2995,7 @@ public class CVRCompositor
 	}
 	public EVRCompositorError GetMirrorTextureD3D11(EVREye eEye,IntPtr pD3D11DeviceOrResource,ref IntPtr ppD3D11ShaderResourceView)
 	{
-		EVRCompositorError result = FnTable.GetMirrorTextureD3D11(eEye,pD3D11DeviceOrResource,ref ppD3D11ShaderResourceView);
+		var result = FnTable.GetMirrorTextureD3D11(eEye,pD3D11DeviceOrResource,ref ppD3D11ShaderResourceView);
 		return result;
 	}
 	public void ReleaseMirrorTextureD3D11(IntPtr pD3D11ShaderResourceView)
@@ -3005,7 +3005,7 @@ public class CVRCompositor
 	public EVRCompositorError GetMirrorTextureGL(EVREye eEye,ref uint pglTextureId,IntPtr pglSharedTextureHandle)
 	{
 		pglTextureId = 0;
-		EVRCompositorError result = FnTable.GetMirrorTextureGL(eEye,ref pglTextureId,pglSharedTextureHandle);
+		var result = FnTable.GetMirrorTextureGL(eEye,ref pglTextureId,pglSharedTextureHandle);
 		return result;
 	}
 	public bool ReleaseSharedGLTexture(uint glTextureId,IntPtr glSharedTextureHandle)
@@ -3037,7 +3037,7 @@ public class CVRCompositor
 	}
 	public EVRCompositorError SubmitExplicitTimingData()
 	{
-		EVRCompositorError result = FnTable.SubmitExplicitTimingData();
+		var result = FnTable.SubmitExplicitTimingData();
 		return result;
 	}
 	public bool IsMotionSmoothingEnabled()
@@ -3057,8 +3057,8 @@ public class CVRCompositor
 	}
 	public EVRCompositorError SetStageOverride_Async(string pchRenderModelPath,ref HmdMatrix34_t pTransform,ref Compositor_StageRenderSettings pRenderSettings,uint nSizeOfRenderSettings)
 	{
-		IntPtr pchRenderModelPathUtf8 = Utils.ToUtf8(pchRenderModelPath);
-		EVRCompositorError result = FnTable.SetStageOverride_Async(pchRenderModelPathUtf8,ref pTransform,ref pRenderSettings,nSizeOfRenderSettings);
+		var pchRenderModelPathUtf8 = Utils.ToUtf8(pchRenderModelPath);
+		var result = FnTable.SetStageOverride_Async(pchRenderModelPathUtf8,ref pTransform,ref pRenderSettings,nSizeOfRenderSettings);
 		Marshal.FreeHGlobal(pchRenderModelPathUtf8);
 		return result;
 	}
@@ -3075,12 +3075,12 @@ public class CVRCompositor
 	{
 		pRenderPosePredictionID = 0;
 		pGamePosePredictionID = 0;
-		EVRCompositorError result = FnTable.GetLastPosePredictionIDs(ref pRenderPosePredictionID,ref pGamePosePredictionID);
+		var result = FnTable.GetLastPosePredictionIDs(ref pRenderPosePredictionID,ref pGamePosePredictionID);
 		return result;
 	}
 	public EVRCompositorError GetPosesForFrame(uint unPosePredictionID,TrackedDevicePose_t [] pPoseArray)
 	{
-		EVRCompositorError result = FnTable.GetPosesForFrame(unPosePredictionID,pPoseArray,(uint) pPoseArray.Length);
+		var result = FnTable.GetPosesForFrame(unPosePredictionID,pPoseArray,(uint) pPoseArray.Length);
 		return result;
 	}
 }
@@ -3095,25 +3095,25 @@ public class CVROverlay
 	}
 	public EVROverlayError FindOverlay(string pchOverlayKey,ref ulong pOverlayHandle)
 	{
-		IntPtr pchOverlayKeyUtf8 = Utils.ToUtf8(pchOverlayKey);
+		var pchOverlayKeyUtf8 = Utils.ToUtf8(pchOverlayKey);
 		pOverlayHandle = 0;
-		EVROverlayError result = FnTable.FindOverlay(pchOverlayKeyUtf8,ref pOverlayHandle);
+		var result = FnTable.FindOverlay(pchOverlayKeyUtf8,ref pOverlayHandle);
 		Marshal.FreeHGlobal(pchOverlayKeyUtf8);
 		return result;
 	}
 	public EVROverlayError CreateOverlay(string pchOverlayKey,string pchOverlayName,ref ulong pOverlayHandle)
 	{
-		IntPtr pchOverlayKeyUtf8 = Utils.ToUtf8(pchOverlayKey);
-		IntPtr pchOverlayNameUtf8 = Utils.ToUtf8(pchOverlayName);
+		var pchOverlayKeyUtf8 = Utils.ToUtf8(pchOverlayKey);
+		var pchOverlayNameUtf8 = Utils.ToUtf8(pchOverlayName);
 		pOverlayHandle = 0;
-		EVROverlayError result = FnTable.CreateOverlay(pchOverlayKeyUtf8,pchOverlayNameUtf8,ref pOverlayHandle);
+		var result = FnTable.CreateOverlay(pchOverlayKeyUtf8,pchOverlayNameUtf8,ref pOverlayHandle);
 		Marshal.FreeHGlobal(pchOverlayKeyUtf8);
 		Marshal.FreeHGlobal(pchOverlayNameUtf8);
 		return result;
 	}
 	public EVROverlayError DestroyOverlay(ulong ulOverlayHandle)
 	{
-		EVROverlayError result = FnTable.DestroyOverlay(ulOverlayHandle);
+		var result = FnTable.DestroyOverlay(ulOverlayHandle);
 		return result;
 	}
 	public uint GetOverlayKey(ulong ulOverlayHandle,System.Text.StringBuilder pchValue,uint unBufferSize,ref EVROverlayError pError)
@@ -3128,8 +3128,8 @@ public class CVROverlay
 	}
 	public EVROverlayError SetOverlayName(ulong ulOverlayHandle,string pchName)
 	{
-		IntPtr pchNameUtf8 = Utils.ToUtf8(pchName);
-		EVROverlayError result = FnTable.SetOverlayName(ulOverlayHandle,pchNameUtf8);
+		var pchNameUtf8 = Utils.ToUtf8(pchName);
+		var result = FnTable.SetOverlayName(ulOverlayHandle,pchNameUtf8);
 		Marshal.FreeHGlobal(pchNameUtf8);
 		return result;
 	}
@@ -3137,17 +3137,17 @@ public class CVROverlay
 	{
 		punWidth = 0;
 		punHeight = 0;
-		EVROverlayError result = FnTable.GetOverlayImageData(ulOverlayHandle,pvBuffer,unBufferSize,ref punWidth,ref punHeight);
+		var result = FnTable.GetOverlayImageData(ulOverlayHandle,pvBuffer,unBufferSize,ref punWidth,ref punHeight);
 		return result;
 	}
 	public string GetOverlayErrorNameFromEnum(EVROverlayError error)
 	{
-		IntPtr result = FnTable.GetOverlayErrorNameFromEnum(error);
+		var result = FnTable.GetOverlayErrorNameFromEnum(error);
 		return Marshal.PtrToStringAnsi(result);
 	}
 	public EVROverlayError SetOverlayRenderingPid(ulong ulOverlayHandle,uint unPID)
 	{
-		EVROverlayError result = FnTable.SetOverlayRenderingPid(ulOverlayHandle,unPID);
+		var result = FnTable.SetOverlayRenderingPid(ulOverlayHandle,unPID);
 		return result;
 	}
 	public uint GetOverlayRenderingPid(ulong ulOverlayHandle)
@@ -3157,24 +3157,24 @@ public class CVROverlay
 	}
 	public EVROverlayError SetOverlayFlag(ulong ulOverlayHandle,VROverlayFlags eOverlayFlag,bool bEnabled)
 	{
-		EVROverlayError result = FnTable.SetOverlayFlag(ulOverlayHandle,eOverlayFlag,bEnabled);
+		var result = FnTable.SetOverlayFlag(ulOverlayHandle,eOverlayFlag,bEnabled);
 		return result;
 	}
 	public EVROverlayError GetOverlayFlag(ulong ulOverlayHandle,VROverlayFlags eOverlayFlag,ref bool pbEnabled)
 	{
 		pbEnabled = false;
-		EVROverlayError result = FnTable.GetOverlayFlag(ulOverlayHandle,eOverlayFlag,ref pbEnabled);
+		var result = FnTable.GetOverlayFlag(ulOverlayHandle,eOverlayFlag,ref pbEnabled);
 		return result;
 	}
 	public EVROverlayError GetOverlayFlags(ulong ulOverlayHandle,ref uint pFlags)
 	{
 		pFlags = 0;
-		EVROverlayError result = FnTable.GetOverlayFlags(ulOverlayHandle,ref pFlags);
+		var result = FnTable.GetOverlayFlags(ulOverlayHandle,ref pFlags);
 		return result;
 	}
 	public EVROverlayError SetOverlayColor(ulong ulOverlayHandle,float fRed,float fGreen,float fBlue)
 	{
-		EVROverlayError result = FnTable.SetOverlayColor(ulOverlayHandle,fRed,fGreen,fBlue);
+		var result = FnTable.SetOverlayColor(ulOverlayHandle,fRed,fGreen,fBlue);
 		return result;
 	}
 	public EVROverlayError GetOverlayColor(ulong ulOverlayHandle,ref float pfRed,ref float pfGreen,ref float pfBlue)
@@ -3182,157 +3182,157 @@ public class CVROverlay
 		pfRed = 0;
 		pfGreen = 0;
 		pfBlue = 0;
-		EVROverlayError result = FnTable.GetOverlayColor(ulOverlayHandle,ref pfRed,ref pfGreen,ref pfBlue);
+		var result = FnTable.GetOverlayColor(ulOverlayHandle,ref pfRed,ref pfGreen,ref pfBlue);
 		return result;
 	}
 	public EVROverlayError SetOverlayAlpha(ulong ulOverlayHandle,float fAlpha)
 	{
-		EVROverlayError result = FnTable.SetOverlayAlpha(ulOverlayHandle,fAlpha);
+		var result = FnTable.SetOverlayAlpha(ulOverlayHandle,fAlpha);
 		return result;
 	}
 	public EVROverlayError GetOverlayAlpha(ulong ulOverlayHandle,ref float pfAlpha)
 	{
 		pfAlpha = 0;
-		EVROverlayError result = FnTable.GetOverlayAlpha(ulOverlayHandle,ref pfAlpha);
+		var result = FnTable.GetOverlayAlpha(ulOverlayHandle,ref pfAlpha);
 		return result;
 	}
 	public EVROverlayError SetOverlayTexelAspect(ulong ulOverlayHandle,float fTexelAspect)
 	{
-		EVROverlayError result = FnTable.SetOverlayTexelAspect(ulOverlayHandle,fTexelAspect);
+		var result = FnTable.SetOverlayTexelAspect(ulOverlayHandle,fTexelAspect);
 		return result;
 	}
 	public EVROverlayError GetOverlayTexelAspect(ulong ulOverlayHandle,ref float pfTexelAspect)
 	{
 		pfTexelAspect = 0;
-		EVROverlayError result = FnTable.GetOverlayTexelAspect(ulOverlayHandle,ref pfTexelAspect);
+		var result = FnTable.GetOverlayTexelAspect(ulOverlayHandle,ref pfTexelAspect);
 		return result;
 	}
 	public EVROverlayError SetOverlaySortOrder(ulong ulOverlayHandle,uint unSortOrder)
 	{
-		EVROverlayError result = FnTable.SetOverlaySortOrder(ulOverlayHandle,unSortOrder);
+		var result = FnTable.SetOverlaySortOrder(ulOverlayHandle,unSortOrder);
 		return result;
 	}
 	public EVROverlayError GetOverlaySortOrder(ulong ulOverlayHandle,ref uint punSortOrder)
 	{
 		punSortOrder = 0;
-		EVROverlayError result = FnTable.GetOverlaySortOrder(ulOverlayHandle,ref punSortOrder);
+		var result = FnTable.GetOverlaySortOrder(ulOverlayHandle,ref punSortOrder);
 		return result;
 	}
 	public EVROverlayError SetOverlayWidthInMeters(ulong ulOverlayHandle,float fWidthInMeters)
 	{
-		EVROverlayError result = FnTable.SetOverlayWidthInMeters(ulOverlayHandle,fWidthInMeters);
+		var result = FnTable.SetOverlayWidthInMeters(ulOverlayHandle,fWidthInMeters);
 		return result;
 	}
 	public EVROverlayError GetOverlayWidthInMeters(ulong ulOverlayHandle,ref float pfWidthInMeters)
 	{
 		pfWidthInMeters = 0;
-		EVROverlayError result = FnTable.GetOverlayWidthInMeters(ulOverlayHandle,ref pfWidthInMeters);
+		var result = FnTable.GetOverlayWidthInMeters(ulOverlayHandle,ref pfWidthInMeters);
 		return result;
 	}
 	public EVROverlayError SetOverlayCurvature(ulong ulOverlayHandle,float fCurvature)
 	{
-		EVROverlayError result = FnTable.SetOverlayCurvature(ulOverlayHandle,fCurvature);
+		var result = FnTable.SetOverlayCurvature(ulOverlayHandle,fCurvature);
 		return result;
 	}
 	public EVROverlayError GetOverlayCurvature(ulong ulOverlayHandle,ref float pfCurvature)
 	{
 		pfCurvature = 0;
-		EVROverlayError result = FnTable.GetOverlayCurvature(ulOverlayHandle,ref pfCurvature);
+		var result = FnTable.GetOverlayCurvature(ulOverlayHandle,ref pfCurvature);
 		return result;
 	}
 	public EVROverlayError SetOverlayPreCurvePitch(ulong ulOverlayHandle,float fRadians)
 	{
-		EVROverlayError result = FnTable.SetOverlayPreCurvePitch(ulOverlayHandle,fRadians);
+		var result = FnTable.SetOverlayPreCurvePitch(ulOverlayHandle,fRadians);
 		return result;
 	}
 	public EVROverlayError GetOverlayPreCurvePitch(ulong ulOverlayHandle,ref float pfRadians)
 	{
 		pfRadians = 0;
-		EVROverlayError result = FnTable.GetOverlayPreCurvePitch(ulOverlayHandle,ref pfRadians);
+		var result = FnTable.GetOverlayPreCurvePitch(ulOverlayHandle,ref pfRadians);
 		return result;
 	}
 	public EVROverlayError SetOverlayTextureColorSpace(ulong ulOverlayHandle,EColorSpace eTextureColorSpace)
 	{
-		EVROverlayError result = FnTable.SetOverlayTextureColorSpace(ulOverlayHandle,eTextureColorSpace);
+		var result = FnTable.SetOverlayTextureColorSpace(ulOverlayHandle,eTextureColorSpace);
 		return result;
 	}
 	public EVROverlayError GetOverlayTextureColorSpace(ulong ulOverlayHandle,ref EColorSpace peTextureColorSpace)
 	{
-		EVROverlayError result = FnTable.GetOverlayTextureColorSpace(ulOverlayHandle,ref peTextureColorSpace);
+		var result = FnTable.GetOverlayTextureColorSpace(ulOverlayHandle,ref peTextureColorSpace);
 		return result;
 	}
 	public EVROverlayError SetOverlayTextureBounds(ulong ulOverlayHandle,ref VRTextureBounds_t pOverlayTextureBounds)
 	{
-		EVROverlayError result = FnTable.SetOverlayTextureBounds(ulOverlayHandle,ref pOverlayTextureBounds);
+		var result = FnTable.SetOverlayTextureBounds(ulOverlayHandle,ref pOverlayTextureBounds);
 		return result;
 	}
 	public EVROverlayError GetOverlayTextureBounds(ulong ulOverlayHandle,ref VRTextureBounds_t pOverlayTextureBounds)
 	{
-		EVROverlayError result = FnTable.GetOverlayTextureBounds(ulOverlayHandle,ref pOverlayTextureBounds);
+		var result = FnTable.GetOverlayTextureBounds(ulOverlayHandle,ref pOverlayTextureBounds);
 		return result;
 	}
 	public EVROverlayError GetOverlayTransformType(ulong ulOverlayHandle,ref VROverlayTransformType peTransformType)
 	{
-		EVROverlayError result = FnTable.GetOverlayTransformType(ulOverlayHandle,ref peTransformType);
+		var result = FnTable.GetOverlayTransformType(ulOverlayHandle,ref peTransformType);
 		return result;
 	}
 	public EVROverlayError SetOverlayTransformAbsolute(ulong ulOverlayHandle,ETrackingUniverseOrigin eTrackingOrigin,ref HmdMatrix34_t pmatTrackingOriginToOverlayTransform)
 	{
-		EVROverlayError result = FnTable.SetOverlayTransformAbsolute(ulOverlayHandle,eTrackingOrigin,ref pmatTrackingOriginToOverlayTransform);
+		var result = FnTable.SetOverlayTransformAbsolute(ulOverlayHandle,eTrackingOrigin,ref pmatTrackingOriginToOverlayTransform);
 		return result;
 	}
 	public EVROverlayError GetOverlayTransformAbsolute(ulong ulOverlayHandle,ref ETrackingUniverseOrigin peTrackingOrigin,ref HmdMatrix34_t pmatTrackingOriginToOverlayTransform)
 	{
-		EVROverlayError result = FnTable.GetOverlayTransformAbsolute(ulOverlayHandle,ref peTrackingOrigin,ref pmatTrackingOriginToOverlayTransform);
+		var result = FnTable.GetOverlayTransformAbsolute(ulOverlayHandle,ref peTrackingOrigin,ref pmatTrackingOriginToOverlayTransform);
 		return result;
 	}
 	public EVROverlayError SetOverlayTransformTrackedDeviceRelative(ulong ulOverlayHandle,uint unTrackedDevice,ref HmdMatrix34_t pmatTrackedDeviceToOverlayTransform)
 	{
-		EVROverlayError result = FnTable.SetOverlayTransformTrackedDeviceRelative(ulOverlayHandle,unTrackedDevice,ref pmatTrackedDeviceToOverlayTransform);
+		var result = FnTable.SetOverlayTransformTrackedDeviceRelative(ulOverlayHandle,unTrackedDevice,ref pmatTrackedDeviceToOverlayTransform);
 		return result;
 	}
 	public EVROverlayError GetOverlayTransformTrackedDeviceRelative(ulong ulOverlayHandle,ref uint punTrackedDevice,ref HmdMatrix34_t pmatTrackedDeviceToOverlayTransform)
 	{
 		punTrackedDevice = 0;
-		EVROverlayError result = FnTable.GetOverlayTransformTrackedDeviceRelative(ulOverlayHandle,ref punTrackedDevice,ref pmatTrackedDeviceToOverlayTransform);
+		var result = FnTable.GetOverlayTransformTrackedDeviceRelative(ulOverlayHandle,ref punTrackedDevice,ref pmatTrackedDeviceToOverlayTransform);
 		return result;
 	}
 	public EVROverlayError SetOverlayTransformTrackedDeviceComponent(ulong ulOverlayHandle,uint unDeviceIndex,string pchComponentName)
 	{
-		IntPtr pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
-		EVROverlayError result = FnTable.SetOverlayTransformTrackedDeviceComponent(ulOverlayHandle,unDeviceIndex,pchComponentNameUtf8);
+		var pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
+		var result = FnTable.SetOverlayTransformTrackedDeviceComponent(ulOverlayHandle,unDeviceIndex,pchComponentNameUtf8);
 		Marshal.FreeHGlobal(pchComponentNameUtf8);
 		return result;
 	}
 	public EVROverlayError GetOverlayTransformTrackedDeviceComponent(ulong ulOverlayHandle,ref uint punDeviceIndex,System.Text.StringBuilder pchComponentName,uint unComponentNameSize)
 	{
 		punDeviceIndex = 0;
-		EVROverlayError result = FnTable.GetOverlayTransformTrackedDeviceComponent(ulOverlayHandle,ref punDeviceIndex,pchComponentName,unComponentNameSize);
+		var result = FnTable.GetOverlayTransformTrackedDeviceComponent(ulOverlayHandle,ref punDeviceIndex,pchComponentName,unComponentNameSize);
 		return result;
 	}
 	public EVROverlayError SetOverlayTransformCursor(ulong ulCursorOverlayHandle,ref HmdVector2_t pvHotspot)
 	{
-		EVROverlayError result = FnTable.SetOverlayTransformCursor(ulCursorOverlayHandle,ref pvHotspot);
+		var result = FnTable.SetOverlayTransformCursor(ulCursorOverlayHandle,ref pvHotspot);
 		return result;
 	}
 	public EVROverlayError GetOverlayTransformCursor(ulong ulOverlayHandle,ref HmdVector2_t pvHotspot)
 	{
-		EVROverlayError result = FnTable.GetOverlayTransformCursor(ulOverlayHandle,ref pvHotspot);
+		var result = FnTable.GetOverlayTransformCursor(ulOverlayHandle,ref pvHotspot);
 		return result;
 	}
 	public EVROverlayError SetOverlayTransformProjection(ulong ulOverlayHandle,ETrackingUniverseOrigin eTrackingOrigin,ref HmdMatrix34_t pmatTrackingOriginToOverlayTransform,ref VROverlayProjection_t pProjection,EVREye eEye)
 	{
-		EVROverlayError result = FnTable.SetOverlayTransformProjection(ulOverlayHandle,eTrackingOrigin,ref pmatTrackingOriginToOverlayTransform,ref pProjection,eEye);
+		var result = FnTable.SetOverlayTransformProjection(ulOverlayHandle,eTrackingOrigin,ref pmatTrackingOriginToOverlayTransform,ref pProjection,eEye);
 		return result;
 	}
 	public EVROverlayError ShowOverlay(ulong ulOverlayHandle)
 	{
-		EVROverlayError result = FnTable.ShowOverlay(ulOverlayHandle);
+		var result = FnTable.ShowOverlay(ulOverlayHandle);
 		return result;
 	}
 	public EVROverlayError HideOverlay(ulong ulOverlayHandle)
 	{
-		EVROverlayError result = FnTable.HideOverlay(ulOverlayHandle);
+		var result = FnTable.HideOverlay(ulOverlayHandle);
 		return result;
 	}
 	public bool IsOverlayVisible(ulong ulOverlayHandle)
@@ -3342,12 +3342,12 @@ public class CVROverlay
 	}
 	public EVROverlayError GetTransformForOverlayCoordinates(ulong ulOverlayHandle,ETrackingUniverseOrigin eTrackingOrigin,HmdVector2_t coordinatesInOverlay,ref HmdMatrix34_t pmatTransform)
 	{
-		EVROverlayError result = FnTable.GetTransformForOverlayCoordinates(ulOverlayHandle,eTrackingOrigin,coordinatesInOverlay,ref pmatTransform);
+		var result = FnTable.GetTransformForOverlayCoordinates(ulOverlayHandle,eTrackingOrigin,coordinatesInOverlay,ref pmatTransform);
 		return result;
 	}
 	public EVROverlayError WaitFrameSync(uint nTimeoutMs)
 	{
-		EVROverlayError result = FnTable.WaitFrameSync(nTimeoutMs);
+		var result = FnTable.WaitFrameSync(nTimeoutMs);
 		return result;
 	}
 // This is a terrible hack to workaround the fact that VRControllerState_t and VREvent_t were
@@ -3369,7 +3369,7 @@ public class CVROverlay
 				(System.Environment.OSVersion.Platform == System.PlatformID.Unix))
 		{
 			PollNextOverlayEventUnion u;
-			VREvent_t_Packed event_packed = new VREvent_t_Packed();
+			var event_packed = new VREvent_t_Packed();
 			u.pPollNextOverlayEventPacked = null;
 			u.pPollNextOverlayEvent = FnTable.PollNextOverlayEvent;
 			bool packed_result = u.pPollNextOverlayEventPacked(ulOverlayHandle,ref event_packed,(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VREvent_t_Packed)));
@@ -3383,22 +3383,22 @@ public class CVROverlay
 	}
 	public EVROverlayError GetOverlayInputMethod(ulong ulOverlayHandle,ref VROverlayInputMethod peInputMethod)
 	{
-		EVROverlayError result = FnTable.GetOverlayInputMethod(ulOverlayHandle,ref peInputMethod);
+		var result = FnTable.GetOverlayInputMethod(ulOverlayHandle,ref peInputMethod);
 		return result;
 	}
 	public EVROverlayError SetOverlayInputMethod(ulong ulOverlayHandle,VROverlayInputMethod eInputMethod)
 	{
-		EVROverlayError result = FnTable.SetOverlayInputMethod(ulOverlayHandle,eInputMethod);
+		var result = FnTable.SetOverlayInputMethod(ulOverlayHandle,eInputMethod);
 		return result;
 	}
 	public EVROverlayError GetOverlayMouseScale(ulong ulOverlayHandle,ref HmdVector2_t pvecMouseScale)
 	{
-		EVROverlayError result = FnTable.GetOverlayMouseScale(ulOverlayHandle,ref pvecMouseScale);
+		var result = FnTable.GetOverlayMouseScale(ulOverlayHandle,ref pvecMouseScale);
 		return result;
 	}
 	public EVROverlayError SetOverlayMouseScale(ulong ulOverlayHandle,ref HmdVector2_t pvecMouseScale)
 	{
-		EVROverlayError result = FnTable.SetOverlayMouseScale(ulOverlayHandle,ref pvecMouseScale);
+		var result = FnTable.SetOverlayMouseScale(ulOverlayHandle,ref pvecMouseScale);
 		return result;
 	}
 	public bool ComputeOverlayIntersection(ulong ulOverlayHandle,ref VROverlayIntersectionParams_t pParams,ref VROverlayIntersectionResults_t pResults)
@@ -3413,48 +3413,48 @@ public class CVROverlay
 	}
 	public EVROverlayError SetOverlayIntersectionMask(ulong ulOverlayHandle,ref VROverlayIntersectionMaskPrimitive_t pMaskPrimitives,uint unNumMaskPrimitives,uint unPrimitiveSize)
 	{
-		EVROverlayError result = FnTable.SetOverlayIntersectionMask(ulOverlayHandle,ref pMaskPrimitives,unNumMaskPrimitives,unPrimitiveSize);
+		var result = FnTable.SetOverlayIntersectionMask(ulOverlayHandle,ref pMaskPrimitives,unNumMaskPrimitives,unPrimitiveSize);
 		return result;
 	}
 	public EVROverlayError TriggerLaserMouseHapticVibration(ulong ulOverlayHandle,float fDurationSeconds,float fFrequency,float fAmplitude)
 	{
-		EVROverlayError result = FnTable.TriggerLaserMouseHapticVibration(ulOverlayHandle,fDurationSeconds,fFrequency,fAmplitude);
+		var result = FnTable.TriggerLaserMouseHapticVibration(ulOverlayHandle,fDurationSeconds,fFrequency,fAmplitude);
 		return result;
 	}
 	public EVROverlayError SetOverlayCursor(ulong ulOverlayHandle,ulong ulCursorHandle)
 	{
-		EVROverlayError result = FnTable.SetOverlayCursor(ulOverlayHandle,ulCursorHandle);
+		var result = FnTable.SetOverlayCursor(ulOverlayHandle,ulCursorHandle);
 		return result;
 	}
 	public EVROverlayError SetOverlayCursorPositionOverride(ulong ulOverlayHandle,ref HmdVector2_t pvCursor)
 	{
-		EVROverlayError result = FnTable.SetOverlayCursorPositionOverride(ulOverlayHandle,ref pvCursor);
+		var result = FnTable.SetOverlayCursorPositionOverride(ulOverlayHandle,ref pvCursor);
 		return result;
 	}
 	public EVROverlayError ClearOverlayCursorPositionOverride(ulong ulOverlayHandle)
 	{
-		EVROverlayError result = FnTable.ClearOverlayCursorPositionOverride(ulOverlayHandle);
+		var result = FnTable.ClearOverlayCursorPositionOverride(ulOverlayHandle);
 		return result;
 	}
 	public EVROverlayError SetOverlayTexture(ulong ulOverlayHandle,ref Texture_t pTexture)
 	{
-		EVROverlayError result = FnTable.SetOverlayTexture(ulOverlayHandle,ref pTexture);
+		var result = FnTable.SetOverlayTexture(ulOverlayHandle,ref pTexture);
 		return result;
 	}
 	public EVROverlayError ClearOverlayTexture(ulong ulOverlayHandle)
 	{
-		EVROverlayError result = FnTable.ClearOverlayTexture(ulOverlayHandle);
+		var result = FnTable.ClearOverlayTexture(ulOverlayHandle);
 		return result;
 	}
 	public EVROverlayError SetOverlayRaw(ulong ulOverlayHandle,IntPtr pvBuffer,uint unWidth,uint unHeight,uint unBytesPerPixel)
 	{
-		EVROverlayError result = FnTable.SetOverlayRaw(ulOverlayHandle,pvBuffer,unWidth,unHeight,unBytesPerPixel);
+		var result = FnTable.SetOverlayRaw(ulOverlayHandle,pvBuffer,unWidth,unHeight,unBytesPerPixel);
 		return result;
 	}
 	public EVROverlayError SetOverlayFromFile(ulong ulOverlayHandle,string pchFilePath)
 	{
-		IntPtr pchFilePathUtf8 = Utils.ToUtf8(pchFilePath);
-		EVROverlayError result = FnTable.SetOverlayFromFile(ulOverlayHandle,pchFilePathUtf8);
+		var pchFilePathUtf8 = Utils.ToUtf8(pchFilePath);
+		var result = FnTable.SetOverlayFromFile(ulOverlayHandle,pchFilePathUtf8);
 		Marshal.FreeHGlobal(pchFilePathUtf8);
 		return result;
 	}
@@ -3463,28 +3463,28 @@ public class CVROverlay
 		pWidth = 0;
 		pHeight = 0;
 		pNativeFormat = 0;
-		EVROverlayError result = FnTable.GetOverlayTexture(ulOverlayHandle,ref pNativeTextureHandle,pNativeTextureRef,ref pWidth,ref pHeight,ref pNativeFormat,ref pAPIType,ref pColorSpace,ref pTextureBounds);
+		var result = FnTable.GetOverlayTexture(ulOverlayHandle,ref pNativeTextureHandle,pNativeTextureRef,ref pWidth,ref pHeight,ref pNativeFormat,ref pAPIType,ref pColorSpace,ref pTextureBounds);
 		return result;
 	}
 	public EVROverlayError ReleaseNativeOverlayHandle(ulong ulOverlayHandle,IntPtr pNativeTextureHandle)
 	{
-		EVROverlayError result = FnTable.ReleaseNativeOverlayHandle(ulOverlayHandle,pNativeTextureHandle);
+		var result = FnTable.ReleaseNativeOverlayHandle(ulOverlayHandle,pNativeTextureHandle);
 		return result;
 	}
 	public EVROverlayError GetOverlayTextureSize(ulong ulOverlayHandle,ref uint pWidth,ref uint pHeight)
 	{
 		pWidth = 0;
 		pHeight = 0;
-		EVROverlayError result = FnTable.GetOverlayTextureSize(ulOverlayHandle,ref pWidth,ref pHeight);
+		var result = FnTable.GetOverlayTextureSize(ulOverlayHandle,ref pWidth,ref pHeight);
 		return result;
 	}
 	public EVROverlayError CreateDashboardOverlay(string pchOverlayKey,string pchOverlayFriendlyName,ref ulong pMainHandle,ref ulong pThumbnailHandle)
 	{
-		IntPtr pchOverlayKeyUtf8 = Utils.ToUtf8(pchOverlayKey);
-		IntPtr pchOverlayFriendlyNameUtf8 = Utils.ToUtf8(pchOverlayFriendlyName);
+		var pchOverlayKeyUtf8 = Utils.ToUtf8(pchOverlayKey);
+		var pchOverlayFriendlyNameUtf8 = Utils.ToUtf8(pchOverlayFriendlyName);
 		pMainHandle = 0;
 		pThumbnailHandle = 0;
-		EVROverlayError result = FnTable.CreateDashboardOverlay(pchOverlayKeyUtf8,pchOverlayFriendlyNameUtf8,ref pMainHandle,ref pThumbnailHandle);
+		var result = FnTable.CreateDashboardOverlay(pchOverlayKeyUtf8,pchOverlayFriendlyNameUtf8,ref pMainHandle,ref pThumbnailHandle);
 		Marshal.FreeHGlobal(pchOverlayKeyUtf8);
 		Marshal.FreeHGlobal(pchOverlayFriendlyNameUtf8);
 		return result;
@@ -3501,18 +3501,18 @@ public class CVROverlay
 	}
 	public EVROverlayError SetDashboardOverlaySceneProcess(ulong ulOverlayHandle,uint unProcessId)
 	{
-		EVROverlayError result = FnTable.SetDashboardOverlaySceneProcess(ulOverlayHandle,unProcessId);
+		var result = FnTable.SetDashboardOverlaySceneProcess(ulOverlayHandle,unProcessId);
 		return result;
 	}
 	public EVROverlayError GetDashboardOverlaySceneProcess(ulong ulOverlayHandle,ref uint punProcessId)
 	{
 		punProcessId = 0;
-		EVROverlayError result = FnTable.GetDashboardOverlaySceneProcess(ulOverlayHandle,ref punProcessId);
+		var result = FnTable.GetDashboardOverlaySceneProcess(ulOverlayHandle,ref punProcessId);
 		return result;
 	}
 	public void ShowDashboard(string pchOverlayToShow)
 	{
-		IntPtr pchOverlayToShowUtf8 = Utils.ToUtf8(pchOverlayToShow);
+		var pchOverlayToShowUtf8 = Utils.ToUtf8(pchOverlayToShow);
 		FnTable.ShowDashboard(pchOverlayToShowUtf8);
 		Marshal.FreeHGlobal(pchOverlayToShowUtf8);
 	}
@@ -3523,18 +3523,18 @@ public class CVROverlay
 	}
 	public EVROverlayError ShowKeyboard(int eInputMode,int eLineInputMode,uint unFlags,string pchDescription,uint unCharMax,string pchExistingText,ulong uUserValue)
 	{
-		IntPtr pchDescriptionUtf8 = Utils.ToUtf8(pchDescription);
-		IntPtr pchExistingTextUtf8 = Utils.ToUtf8(pchExistingText);
-		EVROverlayError result = FnTable.ShowKeyboard(eInputMode,eLineInputMode,unFlags,pchDescriptionUtf8,unCharMax,pchExistingTextUtf8,uUserValue);
+		var pchDescriptionUtf8 = Utils.ToUtf8(pchDescription);
+		var pchExistingTextUtf8 = Utils.ToUtf8(pchExistingText);
+		var result = FnTable.ShowKeyboard(eInputMode,eLineInputMode,unFlags,pchDescriptionUtf8,unCharMax,pchExistingTextUtf8,uUserValue);
 		Marshal.FreeHGlobal(pchDescriptionUtf8);
 		Marshal.FreeHGlobal(pchExistingTextUtf8);
 		return result;
 	}
 	public EVROverlayError ShowKeyboardForOverlay(ulong ulOverlayHandle,int eInputMode,int eLineInputMode,uint unFlags,string pchDescription,uint unCharMax,string pchExistingText,ulong uUserValue)
 	{
-		IntPtr pchDescriptionUtf8 = Utils.ToUtf8(pchDescription);
-		IntPtr pchExistingTextUtf8 = Utils.ToUtf8(pchExistingText);
-		EVROverlayError result = FnTable.ShowKeyboardForOverlay(ulOverlayHandle,eInputMode,eLineInputMode,unFlags,pchDescriptionUtf8,unCharMax,pchExistingTextUtf8,uUserValue);
+		var pchDescriptionUtf8 = Utils.ToUtf8(pchDescription);
+		var pchExistingTextUtf8 = Utils.ToUtf8(pchExistingText);
+		var result = FnTable.ShowKeyboardForOverlay(ulOverlayHandle,eInputMode,eLineInputMode,unFlags,pchDescriptionUtf8,unCharMax,pchExistingTextUtf8,uUserValue);
 		Marshal.FreeHGlobal(pchDescriptionUtf8);
 		Marshal.FreeHGlobal(pchExistingTextUtf8);
 		return result;
@@ -3558,13 +3558,13 @@ public class CVROverlay
 	}
 	public VRMessageOverlayResponse ShowMessageOverlay(string pchText,string pchCaption,string pchButton0Text,string pchButton1Text,string pchButton2Text,string pchButton3Text)
 	{
-		IntPtr pchTextUtf8 = Utils.ToUtf8(pchText);
-		IntPtr pchCaptionUtf8 = Utils.ToUtf8(pchCaption);
-		IntPtr pchButton0TextUtf8 = Utils.ToUtf8(pchButton0Text);
-		IntPtr pchButton1TextUtf8 = Utils.ToUtf8(pchButton1Text);
-		IntPtr pchButton2TextUtf8 = Utils.ToUtf8(pchButton2Text);
-		IntPtr pchButton3TextUtf8 = Utils.ToUtf8(pchButton3Text);
-		VRMessageOverlayResponse result = FnTable.ShowMessageOverlay(pchTextUtf8,pchCaptionUtf8,pchButton0TextUtf8,pchButton1TextUtf8,pchButton2TextUtf8,pchButton3TextUtf8);
+		var pchTextUtf8 = Utils.ToUtf8(pchText);
+		var pchCaptionUtf8 = Utils.ToUtf8(pchCaption);
+		var pchButton0TextUtf8 = Utils.ToUtf8(pchButton0Text);
+		var pchButton1TextUtf8 = Utils.ToUtf8(pchButton1Text);
+		var pchButton2TextUtf8 = Utils.ToUtf8(pchButton2Text);
+		var pchButton3TextUtf8 = Utils.ToUtf8(pchButton3Text);
+		var result = FnTable.ShowMessageOverlay(pchTextUtf8,pchCaptionUtf8,pchButton0TextUtf8,pchButton1TextUtf8,pchButton2TextUtf8,pchButton3TextUtf8);
 		Marshal.FreeHGlobal(pchTextUtf8);
 		Marshal.FreeHGlobal(pchCaptionUtf8);
 		Marshal.FreeHGlobal(pchButton0TextUtf8);
@@ -3589,12 +3589,12 @@ public class CVROverlayView
 	}
 	public EVROverlayError AcquireOverlayView(ulong ulOverlayHandle,ref VRNativeDevice_t pNativeDevice,ref VROverlayView_t pOverlayView,uint unOverlayViewSize)
 	{
-		EVROverlayError result = FnTable.AcquireOverlayView(ulOverlayHandle,ref pNativeDevice,ref pOverlayView,unOverlayViewSize);
+		var result = FnTable.AcquireOverlayView(ulOverlayHandle,ref pNativeDevice,ref pOverlayView,unOverlayViewSize);
 		return result;
 	}
 	public EVROverlayError ReleaseOverlayView(ref VROverlayView_t pOverlayView)
 	{
-		EVROverlayError result = FnTable.ReleaseOverlayView(ref pOverlayView);
+		var result = FnTable.ReleaseOverlayView(ref pOverlayView);
 		return result;
 	}
 	public void PostOverlayEvent(ulong ulOverlayHandle,ref VREvent_t pvrEvent)
@@ -3671,8 +3671,8 @@ public class CVRRenderModels
 	}
 	public EVRRenderModelError LoadRenderModel_Async(string pchRenderModelName,ref IntPtr ppRenderModel)
 	{
-		IntPtr pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
-		EVRRenderModelError result = FnTable.LoadRenderModel_Async(pchRenderModelNameUtf8,ref ppRenderModel);
+		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
+		var result = FnTable.LoadRenderModel_Async(pchRenderModelNameUtf8,ref ppRenderModel);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		return result;
 	}
@@ -3682,7 +3682,7 @@ public class CVRRenderModels
 	}
 	public EVRRenderModelError LoadTexture_Async(int textureId,ref IntPtr ppTexture)
 	{
-		EVRRenderModelError result = FnTable.LoadTexture_Async(textureId,ref ppTexture);
+		var result = FnTable.LoadTexture_Async(textureId,ref ppTexture);
 		return result;
 	}
 	public void FreeTexture(IntPtr pTexture)
@@ -3691,12 +3691,12 @@ public class CVRRenderModels
 	}
 	public EVRRenderModelError LoadTextureD3D11_Async(int textureId,IntPtr pD3D11Device,ref IntPtr ppD3D11Texture2D)
 	{
-		EVRRenderModelError result = FnTable.LoadTextureD3D11_Async(textureId,pD3D11Device,ref ppD3D11Texture2D);
+		var result = FnTable.LoadTextureD3D11_Async(textureId,pD3D11Device,ref ppD3D11Texture2D);
 		return result;
 	}
 	public EVRRenderModelError LoadIntoTextureD3D11_Async(int textureId,IntPtr pDstTexture)
 	{
-		EVRRenderModelError result = FnTable.LoadIntoTextureD3D11_Async(textureId,pDstTexture);
+		var result = FnTable.LoadIntoTextureD3D11_Async(textureId,pDstTexture);
 		return result;
 	}
 	public void FreeTextureD3D11(IntPtr pD3D11Texture2D)
@@ -3715,22 +3715,22 @@ public class CVRRenderModels
 	}
 	public uint GetComponentCount(string pchRenderModelName)
 	{
-		IntPtr pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
+		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
 		uint result = FnTable.GetComponentCount(pchRenderModelNameUtf8);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		return result;
 	}
 	public uint GetComponentName(string pchRenderModelName,uint unComponentIndex,System.Text.StringBuilder pchComponentName,uint unComponentNameLen)
 	{
-		IntPtr pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
+		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
 		uint result = FnTable.GetComponentName(pchRenderModelNameUtf8,unComponentIndex,pchComponentName,unComponentNameLen);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		return result;
 	}
 	public ulong GetComponentButtonMask(string pchRenderModelName,string pchComponentName)
 	{
-		IntPtr pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
-		IntPtr pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
+		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
+		var pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
 		ulong result = FnTable.GetComponentButtonMask(pchRenderModelNameUtf8,pchComponentNameUtf8);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		Marshal.FreeHGlobal(pchComponentNameUtf8);
@@ -3738,8 +3738,8 @@ public class CVRRenderModels
 	}
 	public uint GetComponentRenderModelName(string pchRenderModelName,string pchComponentName,System.Text.StringBuilder pchComponentRenderModelName,uint unComponentRenderModelNameLen)
 	{
-		IntPtr pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
-		IntPtr pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
+		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
+		var pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
 		uint result = FnTable.GetComponentRenderModelName(pchRenderModelNameUtf8,pchComponentNameUtf8,pchComponentRenderModelName,unComponentRenderModelNameLen);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		Marshal.FreeHGlobal(pchComponentNameUtf8);
@@ -3747,8 +3747,8 @@ public class CVRRenderModels
 	}
 	public bool GetComponentStateForDevicePath(string pchRenderModelName,string pchComponentName,ulong devicePath,ref RenderModel_ControllerMode_State_t pState,ref RenderModel_ComponentState_t pComponentState)
 	{
-		IntPtr pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
-		IntPtr pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
+		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
+		var pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
 		bool result = FnTable.GetComponentStateForDevicePath(pchRenderModelNameUtf8,pchComponentNameUtf8,devicePath,ref pState,ref pComponentState);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		Marshal.FreeHGlobal(pchComponentNameUtf8);
@@ -3768,14 +3768,14 @@ public class CVRRenderModels
 	}
 	public bool GetComponentState(string pchRenderModelName,string pchComponentName,ref VRControllerState_t pControllerState,ref RenderModel_ControllerMode_State_t pState,ref RenderModel_ComponentState_t pComponentState)
 	{
-		IntPtr pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
-		IntPtr pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
+		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
+		var pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
 #if !UNITY_METRO
 		if ((System.Environment.OSVersion.Platform == System.PlatformID.MacOSX) ||
 				(System.Environment.OSVersion.Platform == System.PlatformID.Unix))
 		{
 			GetComponentStateUnion u;
-			VRControllerState_t_Packed state_packed = new VRControllerState_t_Packed(pControllerState);
+			var state_packed = new VRControllerState_t_Packed(pControllerState);
 			u.pGetComponentStatePacked = null;
 			u.pGetComponentState = FnTable.GetComponentState;
 			bool packed_result = u.pGetComponentStatePacked(pchRenderModelNameUtf8,pchComponentNameUtf8,ref state_packed,ref pState,ref pComponentState);
@@ -3791,8 +3791,8 @@ public class CVRRenderModels
 	}
 	public bool RenderModelHasComponent(string pchRenderModelName,string pchComponentName)
 	{
-		IntPtr pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
-		IntPtr pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
+		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
+		var pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
 		bool result = FnTable.RenderModelHasComponent(pchRenderModelNameUtf8,pchComponentNameUtf8);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		Marshal.FreeHGlobal(pchComponentNameUtf8);
@@ -3800,21 +3800,21 @@ public class CVRRenderModels
 	}
 	public uint GetRenderModelThumbnailURL(string pchRenderModelName,System.Text.StringBuilder pchThumbnailURL,uint unThumbnailURLLen,ref EVRRenderModelError peError)
 	{
-		IntPtr pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
+		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
 		uint result = FnTable.GetRenderModelThumbnailURL(pchRenderModelNameUtf8,pchThumbnailURL,unThumbnailURLLen,ref peError);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		return result;
 	}
 	public uint GetRenderModelOriginalPath(string pchRenderModelName,System.Text.StringBuilder pchOriginalPath,uint unOriginalPathLen,ref EVRRenderModelError peError)
 	{
-		IntPtr pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
+		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
 		uint result = FnTable.GetRenderModelOriginalPath(pchRenderModelNameUtf8,pchOriginalPath,unOriginalPathLen,ref peError);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		return result;
 	}
 	public string GetRenderModelErrorNameFromEnum(EVRRenderModelError error)
 	{
-		IntPtr result = FnTable.GetRenderModelErrorNameFromEnum(error);
+		var result = FnTable.GetRenderModelErrorNameFromEnum(error);
 		return Marshal.PtrToStringAnsi(result);
 	}
 }
@@ -3829,15 +3829,15 @@ public class CVRNotifications
 	}
 	public EVRNotificationError CreateNotification(ulong ulOverlayHandle,ulong ulUserValue,EVRNotificationType type,string pchText,EVRNotificationStyle style,ref NotificationBitmap_t pImage,ref uint pNotificationId)
 	{
-		IntPtr pchTextUtf8 = Utils.ToUtf8(pchText);
+		var pchTextUtf8 = Utils.ToUtf8(pchText);
 		pNotificationId = 0;
-		EVRNotificationError result = FnTable.CreateNotification(ulOverlayHandle,ulUserValue,type,pchTextUtf8,style,ref pImage,ref pNotificationId);
+		var result = FnTable.CreateNotification(ulOverlayHandle,ulUserValue,type,pchTextUtf8,style,ref pImage,ref pNotificationId);
 		Marshal.FreeHGlobal(pchTextUtf8);
 		return result;
 	}
 	public EVRNotificationError RemoveNotification(uint notificationId)
 	{
-		EVRNotificationError result = FnTable.RemoveNotification(notificationId);
+		var result = FnTable.RemoveNotification(notificationId);
 		return result;
 	}
 }
@@ -3852,38 +3852,38 @@ public class CVRSettings
 	}
 	public string GetSettingsErrorNameFromEnum(EVRSettingsError eError)
 	{
-		IntPtr result = FnTable.GetSettingsErrorNameFromEnum(eError);
+		var result = FnTable.GetSettingsErrorNameFromEnum(eError);
 		return Marshal.PtrToStringAnsi(result);
 	}
 	public void SetBool(string pchSection,string pchSettingsKey,bool bValue,ref EVRSettingsError peError)
 	{
-		IntPtr pchSectionUtf8 = Utils.ToUtf8(pchSection);
-		IntPtr pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
+		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
+		var pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
 		FnTable.SetBool(pchSectionUtf8,pchSettingsKeyUtf8,bValue,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 		Marshal.FreeHGlobal(pchSettingsKeyUtf8);
 	}
 	public void SetInt32(string pchSection,string pchSettingsKey,int nValue,ref EVRSettingsError peError)
 	{
-		IntPtr pchSectionUtf8 = Utils.ToUtf8(pchSection);
-		IntPtr pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
+		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
+		var pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
 		FnTable.SetInt32(pchSectionUtf8,pchSettingsKeyUtf8,nValue,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 		Marshal.FreeHGlobal(pchSettingsKeyUtf8);
 	}
 	public void SetFloat(string pchSection,string pchSettingsKey,float flValue,ref EVRSettingsError peError)
 	{
-		IntPtr pchSectionUtf8 = Utils.ToUtf8(pchSection);
-		IntPtr pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
+		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
+		var pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
 		FnTable.SetFloat(pchSectionUtf8,pchSettingsKeyUtf8,flValue,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 		Marshal.FreeHGlobal(pchSettingsKeyUtf8);
 	}
 	public void SetString(string pchSection,string pchSettingsKey,string pchValue,ref EVRSettingsError peError)
 	{
-		IntPtr pchSectionUtf8 = Utils.ToUtf8(pchSection);
-		IntPtr pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
-		IntPtr pchValueUtf8 = Utils.ToUtf8(pchValue);
+		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
+		var pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
+		var pchValueUtf8 = Utils.ToUtf8(pchValue);
 		FnTable.SetString(pchSectionUtf8,pchSettingsKeyUtf8,pchValueUtf8,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 		Marshal.FreeHGlobal(pchSettingsKeyUtf8);
@@ -3891,8 +3891,8 @@ public class CVRSettings
 	}
 	public bool GetBool(string pchSection,string pchSettingsKey,ref EVRSettingsError peError)
 	{
-		IntPtr pchSectionUtf8 = Utils.ToUtf8(pchSection);
-		IntPtr pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
+		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
+		var pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
 		bool result = FnTable.GetBool(pchSectionUtf8,pchSettingsKeyUtf8,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 		Marshal.FreeHGlobal(pchSettingsKeyUtf8);
@@ -3900,8 +3900,8 @@ public class CVRSettings
 	}
 	public int GetInt32(string pchSection,string pchSettingsKey,ref EVRSettingsError peError)
 	{
-		IntPtr pchSectionUtf8 = Utils.ToUtf8(pchSection);
-		IntPtr pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
+		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
+		var pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
 		int result = FnTable.GetInt32(pchSectionUtf8,pchSettingsKeyUtf8,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 		Marshal.FreeHGlobal(pchSettingsKeyUtf8);
@@ -3909,8 +3909,8 @@ public class CVRSettings
 	}
 	public float GetFloat(string pchSection,string pchSettingsKey,ref EVRSettingsError peError)
 	{
-		IntPtr pchSectionUtf8 = Utils.ToUtf8(pchSection);
-		IntPtr pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
+		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
+		var pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
 		float result = FnTable.GetFloat(pchSectionUtf8,pchSettingsKeyUtf8,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 		Marshal.FreeHGlobal(pchSettingsKeyUtf8);
@@ -3918,22 +3918,22 @@ public class CVRSettings
 	}
 	public void GetString(string pchSection,string pchSettingsKey,System.Text.StringBuilder pchValue,uint unValueLen,ref EVRSettingsError peError)
 	{
-		IntPtr pchSectionUtf8 = Utils.ToUtf8(pchSection);
-		IntPtr pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
+		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
+		var pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
 		FnTable.GetString(pchSectionUtf8,pchSettingsKeyUtf8,pchValue,unValueLen,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 		Marshal.FreeHGlobal(pchSettingsKeyUtf8);
 	}
 	public void RemoveSection(string pchSection,ref EVRSettingsError peError)
 	{
-		IntPtr pchSectionUtf8 = Utils.ToUtf8(pchSection);
+		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
 		FnTable.RemoveSection(pchSectionUtf8,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 	}
 	public void RemoveKeyInSection(string pchSection,string pchSettingsKey,ref EVRSettingsError peError)
 	{
-		IntPtr pchSectionUtf8 = Utils.ToUtf8(pchSection);
-		IntPtr pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
+		var pchSectionUtf8 = Utils.ToUtf8(pchSection);
+		var pchSettingsKeyUtf8 = Utils.ToUtf8(pchSettingsKey);
 		FnTable.RemoveKeyInSection(pchSectionUtf8,pchSettingsKeyUtf8,ref peError);
 		Marshal.FreeHGlobal(pchSectionUtf8);
 		Marshal.FreeHGlobal(pchSettingsKeyUtf8);
@@ -3951,21 +3951,21 @@ public class CVRScreenshots
 	public EVRScreenshotError RequestScreenshot(ref uint pOutScreenshotHandle,EVRScreenshotType type,string pchPreviewFilename,string pchVRFilename)
 	{
 		pOutScreenshotHandle = 0;
-		IntPtr pchPreviewFilenameUtf8 = Utils.ToUtf8(pchPreviewFilename);
-		IntPtr pchVRFilenameUtf8 = Utils.ToUtf8(pchVRFilename);
-		EVRScreenshotError result = FnTable.RequestScreenshot(ref pOutScreenshotHandle,type,pchPreviewFilenameUtf8,pchVRFilenameUtf8);
+		var pchPreviewFilenameUtf8 = Utils.ToUtf8(pchPreviewFilename);
+		var pchVRFilenameUtf8 = Utils.ToUtf8(pchVRFilename);
+		var result = FnTable.RequestScreenshot(ref pOutScreenshotHandle,type,pchPreviewFilenameUtf8,pchVRFilenameUtf8);
 		Marshal.FreeHGlobal(pchPreviewFilenameUtf8);
 		Marshal.FreeHGlobal(pchVRFilenameUtf8);
 		return result;
 	}
 	public EVRScreenshotError HookScreenshot(EVRScreenshotType [] pSupportedTypes)
 	{
-		EVRScreenshotError result = FnTable.HookScreenshot(pSupportedTypes,(int) pSupportedTypes.Length);
+		var result = FnTable.HookScreenshot(pSupportedTypes,(int) pSupportedTypes.Length);
 		return result;
 	}
 	public EVRScreenshotType GetScreenshotPropertyType(uint screenshotHandle,ref EVRScreenshotError pError)
 	{
-		EVRScreenshotType result = FnTable.GetScreenshotPropertyType(screenshotHandle,ref pError);
+		var result = FnTable.GetScreenshotPropertyType(screenshotHandle,ref pError);
 		return result;
 	}
 	public uint GetScreenshotPropertyFilename(uint screenshotHandle,EVRScreenshotPropertyFilenames filenameType,System.Text.StringBuilder pchFilename,uint cchFilename,ref EVRScreenshotError pError)
@@ -3975,24 +3975,24 @@ public class CVRScreenshots
 	}
 	public EVRScreenshotError UpdateScreenshotProgress(uint screenshotHandle,float flProgress)
 	{
-		EVRScreenshotError result = FnTable.UpdateScreenshotProgress(screenshotHandle,flProgress);
+		var result = FnTable.UpdateScreenshotProgress(screenshotHandle,flProgress);
 		return result;
 	}
 	public EVRScreenshotError TakeStereoScreenshot(ref uint pOutScreenshotHandle,string pchPreviewFilename,string pchVRFilename)
 	{
 		pOutScreenshotHandle = 0;
-		IntPtr pchPreviewFilenameUtf8 = Utils.ToUtf8(pchPreviewFilename);
-		IntPtr pchVRFilenameUtf8 = Utils.ToUtf8(pchVRFilename);
-		EVRScreenshotError result = FnTable.TakeStereoScreenshot(ref pOutScreenshotHandle,pchPreviewFilenameUtf8,pchVRFilenameUtf8);
+		var pchPreviewFilenameUtf8 = Utils.ToUtf8(pchPreviewFilename);
+		var pchVRFilenameUtf8 = Utils.ToUtf8(pchVRFilename);
+		var result = FnTable.TakeStereoScreenshot(ref pOutScreenshotHandle,pchPreviewFilenameUtf8,pchVRFilenameUtf8);
 		Marshal.FreeHGlobal(pchPreviewFilenameUtf8);
 		Marshal.FreeHGlobal(pchVRFilenameUtf8);
 		return result;
 	}
 	public EVRScreenshotError SubmitScreenshot(uint screenshotHandle,EVRScreenshotType type,string pchSourcePreviewFilename,string pchSourceVRFilename)
 	{
-		IntPtr pchSourcePreviewFilenameUtf8 = Utils.ToUtf8(pchSourcePreviewFilename);
-		IntPtr pchSourceVRFilenameUtf8 = Utils.ToUtf8(pchSourceVRFilename);
-		EVRScreenshotError result = FnTable.SubmitScreenshot(screenshotHandle,type,pchSourcePreviewFilenameUtf8,pchSourceVRFilenameUtf8);
+		var pchSourcePreviewFilenameUtf8 = Utils.ToUtf8(pchSourcePreviewFilename);
+		var pchSourceVRFilenameUtf8 = Utils.ToUtf8(pchSourceVRFilename);
+		var result = FnTable.SubmitScreenshot(screenshotHandle,type,pchSourcePreviewFilenameUtf8,pchSourceVRFilenameUtf8);
 		Marshal.FreeHGlobal(pchSourcePreviewFilenameUtf8);
 		Marshal.FreeHGlobal(pchSourceVRFilenameUtf8);
 		return result;
@@ -4009,15 +4009,15 @@ public class CVRResources
 	}
 	public uint LoadSharedResource(string pchResourceName,string pchBuffer,uint unBufferLen)
 	{
-		IntPtr pchResourceNameUtf8 = Utils.ToUtf8(pchResourceName);
+		var pchResourceNameUtf8 = Utils.ToUtf8(pchResourceName);
 		uint result = FnTable.LoadSharedResource(pchResourceNameUtf8,pchBuffer,unBufferLen);
 		Marshal.FreeHGlobal(pchResourceNameUtf8);
 		return result;
 	}
 	public uint GetResourceFullPath(string pchResourceName,string pchResourceTypeDirectory,System.Text.StringBuilder pchPathBuffer,uint unBufferLen)
 	{
-		IntPtr pchResourceNameUtf8 = Utils.ToUtf8(pchResourceName);
-		IntPtr pchResourceTypeDirectoryUtf8 = Utils.ToUtf8(pchResourceTypeDirectory);
+		var pchResourceNameUtf8 = Utils.ToUtf8(pchResourceName);
+		var pchResourceTypeDirectoryUtf8 = Utils.ToUtf8(pchResourceTypeDirectory);
 		uint result = FnTable.GetResourceFullPath(pchResourceNameUtf8,pchResourceTypeDirectoryUtf8,pchPathBuffer,unBufferLen);
 		Marshal.FreeHGlobal(pchResourceNameUtf8);
 		Marshal.FreeHGlobal(pchResourceTypeDirectoryUtf8);
@@ -4045,7 +4045,7 @@ public class CVRDriverManager
 	}
 	public ulong GetDriverHandle(string pchDriverName)
 	{
-		IntPtr pchDriverNameUtf8 = Utils.ToUtf8(pchDriverName);
+		var pchDriverNameUtf8 = Utils.ToUtf8(pchDriverName);
 		ulong result = FnTable.GetDriverHandle(pchDriverNameUtf8);
 		Marshal.FreeHGlobal(pchDriverNameUtf8);
 		return result;
@@ -4067,163 +4067,163 @@ public class CVRInput
 	}
 	public EVRInputError SetActionManifestPath(string pchActionManifestPath)
 	{
-		IntPtr pchActionManifestPathUtf8 = Utils.ToUtf8(pchActionManifestPath);
-		EVRInputError result = FnTable.SetActionManifestPath(pchActionManifestPathUtf8);
+		var pchActionManifestPathUtf8 = Utils.ToUtf8(pchActionManifestPath);
+		var result = FnTable.SetActionManifestPath(pchActionManifestPathUtf8);
 		Marshal.FreeHGlobal(pchActionManifestPathUtf8);
 		return result;
 	}
 	public EVRInputError GetActionSetHandle(string pchActionSetName,ref ulong pHandle)
 	{
-		IntPtr pchActionSetNameUtf8 = Utils.ToUtf8(pchActionSetName);
+		var pchActionSetNameUtf8 = Utils.ToUtf8(pchActionSetName);
 		pHandle = 0;
-		EVRInputError result = FnTable.GetActionSetHandle(pchActionSetNameUtf8,ref pHandle);
+		var result = FnTable.GetActionSetHandle(pchActionSetNameUtf8,ref pHandle);
 		Marshal.FreeHGlobal(pchActionSetNameUtf8);
 		return result;
 	}
 	public EVRInputError GetActionHandle(string pchActionName,ref ulong pHandle)
 	{
-		IntPtr pchActionNameUtf8 = Utils.ToUtf8(pchActionName);
+		var pchActionNameUtf8 = Utils.ToUtf8(pchActionName);
 		pHandle = 0;
-		EVRInputError result = FnTable.GetActionHandle(pchActionNameUtf8,ref pHandle);
+		var result = FnTable.GetActionHandle(pchActionNameUtf8,ref pHandle);
 		Marshal.FreeHGlobal(pchActionNameUtf8);
 		return result;
 	}
 	public EVRInputError GetInputSourceHandle(string pchInputSourcePath,ref ulong pHandle)
 	{
-		IntPtr pchInputSourcePathUtf8 = Utils.ToUtf8(pchInputSourcePath);
+		var pchInputSourcePathUtf8 = Utils.ToUtf8(pchInputSourcePath);
 		pHandle = 0;
-		EVRInputError result = FnTable.GetInputSourceHandle(pchInputSourcePathUtf8,ref pHandle);
+		var result = FnTable.GetInputSourceHandle(pchInputSourcePathUtf8,ref pHandle);
 		Marshal.FreeHGlobal(pchInputSourcePathUtf8);
 		return result;
 	}
 	public EVRInputError UpdateActionState(VRActiveActionSet_t [] pSets,uint unSizeOfVRSelectedActionSet_t)
 	{
-		EVRInputError result = FnTable.UpdateActionState(pSets,unSizeOfVRSelectedActionSet_t,(uint) pSets.Length);
+		var result = FnTable.UpdateActionState(pSets,unSizeOfVRSelectedActionSet_t,(uint) pSets.Length);
 		return result;
 	}
 	public EVRInputError GetDigitalActionData(ulong action,ref InputDigitalActionData_t pActionData,uint unActionDataSize,ulong ulRestrictToDevice)
 	{
-		EVRInputError result = FnTable.GetDigitalActionData(action,ref pActionData,unActionDataSize,ulRestrictToDevice);
+		var result = FnTable.GetDigitalActionData(action,ref pActionData,unActionDataSize,ulRestrictToDevice);
 		return result;
 	}
 	public EVRInputError GetAnalogActionData(ulong action,ref InputAnalogActionData_t pActionData,uint unActionDataSize,ulong ulRestrictToDevice)
 	{
-		EVRInputError result = FnTable.GetAnalogActionData(action,ref pActionData,unActionDataSize,ulRestrictToDevice);
+		var result = FnTable.GetAnalogActionData(action,ref pActionData,unActionDataSize,ulRestrictToDevice);
 		return result;
 	}
 	public EVRInputError GetPoseActionDataRelativeToNow(ulong action,ETrackingUniverseOrigin eOrigin,float fPredictedSecondsFromNow,ref InputPoseActionData_t pActionData,uint unActionDataSize,ulong ulRestrictToDevice)
 	{
-		EVRInputError result = FnTable.GetPoseActionDataRelativeToNow(action,eOrigin,fPredictedSecondsFromNow,ref pActionData,unActionDataSize,ulRestrictToDevice);
+		var result = FnTable.GetPoseActionDataRelativeToNow(action,eOrigin,fPredictedSecondsFromNow,ref pActionData,unActionDataSize,ulRestrictToDevice);
 		return result;
 	}
 	public EVRInputError GetPoseActionDataForNextFrame(ulong action,ETrackingUniverseOrigin eOrigin,ref InputPoseActionData_t pActionData,uint unActionDataSize,ulong ulRestrictToDevice)
 	{
-		EVRInputError result = FnTable.GetPoseActionDataForNextFrame(action,eOrigin,ref pActionData,unActionDataSize,ulRestrictToDevice);
+		var result = FnTable.GetPoseActionDataForNextFrame(action,eOrigin,ref pActionData,unActionDataSize,ulRestrictToDevice);
 		return result;
 	}
 	public EVRInputError GetSkeletalActionData(ulong action,ref InputSkeletalActionData_t pActionData,uint unActionDataSize)
 	{
-		EVRInputError result = FnTable.GetSkeletalActionData(action,ref pActionData,unActionDataSize);
+		var result = FnTable.GetSkeletalActionData(action,ref pActionData,unActionDataSize);
 		return result;
 	}
 	public EVRInputError GetDominantHand(ref ETrackedControllerRole peDominantHand)
 	{
-		EVRInputError result = FnTable.GetDominantHand(ref peDominantHand);
+		var result = FnTable.GetDominantHand(ref peDominantHand);
 		return result;
 	}
 	public EVRInputError SetDominantHand(ETrackedControllerRole eDominantHand)
 	{
-		EVRInputError result = FnTable.SetDominantHand(eDominantHand);
+		var result = FnTable.SetDominantHand(eDominantHand);
 		return result;
 	}
 	public EVRInputError GetBoneCount(ulong action,ref uint pBoneCount)
 	{
 		pBoneCount = 0;
-		EVRInputError result = FnTable.GetBoneCount(action,ref pBoneCount);
+		var result = FnTable.GetBoneCount(action,ref pBoneCount);
 		return result;
 	}
 	public EVRInputError GetBoneHierarchy(ulong action,int [] pParentIndices)
 	{
-		EVRInputError result = FnTable.GetBoneHierarchy(action,pParentIndices,(uint) pParentIndices.Length);
+		var result = FnTable.GetBoneHierarchy(action,pParentIndices,(uint) pParentIndices.Length);
 		return result;
 	}
 	public EVRInputError GetBoneName(ulong action,int nBoneIndex,System.Text.StringBuilder pchBoneName,uint unNameBufferSize)
 	{
-		EVRInputError result = FnTable.GetBoneName(action,nBoneIndex,pchBoneName,unNameBufferSize);
+		var result = FnTable.GetBoneName(action,nBoneIndex,pchBoneName,unNameBufferSize);
 		return result;
 	}
 	public EVRInputError GetSkeletalReferenceTransforms(ulong action,EVRSkeletalTransformSpace eTransformSpace,EVRSkeletalReferencePose eReferencePose,VRBoneTransform_t [] pTransformArray)
 	{
-		EVRInputError result = FnTable.GetSkeletalReferenceTransforms(action,eTransformSpace,eReferencePose,pTransformArray,(uint) pTransformArray.Length);
+		var result = FnTable.GetSkeletalReferenceTransforms(action,eTransformSpace,eReferencePose,pTransformArray,(uint) pTransformArray.Length);
 		return result;
 	}
 	public EVRInputError GetSkeletalTrackingLevel(ulong action,ref EVRSkeletalTrackingLevel pSkeletalTrackingLevel)
 	{
-		EVRInputError result = FnTable.GetSkeletalTrackingLevel(action,ref pSkeletalTrackingLevel);
+		var result = FnTable.GetSkeletalTrackingLevel(action,ref pSkeletalTrackingLevel);
 		return result;
 	}
 	public EVRInputError GetSkeletalBoneData(ulong action,EVRSkeletalTransformSpace eTransformSpace,EVRSkeletalMotionRange eMotionRange,VRBoneTransform_t [] pTransformArray)
 	{
-		EVRInputError result = FnTable.GetSkeletalBoneData(action,eTransformSpace,eMotionRange,pTransformArray,(uint) pTransformArray.Length);
+		var result = FnTable.GetSkeletalBoneData(action,eTransformSpace,eMotionRange,pTransformArray,(uint) pTransformArray.Length);
 		return result;
 	}
 	public EVRInputError GetSkeletalSummaryData(ulong action,EVRSummaryType eSummaryType,ref VRSkeletalSummaryData_t pSkeletalSummaryData)
 	{
-		EVRInputError result = FnTable.GetSkeletalSummaryData(action,eSummaryType,ref pSkeletalSummaryData);
+		var result = FnTable.GetSkeletalSummaryData(action,eSummaryType,ref pSkeletalSummaryData);
 		return result;
 	}
 	public EVRInputError GetSkeletalBoneDataCompressed(ulong action,EVRSkeletalMotionRange eMotionRange,IntPtr pvCompressedData,uint unCompressedSize,ref uint punRequiredCompressedSize)
 	{
 		punRequiredCompressedSize = 0;
-		EVRInputError result = FnTable.GetSkeletalBoneDataCompressed(action,eMotionRange,pvCompressedData,unCompressedSize,ref punRequiredCompressedSize);
+		var result = FnTable.GetSkeletalBoneDataCompressed(action,eMotionRange,pvCompressedData,unCompressedSize,ref punRequiredCompressedSize);
 		return result;
 	}
 	public EVRInputError DecompressSkeletalBoneData(IntPtr pvCompressedBuffer,uint unCompressedBufferSize,EVRSkeletalTransformSpace eTransformSpace,VRBoneTransform_t [] pTransformArray)
 	{
-		EVRInputError result = FnTable.DecompressSkeletalBoneData(pvCompressedBuffer,unCompressedBufferSize,eTransformSpace,pTransformArray,(uint) pTransformArray.Length);
+		var result = FnTable.DecompressSkeletalBoneData(pvCompressedBuffer,unCompressedBufferSize,eTransformSpace,pTransformArray,(uint) pTransformArray.Length);
 		return result;
 	}
 	public EVRInputError TriggerHapticVibrationAction(ulong action,float fStartSecondsFromNow,float fDurationSeconds,float fFrequency,float fAmplitude,ulong ulRestrictToDevice)
 	{
-		EVRInputError result = FnTable.TriggerHapticVibrationAction(action,fStartSecondsFromNow,fDurationSeconds,fFrequency,fAmplitude,ulRestrictToDevice);
+		var result = FnTable.TriggerHapticVibrationAction(action,fStartSecondsFromNow,fDurationSeconds,fFrequency,fAmplitude,ulRestrictToDevice);
 		return result;
 	}
 	public EVRInputError GetActionOrigins(ulong actionSetHandle,ulong digitalActionHandle,ulong [] originsOut)
 	{
-		EVRInputError result = FnTable.GetActionOrigins(actionSetHandle,digitalActionHandle,originsOut,(uint) originsOut.Length);
+		var result = FnTable.GetActionOrigins(actionSetHandle,digitalActionHandle,originsOut,(uint) originsOut.Length);
 		return result;
 	}
 	public EVRInputError GetOriginLocalizedName(ulong origin,System.Text.StringBuilder pchNameArray,uint unNameArraySize,int unStringSectionsToInclude)
 	{
-		EVRInputError result = FnTable.GetOriginLocalizedName(origin,pchNameArray,unNameArraySize,unStringSectionsToInclude);
+		var result = FnTable.GetOriginLocalizedName(origin,pchNameArray,unNameArraySize,unStringSectionsToInclude);
 		return result;
 	}
 	public EVRInputError GetOriginTrackedDeviceInfo(ulong origin,ref InputOriginInfo_t pOriginInfo,uint unOriginInfoSize)
 	{
-		EVRInputError result = FnTable.GetOriginTrackedDeviceInfo(origin,ref pOriginInfo,unOriginInfoSize);
+		var result = FnTable.GetOriginTrackedDeviceInfo(origin,ref pOriginInfo,unOriginInfoSize);
 		return result;
 	}
 	public EVRInputError GetActionBindingInfo(ulong action,ref InputBindingInfo_t pOriginInfo,uint unBindingInfoSize,uint unBindingInfoCount,ref uint punReturnedBindingInfoCount)
 	{
 		punReturnedBindingInfoCount = 0;
-		EVRInputError result = FnTable.GetActionBindingInfo(action,ref pOriginInfo,unBindingInfoSize,unBindingInfoCount,ref punReturnedBindingInfoCount);
+		var result = FnTable.GetActionBindingInfo(action,ref pOriginInfo,unBindingInfoSize,unBindingInfoCount,ref punReturnedBindingInfoCount);
 		return result;
 	}
 	public EVRInputError ShowActionOrigins(ulong actionSetHandle,ulong ulActionHandle)
 	{
-		EVRInputError result = FnTable.ShowActionOrigins(actionSetHandle,ulActionHandle);
+		var result = FnTable.ShowActionOrigins(actionSetHandle,ulActionHandle);
 		return result;
 	}
 	public EVRInputError ShowBindingsForActionSet(VRActiveActionSet_t [] pSets,uint unSizeOfVRSelectedActionSet_t,ulong originToHighlight)
 	{
-		EVRInputError result = FnTable.ShowBindingsForActionSet(pSets,unSizeOfVRSelectedActionSet_t,(uint) pSets.Length,originToHighlight);
+		var result = FnTable.ShowBindingsForActionSet(pSets,unSizeOfVRSelectedActionSet_t,(uint) pSets.Length,originToHighlight);
 		return result;
 	}
 	public EVRInputError GetComponentStateForBinding(string pchRenderModelName,string pchComponentName,ref InputBindingInfo_t pOriginInfo,uint unBindingInfoSize,uint unBindingInfoCount,ref RenderModel_ComponentState_t pComponentState)
 	{
-		IntPtr pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
-		IntPtr pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
-		EVRInputError result = FnTable.GetComponentStateForBinding(pchRenderModelNameUtf8,pchComponentNameUtf8,ref pOriginInfo,unBindingInfoSize,unBindingInfoCount,ref pComponentState);
+		var pchRenderModelNameUtf8 = Utils.ToUtf8(pchRenderModelName);
+		var pchComponentNameUtf8 = Utils.ToUtf8(pchComponentName);
+		var result = FnTable.GetComponentStateForBinding(pchRenderModelNameUtf8,pchComponentNameUtf8,ref pOriginInfo,unBindingInfoSize,unBindingInfoCount,ref pComponentState);
 		Marshal.FreeHGlobal(pchRenderModelNameUtf8);
 		Marshal.FreeHGlobal(pchComponentNameUtf8);
 		return result;
@@ -4235,14 +4235,14 @@ public class CVRInput
 	}
 	public EVRInputError OpenBindingUI(string pchAppKey,ulong ulActionSetHandle,ulong ulDeviceHandle,bool bShowOnDesktop)
 	{
-		IntPtr pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
-		EVRInputError result = FnTable.OpenBindingUI(pchAppKeyUtf8,ulActionSetHandle,ulDeviceHandle,bShowOnDesktop);
+		var pchAppKeyUtf8 = Utils.ToUtf8(pchAppKey);
+		var result = FnTable.OpenBindingUI(pchAppKeyUtf8,ulActionSetHandle,ulDeviceHandle,bShowOnDesktop);
 		Marshal.FreeHGlobal(pchAppKeyUtf8);
 		return result;
 	}
 	public EVRInputError GetBindingVariant(ulong ulDevicePath,System.Text.StringBuilder pchVariantArray,uint unVariantArraySize)
 	{
-		EVRInputError result = FnTable.GetBindingVariant(ulDevicePath,pchVariantArray,unVariantArraySize);
+		var result = FnTable.GetBindingVariant(ulDevicePath,pchVariantArray,unVariantArraySize);
 		return result;
 	}
 }
@@ -4257,26 +4257,26 @@ public class CVRIOBuffer
 	}
 	public EIOBufferError Open(string pchPath,EIOBufferMode mode,uint unElementSize,uint unElements,ref ulong pulBuffer)
 	{
-		IntPtr pchPathUtf8 = Utils.ToUtf8(pchPath);
+		var pchPathUtf8 = Utils.ToUtf8(pchPath);
 		pulBuffer = 0;
-		EIOBufferError result = FnTable.Open(pchPathUtf8,mode,unElementSize,unElements,ref pulBuffer);
+		var result = FnTable.Open(pchPathUtf8,mode,unElementSize,unElements,ref pulBuffer);
 		Marshal.FreeHGlobal(pchPathUtf8);
 		return result;
 	}
 	public EIOBufferError Close(ulong ulBuffer)
 	{
-		EIOBufferError result = FnTable.Close(ulBuffer);
+		var result = FnTable.Close(ulBuffer);
 		return result;
 	}
 	public EIOBufferError Read(ulong ulBuffer,IntPtr pDst,uint unBytes,ref uint punRead)
 	{
 		punRead = 0;
-		EIOBufferError result = FnTable.Read(ulBuffer,pDst,unBytes,ref punRead);
+		var result = FnTable.Read(ulBuffer,pDst,unBytes,ref punRead);
 		return result;
 	}
 	public EIOBufferError Write(ulong ulBuffer,IntPtr pSrc,uint unBytes)
 	{
-		EIOBufferError result = FnTable.Write(ulBuffer,pSrc,unBytes);
+		var result = FnTable.Write(ulBuffer,pSrc,unBytes);
 		return result;
 	}
 	public ulong PropertyContainer(ulong ulBuffer)
@@ -4301,27 +4301,27 @@ public class CVRSpatialAnchors
 	}
 	public EVRSpatialAnchorError CreateSpatialAnchorFromDescriptor(string pchDescriptor,ref uint pHandleOut)
 	{
-		IntPtr pchDescriptorUtf8 = Utils.ToUtf8(pchDescriptor);
+		var pchDescriptorUtf8 = Utils.ToUtf8(pchDescriptor);
 		pHandleOut = 0;
-		EVRSpatialAnchorError result = FnTable.CreateSpatialAnchorFromDescriptor(pchDescriptorUtf8,ref pHandleOut);
+		var result = FnTable.CreateSpatialAnchorFromDescriptor(pchDescriptorUtf8,ref pHandleOut);
 		Marshal.FreeHGlobal(pchDescriptorUtf8);
 		return result;
 	}
 	public EVRSpatialAnchorError CreateSpatialAnchorFromPose(uint unDeviceIndex,ETrackingUniverseOrigin eOrigin,ref SpatialAnchorPose_t pPose,ref uint pHandleOut)
 	{
 		pHandleOut = 0;
-		EVRSpatialAnchorError result = FnTable.CreateSpatialAnchorFromPose(unDeviceIndex,eOrigin,ref pPose,ref pHandleOut);
+		var result = FnTable.CreateSpatialAnchorFromPose(unDeviceIndex,eOrigin,ref pPose,ref pHandleOut);
 		return result;
 	}
 	public EVRSpatialAnchorError GetSpatialAnchorPose(uint unHandle,ETrackingUniverseOrigin eOrigin,ref SpatialAnchorPose_t pPoseOut)
 	{
-		EVRSpatialAnchorError result = FnTable.GetSpatialAnchorPose(unHandle,eOrigin,ref pPoseOut);
+		var result = FnTable.GetSpatialAnchorPose(unHandle,eOrigin,ref pPoseOut);
 		return result;
 	}
 	public EVRSpatialAnchorError GetSpatialAnchorDescriptor(uint unHandle,System.Text.StringBuilder pchDescriptorOut,ref uint punDescriptorBufferLenInOut)
 	{
 		punDescriptorBufferLenInOut = 0;
-		EVRSpatialAnchorError result = FnTable.GetSpatialAnchorDescriptor(unHandle,pchDescriptorOut,ref punDescriptorBufferLenInOut);
+		var result = FnTable.GetSpatialAnchorDescriptor(unHandle,pchDescriptorOut,ref punDescriptorBufferLenInOut);
 		return result;
 	}
 }
@@ -4336,27 +4336,27 @@ public class CVRDebug
 	}
 	public EVRDebugError EmitVrProfilerEvent(string pchMessage)
 	{
-		IntPtr pchMessageUtf8 = Utils.ToUtf8(pchMessage);
-		EVRDebugError result = FnTable.EmitVrProfilerEvent(pchMessageUtf8);
+		var pchMessageUtf8 = Utils.ToUtf8(pchMessage);
+		var result = FnTable.EmitVrProfilerEvent(pchMessageUtf8);
 		Marshal.FreeHGlobal(pchMessageUtf8);
 		return result;
 	}
 	public EVRDebugError BeginVrProfilerEvent(ref ulong pHandleOut)
 	{
 		pHandleOut = 0;
-		EVRDebugError result = FnTable.BeginVrProfilerEvent(ref pHandleOut);
+		var result = FnTable.BeginVrProfilerEvent(ref pHandleOut);
 		return result;
 	}
 	public EVRDebugError FinishVrProfilerEvent(ulong hHandle,string pchMessage)
 	{
-		IntPtr pchMessageUtf8 = Utils.ToUtf8(pchMessage);
-		EVRDebugError result = FnTable.FinishVrProfilerEvent(hHandle,pchMessageUtf8);
+		var pchMessageUtf8 = Utils.ToUtf8(pchMessage);
+		var result = FnTable.FinishVrProfilerEvent(hHandle,pchMessageUtf8);
 		Marshal.FreeHGlobal(pchMessageUtf8);
 		return result;
 	}
 	public uint DriverDebugRequest(uint unDeviceIndex,string pchRequest,System.Text.StringBuilder pchResponseBuffer,uint unResponseBufferSize)
 	{
-		IntPtr pchRequestUtf8 = Utils.ToUtf8(pchRequest);
+		var pchRequestUtf8 = Utils.ToUtf8(pchRequest);
 		uint result = FnTable.DriverDebugRequest(unDeviceIndex,pchRequestUtf8,pchResponseBuffer,unResponseBufferSize);
 		Marshal.FreeHGlobal(pchRequestUtf8);
 		return result;
@@ -4373,17 +4373,17 @@ public class CVRProperties
 	}
 	public ETrackedPropertyError ReadPropertyBatch(ulong ulContainerHandle,ref PropertyRead_t pBatch,uint unBatchEntryCount)
 	{
-		ETrackedPropertyError result = FnTable.ReadPropertyBatch(ulContainerHandle,ref pBatch,unBatchEntryCount);
+		var result = FnTable.ReadPropertyBatch(ulContainerHandle,ref pBatch,unBatchEntryCount);
 		return result;
 	}
 	public ETrackedPropertyError WritePropertyBatch(ulong ulContainerHandle,ref PropertyWrite_t pBatch,uint unBatchEntryCount)
 	{
-		ETrackedPropertyError result = FnTable.WritePropertyBatch(ulContainerHandle,ref pBatch,unBatchEntryCount);
+		var result = FnTable.WritePropertyBatch(ulContainerHandle,ref pBatch,unBatchEntryCount);
 		return result;
 	}
 	public string GetPropErrorNameFromEnum(ETrackedPropertyError error)
 	{
-		IntPtr result = FnTable.GetPropErrorNameFromEnum(error);
+		var result = FnTable.GetPropErrorNameFromEnum(error);
 		return Marshal.PtrToStringAnsi(result);
 	}
 	public ulong TrackedDeviceToPropertyContainer(uint nDevice)
@@ -4403,26 +4403,26 @@ public class CVRPaths
 	}
 	public ETrackedPropertyError ReadPathBatch(ulong ulRootHandle,ref PathRead_t pBatch,uint unBatchEntryCount)
 	{
-		ETrackedPropertyError result = FnTable.ReadPathBatch(ulRootHandle,ref pBatch,unBatchEntryCount);
+		var result = FnTable.ReadPathBatch(ulRootHandle,ref pBatch,unBatchEntryCount);
 		return result;
 	}
 	public ETrackedPropertyError WritePathBatch(ulong ulRootHandle,ref PathWrite_t pBatch,uint unBatchEntryCount)
 	{
-		ETrackedPropertyError result = FnTable.WritePathBatch(ulRootHandle,ref pBatch,unBatchEntryCount);
+		var result = FnTable.WritePathBatch(ulRootHandle,ref pBatch,unBatchEntryCount);
 		return result;
 	}
 	public ETrackedPropertyError StringToHandle(ref ulong pHandle,string pchPath)
 	{
 		pHandle = 0;
-		IntPtr pchPathUtf8 = Utils.ToUtf8(pchPath);
-		ETrackedPropertyError result = FnTable.StringToHandle(ref pHandle,pchPathUtf8);
+		var pchPathUtf8 = Utils.ToUtf8(pchPath);
+		var result = FnTable.StringToHandle(ref pHandle,pchPathUtf8);
 		Marshal.FreeHGlobal(pchPathUtf8);
 		return result;
 	}
 	public ETrackedPropertyError HandleToString(ulong pHandle,string pchBuffer,uint unBufferSize,ref uint punBufferSizeUsed)
 	{
 		punBufferSizeUsed = 0;
-		ETrackedPropertyError result = FnTable.HandleToString(pHandle,pchBuffer,unBufferSize,ref punBufferSizeUsed);
+		var result = FnTable.HandleToString(pHandle,pchBuffer,unBufferSize,ref punBufferSizeUsed);
 		return result;
 	}
 }
@@ -4438,56 +4438,56 @@ public class CVRBlockQueue
 	public EBlockQueueError Create(ref ulong pulQueueHandle,string pchPath,uint unBlockDataSize,uint unBlockHeaderSize,uint unBlockCount,uint unFlags)
 	{
 		pulQueueHandle = 0;
-		IntPtr pchPathUtf8 = Utils.ToUtf8(pchPath);
-		EBlockQueueError result = FnTable.Create(ref pulQueueHandle,pchPathUtf8,unBlockDataSize,unBlockHeaderSize,unBlockCount,unFlags);
+		var pchPathUtf8 = Utils.ToUtf8(pchPath);
+		var result = FnTable.Create(ref pulQueueHandle,pchPathUtf8,unBlockDataSize,unBlockHeaderSize,unBlockCount,unFlags);
 		Marshal.FreeHGlobal(pchPathUtf8);
 		return result;
 	}
 	public EBlockQueueError Connect(ref ulong pulQueueHandle,string pchPath)
 	{
 		pulQueueHandle = 0;
-		IntPtr pchPathUtf8 = Utils.ToUtf8(pchPath);
-		EBlockQueueError result = FnTable.Connect(ref pulQueueHandle,pchPathUtf8);
+		var pchPathUtf8 = Utils.ToUtf8(pchPath);
+		var result = FnTable.Connect(ref pulQueueHandle,pchPathUtf8);
 		Marshal.FreeHGlobal(pchPathUtf8);
 		return result;
 	}
 	public EBlockQueueError Destroy(ulong ulQueueHandle)
 	{
-		EBlockQueueError result = FnTable.Destroy(ulQueueHandle);
+		var result = FnTable.Destroy(ulQueueHandle);
 		return result;
 	}
 	public EBlockQueueError AcquireWriteOnlyBlock(ulong ulQueueHandle,ref ulong pulBlockHandle,ref IntPtr ppvBuffer)
 	{
 		pulBlockHandle = 0;
-		EBlockQueueError result = FnTable.AcquireWriteOnlyBlock(ulQueueHandle,ref pulBlockHandle,ref ppvBuffer);
+		var result = FnTable.AcquireWriteOnlyBlock(ulQueueHandle,ref pulBlockHandle,ref ppvBuffer);
 		return result;
 	}
 	public EBlockQueueError ReleaseWriteOnlyBlock(ulong ulQueueHandle,ulong ulBlockHandle)
 	{
-		EBlockQueueError result = FnTable.ReleaseWriteOnlyBlock(ulQueueHandle,ulBlockHandle);
+		var result = FnTable.ReleaseWriteOnlyBlock(ulQueueHandle,ulBlockHandle);
 		return result;
 	}
 	public EBlockQueueError WaitAndAcquireReadOnlyBlock(ulong ulQueueHandle,ref ulong pulBlockHandle,ref IntPtr ppvBuffer,EBlockQueueReadType eReadType,uint unTimeoutMs)
 	{
 		pulBlockHandle = 0;
-		EBlockQueueError result = FnTable.WaitAndAcquireReadOnlyBlock(ulQueueHandle,ref pulBlockHandle,ref ppvBuffer,eReadType,unTimeoutMs);
+		var result = FnTable.WaitAndAcquireReadOnlyBlock(ulQueueHandle,ref pulBlockHandle,ref ppvBuffer,eReadType,unTimeoutMs);
 		return result;
 	}
 	public EBlockQueueError AcquireReadOnlyBlock(ulong ulQueueHandle,ref ulong pulBlockHandle,ref IntPtr ppvBuffer,EBlockQueueReadType eReadType)
 	{
 		pulBlockHandle = 0;
-		EBlockQueueError result = FnTable.AcquireReadOnlyBlock(ulQueueHandle,ref pulBlockHandle,ref ppvBuffer,eReadType);
+		var result = FnTable.AcquireReadOnlyBlock(ulQueueHandle,ref pulBlockHandle,ref ppvBuffer,eReadType);
 		return result;
 	}
 	public EBlockQueueError ReleaseReadOnlyBlock(ulong ulQueueHandle,ulong ulBlockHandle)
 	{
-		EBlockQueueError result = FnTable.ReleaseReadOnlyBlock(ulQueueHandle,ulBlockHandle);
+		var result = FnTable.ReleaseReadOnlyBlock(ulQueueHandle,ulBlockHandle);
 		return result;
 	}
 	public EBlockQueueError QueueHasReader(ulong ulQueueHandle,ref bool pbHasReaders)
 	{
 		pbHasReaders = false;
-		EBlockQueueError result = FnTable.QueueHasReader(ulQueueHandle,ref pbHasReaders);
+		var result = FnTable.QueueHasReader(ulQueueHandle,ref pbHasReaders);
 		return result;
 	}
 }
@@ -7570,7 +7570,7 @@ public class OpenVR
 		{
 			uint pathSize = 512;
 			uint requiredPathSize = 512;
-			System.Text.StringBuilder path = new System.Text.StringBuilder((int)pathSize);
+			var path = new System.Text.StringBuilder((int)pathSize);
 			bool success = OpenVRInterop.GetRuntimePath(path, pathSize, ref requiredPathSize);
 			if (success == false)
 			{

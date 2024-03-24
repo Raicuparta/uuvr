@@ -45,7 +45,7 @@ public static class LayerHelper
         // Not using the usual foreach Transform etc because it fails in silly il2cpp.
         for (int index = 0; index < transform.childCount; index++)
         {
-            Transform child = transform.GetChild(index);
+            var child = transform.GetChild(index);
             SetLayerRecursive(child, layer);
             transform.gameObject.layer = layer;
         }

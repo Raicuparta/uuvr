@@ -364,7 +364,7 @@ namespace UnityEngine.XR.OpenXR
 
                 if (unhandledExceptionHandler != null)
                 {
-                    AppDomain currentDomain = AppDomain.CurrentDomain;
+                    var currentDomain = AppDomain.CurrentDomain;
                     currentDomain.UnhandledException -= unhandledExceptionHandler;
                     unhandledExceptionHandler = null;
                 }
@@ -423,8 +423,8 @@ namespace UnityEngine.XR.OpenXR
             if (instance == null || instance.features == null)
                 return;
 
-            StringBuilder requestedLog = new StringBuilder("");
-            StringBuilder failedLog = new StringBuilder("");
+            var requestedLog = new StringBuilder("");
+            var failedLog = new StringBuilder("");
             uint count = 0;
             uint failedCount = 0;
             foreach (var feature in instance.features)
