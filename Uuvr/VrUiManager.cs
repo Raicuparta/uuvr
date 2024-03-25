@@ -20,6 +20,7 @@ public class VrUiManager : UuvrBehaviour
     private RenderTexture? _uiTexture;
     private GameObject? _vrUiQuad;
     private GameObject? _uiContainer;
+    private FollowTarget? _containerFollowTarget;
 
     private readonly List<string> _ignoredCanvases = new()
     {
@@ -70,6 +71,8 @@ public class VrUiManager : UuvrBehaviour
             }
         };
 
+        _containerFollowTarget = _uiContainer.AddComponent<FollowTarget>();
+
         var flatScreenView = FlatScreenView.Create(_uiContainer.transform);
         flatScreenView.transform.localPosition = Vector3.forward * 2f;
         flatScreenView.transform.localRotation = Quaternion.identity;
@@ -111,9 +114,7 @@ public class VrUiManager : UuvrBehaviour
             _uiContainer != null &&
             _uiContainer.transform.parent != VrCamera.HighestDepthVrCamera.ParentCamera.transform)
         {
-            _uiContainer.transform.SetParent(VrCamera.HighestDepthVrCamera.ParentCamera.transform, false);
-            _uiContainer.transform.localPosition = Vector3.zero;
-            _uiContainer.transform.localRotation = Quaternion.identity;
+            _containerFollowTarget.Target = VrCamera.HighestDepthVrCamera.ParentCamera.transform;
         }
     }
 
