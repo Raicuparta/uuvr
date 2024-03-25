@@ -115,6 +115,8 @@ public class VrUiManager : UuvrBehaviour
             _uiContainer != null &&
             _uiContainer.transform.parent != VrCamera.HighestDepthVrCamera.ParentCamera.transform)
         {
+            // TODO: this is a good alternative for when overlay cameras don't work,
+            // but I should give the overlay camera option anyway for games where that's better.
             _containerFollowTarget.Target = VrCamera.HighestDepthVrCamera.ParentCamera.transform;
         }
     }
