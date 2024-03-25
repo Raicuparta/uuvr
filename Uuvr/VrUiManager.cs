@@ -8,20 +8,19 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace Uuvr;
 
-public class VrUiManager: UuvrBehaviour
+public class VrUiManager : UuvrBehaviour
 {
 #if CPP
     public VrUiManager(System.IntPtr pointer) : base(pointer)
     {
     }
 #endif
-    
+
     private static Camera? _uiCaptureCamera;
-    private static Camera? _uiSceneCamera;
     private RenderTexture? _uiTexture;
     private GameObject? _vrUiQuad;
-    private GameObject? _uiScene;
-    
+    private GameObject? _uiContainer;
+
     private readonly List<string> _ignoredCanvases = new()
     {
         // Unity Explorer canvas, don't want it to be affected by VR.
@@ -31,7 +30,6 @@ public class VrUiManager: UuvrBehaviour
         // but really just Unity Explorer.
         "universelib",
     };
-    private AdditionalCameraData _additionalSceneCameraData;
 
     private void Start()
     {
@@ -44,17 +42,16 @@ public class VrUiManager: UuvrBehaviour
     {
         base.OnSettingChanged();
         var uiLayer = LayerHelper.GetVrUiLayer();
-        
+
         _uiCaptureCamera.cullingMask = 1 << uiLayer;
-        _uiSceneCamera.cullingMask = 1 << uiLayer;
         _vrUiQuad.layer = uiLayer;
     }
 
     private void SetUpUi()
     {
         _uiTexture = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.ARGB32);
-        var uiTextureAspectRatio =  (float) _uiTexture.height / _uiTexture.width;
-
+        var uiTextureAspectRatio = (float)_uiTexture.height / _uiTexture.width;
+        
         _uiCaptureCamera = new GameObject("VrUiCaptureCamera").AddComponent<Camera>();
         VrCamera.IgnoredCameras.Add(_uiCaptureCamera);
         _uiCaptureCamera.transform.parent = transform;
@@ -62,45 +59,34 @@ public class VrUiManager: UuvrBehaviour
         _uiCaptureCamera.backgroundColor = Color.clear;
         _uiCaptureCamera.targetTexture = _uiTexture;
         _uiCaptureCamera.depth = 100;
-        
-        
-        _uiScene = new("VrUiScene")
+
+        _uiContainer = new GameObject("VrUiContainer")
         {
             transform =
             {
                 parent = transform,
-
-                // Dumb solution to avoid the scene camera from seeing the capture camera.
-                // Without having to waste another layer.
-                localPosition = Vector3.right * 1000
+                localPosition = Vector3.forward * 2f,
+                localRotation = Quaternion.identity,
             }
         };
 
-        // TODO: use Overlay camera type in URP and HDRP
-        _uiSceneCamera = Create<UuvrPoseDriver>(_uiScene.transform).gameObject.AddComponent<Camera>();
-        VrCamera.IgnoredCameras.Add(_uiSceneCamera);
-        _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
-        _uiSceneCamera.depth = 100;
-        
-        _additionalSceneCameraData = AdditionalCameraData.Create(_uiSceneCamera);
-        _additionalSceneCameraData.SetRenderTypeOverlay();
-        
-        var flatScreenView = FlatScreenView.Create(_uiScene.transform);
+        var flatScreenView = FlatScreenView.Create(_uiContainer.transform);
         flatScreenView.transform.localPosition = Vector3.forward * 2f;
         flatScreenView.transform.localRotation = Quaternion.identity;
-        
+
         _vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         _vrUiQuad.name = "VrUiQuad";
-        _vrUiQuad.transform.parent = _uiScene.transform;
+        _vrUiQuad.transform.parent = _uiContainer.transform;
         _vrUiQuad.transform.localPosition = Vector3.forward * 2f;
         var quadWidth = 1.8f;
         var quadHeight = quadWidth * uiTextureAspectRatio;
         _vrUiQuad.transform.localScale = new Vector3(quadWidth, quadHeight, 1f);
 
         var renderer = _vrUiQuad.GetComponent<Renderer>();
+        // TODO: not sure if this is visible in all games, check Aragami.
         renderer.material = Canvas.GetDefaultCanvasMaterial();
         renderer.material.mainTexture = _uiTexture;
-        
+
         // TODO setting for this.
         // UniversalRenderPipelineAsset? pipelineAsset = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
         // var data = pipelineAsset.GetValue<ForwardRendererData>("scriptableRendererData");
@@ -111,47 +97,33 @@ public class VrUiManager: UuvrBehaviour
     private void Update()
     {
         if (_uiTexture == null) SetUpUi();
-        
+
+        // TODO: handle finding canvases that aren't here because they don't have anything inside them.
+        // Game example: Smushi.
         foreach (var canvas in GraphicRegistry.instance.m_Graphics.Keys)
         {
             PatchCanvas(canvas);
         }
 
-        SetUpAdditionalCameraData();
-
-        if (VrCamera.HighestDepthVrCamera != null && VrCamera.HighestDepthVrCamera.ParentCamera != null)
+        if (
+            VrCamera.HighestDepthVrCamera != null &&
+            VrCamera.HighestDepthVrCamera.ParentCamera != null &&
+            _uiContainer != null &&
+            _uiContainer.transform.parent != VrCamera.HighestDepthVrCamera.ParentCamera.transform)
         {
-            _uiScene.transform.SetParent(VrCamera.HighestDepthVrCamera.ParentCamera.transform, false);
-            _uiScene.transform.localPosition = Vector3.zero;
-            _uiScene.transform.localRotation = Quaternion.identity;
+            _uiContainer.transform.SetParent(VrCamera.HighestDepthVrCamera.ParentCamera.transform, false);
+            _uiContainer.transform.localPosition = Vector3.zero;
+            _uiContainer.transform.localRotation = Quaternion.identity;
         }
-    }
-
-    private void SetUpAdditionalCameraData()
-    {
-        if (VrCamera.HighestDepthVrCamera == null)
-        {
-            _additionalSceneCameraData.SetRenderTypeBase();
-            _uiSceneCamera.clearFlags = CameraClearFlags.Skybox;
-            return;
-        }
-    
-        _additionalSceneCameraData.SetRenderTypeOverlay();
-        _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
-    
-        var additionalHighestDepthCameraData = AdditionalCameraData.Create(VrCamera.HighestDepthVrCamera.CameraInUse);
-        if (additionalHighestDepthCameraData.GetCameraStack().Contains(_uiSceneCamera)) return;
-        
-        additionalHighestDepthCameraData.GetCameraStack().Add(_uiSceneCamera);
     }
 
     private void PatchCanvas(Canvas canvas)
     {
         if (!canvas) return;
-        
+
         // World space canvases probably already work as intended in VR.
         if (canvas.renderMode == RenderMode.WorldSpace) return;
-        
+
         // No need to look at child canvases, just change the parents.
         // Also changing some properties of children affects the parents, which makes it harder for us to know what we're doing.
         if (!canvas.isRootCanvas)
@@ -169,7 +141,7 @@ public class VrUiManager: UuvrBehaviour
         // Already patched;
         // TODO: might be smart to have a more efficient way to check if it's patched.
         if (canvas.GetComponent<VrUiCanvas>()) return;
-        
+
         VrUiCanvas.Create(canvas, _uiCaptureCamera);
     }
 }

@@ -25,7 +25,6 @@ public class VrCamera : UuvrBehaviour
     private Camera? _childCamera;
     private UuvrPoseDriver? _childCameraPoseDriver;
     private LineRenderer _forwardLine;
-    private AdditionalCameraData _additionalData;
     // private int _originalCullingMask = -2;
 
 #if CPP
@@ -85,13 +84,6 @@ public class VrCamera : UuvrBehaviour
 
     private void Update()
     {
-        if (_additionalData == null)
-        {
-            _additionalData = AdditionalCameraData.Create(CameraInUse);
-        }
-        
-        if (_additionalData.IsOverlay()) Destroy(this);
-        
         if (ModConfiguration.Instance.OverrideDepth.Value)
         {
             ParentCamera.depth = ModConfiguration.Instance.VrCameraDepth.Value;

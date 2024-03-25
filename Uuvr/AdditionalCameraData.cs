@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if MODERN
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -69,3 +70,4 @@ public class AdditionalCameraData: MonoBehaviour
         _allowXrRenderingProperty.SetValue(_additionalCameraData, allowXrRendering);    
     }
 }
+#endif

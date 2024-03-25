@@ -43,7 +43,8 @@ public class FlatScreenView: MonoBehaviour
         _clearCamera.stereoTargetEye = StereoTargetEyeMask.None;
         _clearCamera.depth = -100;
         _clearCamera.cullingMask = 0;
-        _clearCamera.clearFlags = CameraClearFlags.Nothing;
+        // TODO: not sure if this works in all games, check Dredge.
+        _clearCamera.clearFlags = CameraClearFlags.SolidColor;
         _clearCamera.backgroundColor = Color.clear;
         
         // HDR seems to prevent a proper transparent clear (would some times become opaque with this enabled).
@@ -51,8 +52,10 @@ public class FlatScreenView: MonoBehaviour
         // This I'm not sure if it helps but since the HDR thing was a problem, might as well.
         _clearCamera.allowMSAA = false;
 
+#if MODERN
         var additionalData = AdditionalCameraData.Create(_clearCamera);
         additionalData.SetAllowXrRendering(false);
+#endif
         
         var xrSettingsType =
             Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.XRModule") ??
