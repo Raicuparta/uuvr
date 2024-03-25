@@ -29,7 +29,7 @@ public class FlatScreenView: MonoBehaviour
     {
         _targetMaterial = new Material(Canvas.GetDefaultCanvasMaterial());
         _quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        // Destroy(_quad.GetComponent<Collider>());
+        Destroy(_quad.GetComponent<Collider>());
         _quad.transform.parent = transform;
         _quad.transform.localPosition = Vector3.zero;
         _quad.transform.localRotation = Quaternion.identity;
