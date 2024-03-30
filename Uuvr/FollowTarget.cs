@@ -4,7 +4,7 @@ namespace Uuvr;
 
 public class FollowTarget: UuvrBehaviour
 {
-    public Transform Target;
+    public Transform? Target;
     public Vector3 LocalPosition = Vector3.zero;
     public Quaternion LocalRotation = Quaternion.identity;
 

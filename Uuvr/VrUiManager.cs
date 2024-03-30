@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 using Vector3 = UnityEngine.Vector3;
 
@@ -16,7 +15,8 @@ public class VrUiManager : UuvrBehaviour
     }
 #endif
 
-    private static Camera? _uiCaptureCamera;
+    private Camera? _uiCaptureCamera;
+    private Camera? _uiSceneCamera;
     private RenderTexture? _uiTexture;
     private GameObject? _vrUiQuad;
     private GameObject? _uiContainer;
@@ -45,14 +45,28 @@ public class VrUiManager : UuvrBehaviour
         var uiLayer = LayerHelper.GetVrUiLayer();
 
         _uiCaptureCamera.cullingMask = 1 << uiLayer;
+        _uiSceneCamera.cullingMask = 1 << uiLayer;
         _vrUiQuad.layer = uiLayer;
+
+
+        switch(ModConfiguration.Instance.PreferredUiRenderMode.Value)
+        {
+            case ModConfiguration.UiRenderMode.InWorld:
+                _uiSceneCamera.gameObject.SetActive(false);
+                break;
+            case ModConfiguration.UiRenderMode.OverlayCamera:
+                _uiSceneCamera.gameObject.SetActive(true);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
     private void SetUpUi()
     {
         _uiTexture = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.ARGB32);
         var uiTextureAspectRatio = (float)_uiTexture.height / _uiTexture.width;
-        
+
         _uiCaptureCamera = new GameObject("VrUiCaptureCamera").AddComponent<Camera>();
         VrCamera.IgnoredCameras.Add(_uiCaptureCamera);
         _uiCaptureCamera.transform.parent = transform;
@@ -87,15 +101,15 @@ public class VrUiManager : UuvrBehaviour
         _vrUiQuad.transform.localScale = new Vector3(quadWidth, quadHeight, 1f);
 
         var renderer = _vrUiQuad.GetComponent<Renderer>();
+
         // TODO: not sure if this is visible in all games, check Aragami.
         renderer.material = Canvas.GetDefaultCanvasMaterial();
         renderer.material.mainTexture = _uiTexture;
 
-        // TODO setting for this.
-        // UniversalRenderPipelineAsset? pipelineAsset = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
-        // var data = pipelineAsset.GetValue<ForwardRendererData>("scriptableRendererData");
-        // data.opaqueLayerMask = -1;
-        // data.transparentLayerMask = -1;
+        _uiSceneCamera = Create<UuvrPoseDriver>(_uiContainer.transform).gameObject.AddComponent<Camera>();
+        VrCamera.IgnoredCameras.Add(_uiSceneCamera);
+        _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
+        _uiSceneCamera.depth = 100;
     }
 
     private void Update()
@@ -113,11 +127,12 @@ public class VrUiManager : UuvrBehaviour
             VrCamera.HighestDepthVrCamera != null &&
             VrCamera.HighestDepthVrCamera.ParentCamera != null &&
             _uiContainer != null &&
-            _uiContainer.transform.parent != VrCamera.HighestDepthVrCamera.ParentCamera.transform)
+            _uiContainer.transform.parent != VrCamera.HighestDepthVrCamera.ParentCamera.transform &&
+            _containerFollowTarget != null)
         {
-            // TODO: this is a good alternative for when overlay cameras don't work,
-            // but I should give the overlay camera option anyway for games where that's better.
-            _containerFollowTarget.Target = VrCamera.HighestDepthVrCamera.ParentCamera.transform;
+            _containerFollowTarget.Target = ModConfiguration.Instance.PreferredUiRenderMode.Value == ModConfiguration.UiRenderMode.InWorld
+                ? VrCamera.HighestDepthVrCamera.ParentCamera.transform
+                : null;
         }
     }
 

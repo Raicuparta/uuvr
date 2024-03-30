@@ -34,6 +34,7 @@ public class VrUiCursor: UuvrBehaviour
         
         // When I load the bmp like this and use it as a texture, it shows up upside down for some reason.
         // So I just flipped the cursor vertically in the actual bmp. Yeah dunno.
+        // TODO: this stuff does't exist in a bunch of games, try something else for loading BMP.
         var bitmap = new Bitmap(Path.Combine(UuvrPlugin.ModFolderPath, @"Assets\cursor.bmp"));
         var bmpdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
         var numbytes = bmpdata.Stride * bitmap.Height;

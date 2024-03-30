@@ -37,6 +37,14 @@ public class ModConfiguration
         All,
     }
 
+    public enum UiRenderMode
+    {
+        [Description("Overlay Camera (draws on top of everything)")]
+        OverlayCamera,
+        [Description("In World (can be occluded)")]
+        InWorld,
+    }
+
     public readonly ConfigFile Config;
     public readonly ConfigEntry<CameraTrackingMode> CameraTracking;
     public readonly ConfigEntry<bool> RelativeCameraSetStereoView;
@@ -46,7 +54,7 @@ public class ModConfiguration
     public readonly ConfigEntry<bool> OverrideDepth;
     public readonly ConfigEntry<bool> PhysicsMatchHeadsetRefreshRate;
     public readonly ConfigEntry<bool> PatchUi;
-    public readonly ConfigEntry<bool> RenderMouseCursor;
+    public readonly ConfigEntry<UiRenderMode> PreferredUiRenderMode;
     public readonly ConfigEntry<ScreenSpaceCanvasType> ScreenSpaceCanvasTypesToPatch;
     
 #if MODERN
@@ -124,5 +132,11 @@ public class ModConfiguration
             "Screen-space UI elements to patch",
             ScreenSpaceCanvasType.NotToTexture,
             "Screen-space UI elements are already visible in VR with no patches. But in some games, they are difficult to see in VR. So you can choose to patch some (or all) of them to be rendered in the VR UI screen.");
+        
+        PreferredUiRenderMode = config.Bind(
+            "UI",
+            "Preferred UI Plane Render Mode",
+            UiRenderMode.InWorld,
+            "How to render the VR UI Plane. Overlay is usually better, but does't work in every game.");
     }
 }
