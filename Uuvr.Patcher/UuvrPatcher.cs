@@ -147,7 +147,8 @@ public class Patcher
         #pragma warning restore CS0618 // Type or member is obsolete
         var enabledVRDevices = buildSettingsBase.Get("enabledVRDevices").Get("Array");
         var stringTemplate = enabledVRDevices.templateField.children[1];
-        AssetTypeValueField[] vrDevicesList = { StringField("OpenVR", stringTemplate) };
+        
+        AssetTypeValueField[] vrDevicesList = { StringField("None", stringTemplate), StringField("OpenVR", stringTemplate), StringField("Oculus", stringTemplate) };
         enabledVRDevices.SetChildrenList(vrDevicesList);
 
         replacers.Add(new AssetsReplacerFromMemory(0, buildSettings.index, (int)buildSettings.curFileType, 0xffff,
