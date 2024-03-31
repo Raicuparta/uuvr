@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using UnityEngine;
+using Uuvr.UnityTypesHelper;
 using Uuvr.VrTogglers;
 
 namespace Uuvr;
@@ -17,7 +18,6 @@ public class UuvrCore: MonoBehaviour
     private float _originalFixedDeltaTime;
     
     private VrUiManager? _vrUi;
-    private PropertyInfo? _refreshRateProperty;
     private VrTogglerManager? _vrTogglerManager;
 
     public static void Create()
@@ -40,13 +40,6 @@ public class UuvrCore: MonoBehaviour
 
     private void Start()
     {
-        var xrDeviceType = Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.XRModule") ??
-                           Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.VRModule") ??
-                           Type.GetType("UnityEngine.VR.VRDevice, UnityEngine.VRModule") ??
-                           Type.GetType("UnityEngine.VR.VRDevice, UnityEngine");
-
-        _refreshRateProperty = xrDeviceType?.GetProperty("refreshRate");
-        
         _vrUi = UuvrBehaviour.Create<VrUiManager>(transform);
 
         _vrTogglerManager = new VrTogglerManager();
@@ -56,6 +49,20 @@ public class UuvrCore: MonoBehaviour
 
     private void Update()
     {
+        for (var i = 0; i < 20; i++)
+        {
+            var button = $"JoystickButton{i}";
+            var keyCode = (KeyCode)Enum.Parse(typeof(KeyCode), button);
+            if (Input.GetKeyDown(keyCode))
+            {
+                Debug.Log($"{button} down");
+            }
+            if (Input.GetKeyUp(keyCode))
+            {
+                Debug.Log($"{button} up");
+            }
+        }
+        
         if (_toggleVrKey.UpdateIsDown()) _vrTogglerManager?.ToggleVr();
         UpdatePhysicsRate();
     }
@@ -67,14 +74,14 @@ public class UuvrCore: MonoBehaviour
             _originalFixedDeltaTime = Time.fixedDeltaTime;
         }
 
-        if (_refreshRateProperty == null) return;
+        if (UuvrXrDevice.RefreshRateProperty == null) return;
 
-        var headsetRefreshRate = (float)_refreshRateProperty.GetValue(null, null);
+        var headsetRefreshRate = (float)UuvrXrDevice.RefreshRateProperty.GetValue(null, null);
         if (headsetRefreshRate <= 0) return;
 
         if (ModConfiguration.Instance.PhysicsMatchHeadsetRefreshRate.Value)
         {
-            Time.fixedDeltaTime = 1f / (float) _refreshRateProperty.GetValue(null, null);
+            Time.fixedDeltaTime = 1f / (float) UuvrXrDevice.RefreshRateProperty.GetValue(null, null);
         }
         else
         {
