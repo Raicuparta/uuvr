@@ -17,6 +17,9 @@
         <Reference Include="..\lib\$(UnityBackend)\$(UnityGeneration)\*.dll">
             <Private>False</Private>
         </Reference>
+        <Reference Include="..\lib\Valve.Newtonsoft.Json.dll">
+            <Private>True</Private>
+        </Reference>
         <Content Include="Assets\**" >
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>

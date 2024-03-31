@@ -32,9 +32,6 @@ namespace Valve.VR
 
         public bool doNotDestroy = true;
 
-        [HideInInspector]
-        public SteamVR_Render steamvr_render;
-
         internal static bool isPlaying = false;
 
         private static bool initializing = false;
@@ -48,9 +45,6 @@ namespace Valve.VR
                 if (forceUnityVRToOpenVR)
                     forcingInitialization = true;
 
-                SteamVR_Render renderInstance = GameObject.FindObjectOfType<SteamVR_Render>();
-                if (renderInstance != null)
-                    steamVRObject = renderInstance.gameObject;
 
                 SteamVR_Behaviour behaviourInstance = GameObject.FindObjectOfType<SteamVR_Behaviour>();
                 if (behaviourInstance != null)
@@ -60,22 +54,12 @@ namespace Valve.VR
                 {
                     GameObject objectInstance = new GameObject("[SteamVR]");
                     _instance = objectInstance.AddComponent<SteamVR_Behaviour>();
-                    _instance.steamvr_render = objectInstance.AddComponent<SteamVR_Render>();
                 }
                 else
                 {
                     behaviourInstance = steamVRObject.GetComponent<SteamVR_Behaviour>();
                     if (behaviourInstance == null)
                         behaviourInstance = steamVRObject.AddComponent<SteamVR_Behaviour>();
-
-                    if (renderInstance != null)
-                        behaviourInstance.steamvr_render = renderInstance;
-                    else
-                    {
-                        behaviourInstance.steamvr_render = steamVRObject.GetComponent<SteamVR_Render>();
-                        if (behaviourInstance.steamvr_render == null)
-                            behaviourInstance.steamvr_render = steamVRObject.AddComponent<SteamVR_Render>();
-                    }
 
                     _instance = behaviourInstance;
                 }

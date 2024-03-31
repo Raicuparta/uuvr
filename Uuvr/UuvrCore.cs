@@ -3,6 +3,7 @@ using System.Reflection;
 using UnityEngine;
 using Uuvr.UnityTypesHelper;
 using Uuvr.VrTogglers;
+using Valve.VR;
 
 namespace Uuvr;
 
@@ -29,6 +30,7 @@ public class UuvrCore: MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
         gameObject.AddComponent<VrCameraManager>();
+        SteamVR.Initialize();
     }
 
     private void OnDestroy()
