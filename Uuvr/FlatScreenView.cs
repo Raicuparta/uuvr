@@ -54,7 +54,10 @@ public class FlatScreenView: MonoBehaviour
 
 #if MODERN
         var additionalData = AdditionalCameraData.Create(_clearCamera);
-        additionalData.SetAllowXrRendering(false);
+        if (additionalData != null)
+        {
+            additionalData.SetAllowXrRendering(false);
+        }
 #endif
         
         var xrSettingsType =

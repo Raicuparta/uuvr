@@ -37,6 +37,8 @@ public class AdditionalCameraData: MonoBehaviour
             _allowXrRenderingProperty = _additionalCameraDataType?.GetProperty("allowXRRendering");
         }
 
+        if (_additionalCameraDataType == null) return null;
+
         return camera.gameObject.GetComponent<AdditionalCameraData>() ?? camera.gameObject.AddComponent<AdditionalCameraData>();
     }
     
