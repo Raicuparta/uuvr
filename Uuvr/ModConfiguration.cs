@@ -9,11 +9,16 @@ public class ModConfiguration
     
     public enum CameraTrackingMode
     {
-        [Description("Absolute (moves/rotates existing camera)")]
+        [Description("Absolute")]
         Absolute,
-        [Description("Relative (changes existing camera rendering)")]
-        Relative,
-        [Description("Child (adds new camera)")]
+        [Description("Relative Matrix")]
+        RelativeMatrix,
+#if MODERN
+        // TODO: could add this for legacy too.
+        [Description("Relative Transform")]
+        RelativeTransform,
+#endif
+        [Description("Child")]
         Child,
     }
 
@@ -78,7 +83,11 @@ public class ModConfiguration
         CameraTracking = config.Bind(
             "Camera",
             "Camera Tracking Mode",
-            CameraTrackingMode.Relative,
+#if LEGACY
+            CameraTrackingMode.RelativeMatrix,
+#else
+            CameraTrackingMode.RelativeTransform,
+#endif
             "Defines how camera tracking is done. Relative is usually preferred, but not all games support it. Changing this might require restarting the level.");
         
         RelativeCameraSetStereoView = config.Bind(

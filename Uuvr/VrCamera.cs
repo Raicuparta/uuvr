@@ -14,6 +14,10 @@ public class VrCamera : UuvrBehaviour
     public static readonly HashSet<Camera> VrCameras = new();
     public static readonly HashSet<Camera> IgnoredCameras = new();
     public static VrCamera? HighestDepthVrCamera { get; private set; }
+
+#if MODERN
+    private Quaternion _rotationBeforeRender;
+#endif
     
     public Camera? ParentCamera { get; private set; }
     public Camera? CameraInUse {
@@ -41,22 +45,24 @@ public class VrCamera : UuvrBehaviour
         VrCameras.Add(ParentCamera);
     }
 
-    // TODO: setting for this, default to it if URP/HDRP.
-    private Quaternion _rotation;
-
+#if MODERN
     protected override void OnBeginFrameRendering()
     {
-        // TODO: setting for this, default to it if URP/HDRP.
         base.OnBeginFrameRendering();
-        _rotation = transform.rotation;
+
+        if (ModConfiguration.Instance.CameraTracking.Value != ModConfiguration.CameraTrackingMode.RelativeTransform) return;
+        
+        _rotationBeforeRender = transform.rotation;
         transform.rotation = _childCamera.transform.rotation;
     }
 
     protected override void OnEndFrameRendering()
     {
-        // TODO: setting for this, default to it if URP/HDRP.
-        transform.rotation = _rotation;
+        if (ModConfiguration.Instance.CameraTracking.Value != ModConfiguration.CameraTrackingMode.RelativeTransform) return;
+
+        transform.rotation = _rotationBeforeRender;
     }
+#endif
 
     private void OnDestroy()
     {
@@ -82,22 +88,22 @@ public class VrCamera : UuvrBehaviour
 
     protected override void OnBeforeRender()
     {
-        UpdateRelativeCamera();
+        UpdateRelativeMatrix();
     }
 
     private void OnPreCull()
     {
-        UpdateRelativeCamera();
+        UpdateRelativeMatrix();
     }
 
     private void OnPreRender()
     {
-        UpdateRelativeCamera();
+        UpdateRelativeMatrix();
     }
 
     private void LateUpdate()
     {
-        UpdateRelativeCamera();
+        UpdateRelativeMatrix();
     }
 
     private void Update()
@@ -147,9 +153,9 @@ public class VrCamera : UuvrBehaviour
         }
     }
 
-    private void UpdateRelativeCamera()
+    private void UpdateRelativeMatrix()
     {
-        if (ModConfiguration.Instance.CameraTracking.Value != ModConfiguration.CameraTrackingMode.Relative) return;
+        if (ModConfiguration.Instance.CameraTracking.Value != ModConfiguration.CameraTrackingMode.RelativeMatrix) return;
         
         var eye = ParentCamera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? Camera.StereoscopicEye.Left : Camera.StereoscopicEye.Right;
        

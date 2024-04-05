@@ -77,6 +77,7 @@ public class UuvrBehaviour: MonoBehaviour
             Debug.LogWarning($"Failed to unlisten from BeforeRender: {exception}");
         }
 #else
+        // TODO: This might not exist?
         Application.onBeforeRender -= OnBeforeRender;
 #endif
         
@@ -98,6 +99,7 @@ public class UuvrBehaviour: MonoBehaviour
 
     protected virtual void OnSettingChanged() {}
 
+#if MODERN
     private void OnBeginFrameRendering(ScriptableRenderContext arg1, Camera[] arg2)
     {
         OnBeginFrameRendering();
@@ -111,4 +113,5 @@ public class UuvrBehaviour: MonoBehaviour
     protected virtual void OnBeginFrameRendering() {}
     
     protected virtual void OnEndFrameRendering() {}
+#endif
 }
