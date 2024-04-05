@@ -4,6 +4,7 @@ using Il2CppSystem.Collections.Generic;
 using System.Collections.Generic;
 #endif
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 
 namespace Uuvr;
@@ -38,6 +39,23 @@ public class VrCamera : UuvrBehaviour
         base.Awake();
         ParentCamera = GetComponent<Camera>();
         VrCameras.Add(ParentCamera);
+    }
+
+    // TODO: setting for this, default to it if URP/HDRP.
+    private Quaternion _rotation;
+
+    protected override void OnBeginFrameRendering()
+    {
+        // TODO: setting for this, default to it if URP/HDRP.
+        base.OnBeginFrameRendering();
+        _rotation = transform.rotation;
+        transform.rotation = _childCamera.transform.rotation;
+    }
+
+    protected override void OnEndFrameRendering()
+    {
+        // TODO: setting for this, default to it if URP/HDRP.
+        transform.rotation = _rotation;
     }
 
     private void OnDestroy()

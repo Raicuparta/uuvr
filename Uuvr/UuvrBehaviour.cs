@@ -4,6 +4,7 @@ using System;
 
 using BepInEx.Configuration;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Uuvr;
 
@@ -54,7 +55,14 @@ public class UuvrBehaviour: MonoBehaviour
         // TODO: This doesn't exist for unity <2017
         Application.onBeforeRender += OnBeforeRender;
 #endif
+
+#if MODERN
+        RenderPipelineManager.beginFrameRendering += OnBeginFrameRendering;
+        RenderPipelineManager.endFrameRendering += OnEndFrameRendering;
+#endif
+
         ModConfiguration.Instance.Config.SettingChanged += ConfigOnSettingChanged;
+        
     }
 
     protected virtual void OnDisable()
@@ -71,6 +79,13 @@ public class UuvrBehaviour: MonoBehaviour
 #else
         Application.onBeforeRender -= OnBeforeRender;
 #endif
+        
+#if MODERN
+        // TODO: This might not exist? maybe ok for modern though.
+        RenderPipelineManager.beginFrameRendering -= OnBeginFrameRendering;
+        RenderPipelineManager.endFrameRendering -= OnEndFrameRendering;
+#endif
+        
         ModConfiguration.Instance.Config.SettingChanged -= ConfigOnSettingChanged;
     }
 
@@ -82,4 +97,18 @@ public class UuvrBehaviour: MonoBehaviour
     protected virtual void OnBeforeRender() {}
 
     protected virtual void OnSettingChanged() {}
+
+    private void OnBeginFrameRendering(ScriptableRenderContext arg1, Camera[] arg2)
+    {
+        OnBeginFrameRendering();
+    }
+
+    private void OnEndFrameRendering(ScriptableRenderContext arg1, Camera[] arg2)
+    {
+        OnEndFrameRendering();
+    }
+    
+    protected virtual void OnBeginFrameRendering() {}
+    
+    protected virtual void OnEndFrameRendering() {}
 }

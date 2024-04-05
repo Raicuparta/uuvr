@@ -105,6 +105,7 @@ public class VrUiManager : UuvrBehaviour
         // TODO: not sure if this is visible in all games, check Aragami.
         renderer.material = Canvas.GetDefaultCanvasMaterial();
         renderer.material.mainTexture = _uiTexture;
+        renderer.material.renderQueue = 5000;
 
         _uiSceneCamera = Create<UuvrPoseDriver>(_uiContainer.transform).gameObject.AddComponent<Camera>();
         VrCamera.IgnoredCameras.Add(_uiSceneCamera);
