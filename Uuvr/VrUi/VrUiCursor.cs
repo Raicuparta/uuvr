@@ -1,16 +1,10 @@
-﻿using System.Collections;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Runtime.InteropServices;
+﻿using System.IO;
 using UnityEngine;
 
 namespace Uuvr.VrUi;
 
 // The mouse cursor isn't visible in the VR UI plane, unless it's being rendered in software mode.
 // So we use a custom mouse cursor graphic and render that.
-// TODO: Look into games that already do this, and possibly revert it to hardware mouse.
-// Might need to patch the cursor methods to prevent it.
 public class VrUiCursor: UuvrBehaviour
 {
 #if CPP
@@ -20,32 +14,24 @@ public class VrUiCursor: UuvrBehaviour
 #endif
 
     private Texture2D _texture;
+    private Vector2 _offset = new(22, 2);
 
     private void Start()
-    {
-        StartCoroutine(SetUpCursor());
-    }
+    {        
+        var bytes = File.ReadAllBytes(Path.Combine(UuvrPlugin.ModFolderPath, @"Assets\cursor.bmp"));
+        
+        // Read dimensions from BMP header
+        var width = bytes[18] + (bytes[19] << 8);
+        var height = bytes[22] + (bytes[23] << 8);
 
-    private IEnumerator SetUpCursor()
-    {
-        // I don't really know what I'm waiting for, but setting this too early made the cursor invisible.
-        yield return new WaitForSeconds(3);
+        var colors = new Color32[width * height];
+        _texture = new Texture2D(width, height, TextureFormat.BGRA32, false);
+        for (var i = 0; i < colors.Length; i++)
+        {
+            colors[i] = new Color32(bytes[i * 4 + 54], bytes[i * 4 + 55], bytes[i * 4 + 56], bytes[i * 4 + 57]);
+        }
+        _texture.SetPixels32(colors);
         
-        // When I load the bmp like this and use it as a texture, it shows up upside down for some reason.
-        // So I just flipped the cursor vertically in the actual bmp. Yeah dunno.
-        // TODO: this stuff does't exist in a bunch of games, try something else for loading BMP.
-        var bitmap = new Bitmap(Path.Combine(UuvrPlugin.ModFolderPath, @"Assets\cursor.bmp"));
-        var bmpdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
-        var numbytes = bmpdata.Stride * bitmap.Height;
-        var imageBytes = new byte[numbytes];
-        var ptr = bmpdata.Scan0;
-     
-        Marshal.Copy(ptr, imageBytes, 0, numbytes);
-     
-        bitmap.UnlockBits(bmpdata);
-        
-        _texture = new Texture2D(48, 48, TextureFormat.RGBA32, false);
-        _texture.LoadRawTextureData(imageBytes);
         _texture.Apply();
     }
 
@@ -53,6 +39,9 @@ public class VrUiCursor: UuvrBehaviour
     {
         if (_texture == null) return;
 
-        Cursor.SetCursor(_texture, new Vector2(2, 5), CursorMode.ForceSoftware);
+        // Perhaps it's unnecessary to set the cursor every frame,
+        // but some games override it. I should probably leave it alone for games that already set it,
+        // but I'm not sure how to check.
+        Cursor.SetCursor(_texture, _offset, CursorMode.ForceSoftware);
     }
 }
