@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Reflection;
 using UnityEngine;
+using Uuvr.VrCamera;
 using Uuvr.VrTogglers;
+using Uuvr.VrUi;
 
 namespace Uuvr;
 

@@ -4,7 +4,7 @@ using UnhollowerBaseLib;
 #endif
 using UnityEngine;
 
-namespace Uuvr;
+namespace Uuvr.VrCamera;
 
 public class VrCameraManager: MonoBehaviour
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Uuvr;
+namespace Uuvr.VrUi;
 
 public class VrUiCanvas: UuvrBehaviour
 {

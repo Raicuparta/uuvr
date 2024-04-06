@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace Uuvr;
+namespace Uuvr.VrUi;
 
 // The mouse cursor isn't visible in the VR UI plane, unless it's being rendered in software mode.
 // So we use a custom mouse cursor graphic and render that.

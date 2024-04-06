@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace Uuvr;
+namespace Uuvr.VrCamera;
 
 // Helper behaviour for handling URP's Additional Camera Data without needing an actual dependency.
 // Not using this for HDRP for now, since it isn't much help.

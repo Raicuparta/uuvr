@@ -4,10 +4,8 @@ using Il2CppSystem.Collections.Generic;
 using System.Collections.Generic;
 #endif
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Serialization;
 
-namespace Uuvr;
+namespace Uuvr.VrCamera;
 
 public class VrCamera : UuvrBehaviour
 {

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Vector3 = UnityEngine.Vector3;
 
-namespace Uuvr;
+namespace Uuvr.VrUi;
 
 public class VrUiManager : UuvrBehaviour
 {
@@ -68,7 +68,7 @@ public class VrUiManager : UuvrBehaviour
         var uiTextureAspectRatio = (float)_uiTexture.height / _uiTexture.width;
 
         _uiCaptureCamera = new GameObject("VrUiCaptureCamera").AddComponent<Camera>();
-        VrCamera.IgnoredCameras.Add(_uiCaptureCamera);
+        VrCamera.VrCamera.IgnoredCameras.Add(_uiCaptureCamera);
         _uiCaptureCamera.transform.parent = transform;
         _uiCaptureCamera.clearFlags = CameraClearFlags.SolidColor;
         _uiCaptureCamera.backgroundColor = Color.clear;
@@ -79,9 +79,7 @@ public class VrUiManager : UuvrBehaviour
         {
             transform =
             {
-                parent = transform,
-                localPosition = Vector3.forward * 2f,
-                localRotation = Quaternion.identity,
+                parent = transform
             }
         };
 
@@ -108,7 +106,7 @@ public class VrUiManager : UuvrBehaviour
         renderer.material.renderQueue = 5000;
 
         _uiSceneCamera = Create<UuvrPoseDriver>(_uiContainer.transform).gameObject.AddComponent<Camera>();
-        VrCamera.IgnoredCameras.Add(_uiSceneCamera);
+        VrCamera.VrCamera.IgnoredCameras.Add(_uiSceneCamera);
         _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
         _uiSceneCamera.depth = 100;
     }
@@ -125,14 +123,14 @@ public class VrUiManager : UuvrBehaviour
         }
 
         if (
-            VrCamera.HighestDepthVrCamera != null &&
-            VrCamera.HighestDepthVrCamera.ParentCamera != null &&
+            VrCamera.VrCamera.HighestDepthVrCamera != null &&
+            VrCamera.VrCamera.HighestDepthVrCamera.ParentCamera != null &&
             _uiContainer != null &&
-            _uiContainer.transform.parent != VrCamera.HighestDepthVrCamera.ParentCamera.transform &&
+            _uiContainer.transform.parent != VrCamera.VrCamera.HighestDepthVrCamera.ParentCamera.transform &&
             _containerFollowTarget != null)
         {
             _containerFollowTarget.Target = ModConfiguration.Instance.PreferredUiRenderMode.Value == ModConfiguration.UiRenderMode.InWorld
-                ? VrCamera.HighestDepthVrCamera.ParentCamera.transform
+                ? VrCamera.VrCamera.HighestDepthVrCamera.ParentCamera.transform
                 : null;
         }
     }

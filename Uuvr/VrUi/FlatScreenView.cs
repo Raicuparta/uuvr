@@ -2,16 +2,17 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Uuvr.VrCamera;
 
-namespace Uuvr;
+namespace Uuvr.VrUi;
 
 public class FlatScreenView: MonoBehaviour
 {
-    private CommandBuffer _commandBuffer;
-    private RenderTexture _targetTexture;
-    private Material _targetMaterial;
-    private GameObject _quad;
-    private Camera _clearCamera;
+    private CommandBuffer? _commandBuffer;
+    private RenderTexture? _targetTexture;
+    private Material? _targetMaterial;
+    private GameObject? _quad;
+    private Camera? _clearCamera;
     private float _scale = 2f;
 
     public static FlatScreenView Create(Transform parent)
