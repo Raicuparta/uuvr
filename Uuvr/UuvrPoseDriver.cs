@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using UnityEngine;
+using Uuvr.UnityTypesHelper;
 
 namespace Uuvr;
 
@@ -66,12 +67,7 @@ public class UuvrPoseDriver: UuvrBehaviour
         var camera = GetComponent<Camera>();
         if (!camera) return;
         
-        var xrDeviceType = Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.XRModule") ??
-                           Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.VRModule") ??
-                           Type.GetType("UnityEngine.VR.VRDevice, UnityEngine.VRModule") ??
-                           Type.GetType("UnityEngine.VR.VRDevice, UnityEngine");
-
-        var cameraTrackingDisablingMethod = xrDeviceType?.GetMethod("DisableAutoXRCameraTracking");
+        var cameraTrackingDisablingMethod = UuvrXrDevice.XrDeviceType?.GetMethod("DisableAutoXRCameraTracking");
 
         if (cameraTrackingDisablingMethod != null)
         {

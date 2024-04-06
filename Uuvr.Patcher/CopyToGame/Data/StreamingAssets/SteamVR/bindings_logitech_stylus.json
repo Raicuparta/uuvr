@@ -1,0 +1,28 @@
+{
+  "bindings": {
+    "/actions/buggy": {
+      "chords": [],
+      "poses": [],
+      "haptics": [],
+      "sources": [],
+      "skeleton": []
+    },
+    "/actions/default": {
+      "chords": [],
+      "poses": [],
+      "haptics": [],
+      "sources": [],
+      "skeleton": []
+    },
+    "/actions/platformer": {
+      "chords": [],
+      "poses": [],
+      "haptics": [],
+      "sources": [],
+      "skeleton": []
+    }
+  },
+  "controller_type": "vive_controller",
+  "description": "",
+  "name": "vive_controller"
+}

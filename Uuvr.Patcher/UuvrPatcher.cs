@@ -148,7 +148,8 @@ public class Patcher
         var enabledVRDevices = buildSettingsBase.Get("enabledVRDevices").Get("Array");
         var stringTemplate = enabledVRDevices.templateField.children[1];
         
-        AssetTypeValueField[] vrDevicesList = { StringField("None", stringTemplate), StringField("OpenVR", stringTemplate), StringField("Oculus", stringTemplate) };
+        // AssetTypeValueField[] vrDevicesList = { StringField("None", stringTemplate), StringField("OpenVR", stringTemplate), StringField("Oculus", stringTemplate) };
+        AssetTypeValueField[] vrDevicesList = { StringField("OpenVR", stringTemplate), StringField("Oculus", stringTemplate) };
         enabledVRDevices.SetChildrenList(vrDevicesList);
 
         replacers.Add(new AssetsReplacerFromMemory(0, buildSettings.index, (int)buildSettings.curFileType, 0xffff,

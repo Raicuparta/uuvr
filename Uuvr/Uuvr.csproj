@@ -17,6 +17,9 @@
         <Reference Include="..\lib\$(UnityBackend)\$(UnityGeneration)\*.dll">
             <Private>False</Private>
         </Reference>
+        <Reference Include="..\lib\Valve.Newtonsoft.Json.dll">
+            <Private>True</Private>
+        </Reference>
         <Content Include="Assets\**" >
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
@@ -46,6 +49,9 @@
     <ItemGroup Condition=" '$(UnityGeneration)' == 'modern' ">
         <ProjectReference Include="..\Uuvr.XR.OpenVR\Uuvr.XR.OpenVR.csproj" />
         <ProjectReference Include="..\Uuvr.XR.OpenXR\Uuvr.XR.OpenXR.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="SteamVR\" />
     </ItemGroup>
 
 </Project>
