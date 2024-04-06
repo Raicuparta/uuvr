@@ -61,14 +61,7 @@ public class UuvrCore: MonoBehaviour
     {
         if (_toggleVrKey.UpdateIsDown()) _vrTogglerManager?.ToggleVr();
         UpdatePhysicsRate();
-
-        XInputSetButtonState(2, Input.GetKey(KeyCode.U));
-        XInputSetButtonState(1, Input.GetKeyDown(KeyCode.J));
     }
-    
-    // native method from dll xinput1_4.dll DLLEXPORT void XInputSetButtonState(_In_ WORD wButton, _In_ BOOL bPressed)
-    [DllImport("xinput1_4.dll", EntryPoint = "XInputSetButtonState")]
-    private static extern void XInputSetButtonState(ushort wButton, bool bPressed);
 
     private void UpdatePhysicsRate()
     {
