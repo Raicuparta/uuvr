@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using Valve.VR;
 
 namespace Uuvr;
 
@@ -32,5 +33,20 @@ public class UuvrInput: UuvrBehaviour
 
     private void Update()
     {
+        var actions = SteamVR_Actions.Xbox;
+        // SetButtonState(XboxButton.DpadUp ,actions.DpadUp.state);
+        // SetButtonState(XboxButton.DpadDown ,actions.DpadDown.state);
+        // SetButtonState(XboxButton.DpadLeft ,actions.DpadLeft.state);
+        // SetButtonState(XboxButton.DpadRight ,actions.DpadRight.state);
+        SetButtonState(XboxButton.Start ,actions.Start.state);
+        SetButtonState(XboxButton.Back ,actions.Select.state);
+        SetButtonState(XboxButton.LeftThumb ,actions.StickLeftClick.state);
+        SetButtonState(XboxButton.RightThumb ,actions.StickRightClick.state);
+        SetButtonState(XboxButton.LeftShoulder ,actions.LB.state);
+        SetButtonState(XboxButton.RightShoulder ,actions.RB.state);
+        SetButtonState(XboxButton.A ,SteamVR_Actions.xbox_A.state);
+        SetButtonState(XboxButton.B ,SteamVR_Actions.xbox_B.state);
+        SetButtonState(XboxButton.X ,SteamVR_Actions.xbox_X.state);
+        SetButtonState(XboxButton.Y ,SteamVR_Actions.xbox_Y.state);
     }
 }
