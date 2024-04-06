@@ -247,3 +247,27 @@ DLLEXPORT void XInputSetButtonState(_In_ WORD wButton, _In_ BOOL bPressed)
 	else
 		state.Gamepad.wButtons &= ~wButton;
 }
+
+// Override trigger state
+DLLEXPORT void XInputSetTriggerState(_In_ BOOL bLeft, _In_ BYTE bValue)
+{
+	if (bLeft)
+		state.Gamepad.bLeftTrigger = bValue;
+	else
+		state.Gamepad.bRightTrigger = bValue;
+}
+
+// Override thumb state
+DLLEXPORT void XInputSetThumbState(_In_ BOOL bLeft, _In_ SHORT sX, _In_ SHORT sY)
+{
+	if (bLeft)
+	{
+		state.Gamepad.sThumbLX = sX;
+		state.Gamepad.sThumbLY = sY;
+	}
+	else
+	{
+		state.Gamepad.sThumbRX = sX;
+		state.Gamepad.sThumbRY = sY;
+	}
+}

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using UnityEngine;
 using Valve.VR;
 
 namespace Uuvr;
@@ -25,6 +26,12 @@ public class UuvrInput: UuvrBehaviour
     
     [DllImport("xinput1_4.dll", EntryPoint = "XInputSetButtonState")]
     private static extern void XInputSetButtonState(ushort wButton, bool bPressed);
+    
+    [DllImport("xinput1_4.dll", EntryPoint = "XInputSetTriggerState")]
+    private static extern void XInputSetTriggerState(bool bLeft, byte bValue);
+    
+    [DllImport("xinput1_4.dll", EntryPoint = "XInputSetThumbState")]
+    private static extern void XInputSetThumbState(bool bLeft, short sX, short sY);
 
     private static void SetButtonState(XboxButton button, bool pressed)
     {
@@ -38,15 +45,27 @@ public class UuvrInput: UuvrBehaviour
         // SetButtonState(XboxButton.DpadDown ,actions.DpadDown.state);
         // SetButtonState(XboxButton.DpadLeft ,actions.DpadLeft.state);
         // SetButtonState(XboxButton.DpadRight ,actions.DpadRight.state);
-        SetButtonState(XboxButton.Start ,actions.Start.state);
-        SetButtonState(XboxButton.Back ,actions.Select.state);
-        SetButtonState(XboxButton.LeftThumb ,actions.StickLeftClick.state);
-        SetButtonState(XboxButton.RightThumb ,actions.StickRightClick.state);
-        SetButtonState(XboxButton.LeftShoulder ,actions.LB.state);
-        SetButtonState(XboxButton.RightShoulder ,actions.RB.state);
-        SetButtonState(XboxButton.A ,SteamVR_Actions.xbox_A.state);
-        SetButtonState(XboxButton.B ,SteamVR_Actions.xbox_B.state);
-        SetButtonState(XboxButton.X ,SteamVR_Actions.xbox_X.state);
-        SetButtonState(XboxButton.Y ,SteamVR_Actions.xbox_Y.state);
+        SetButtonState(XboxButton.Start, actions.Start.state);
+        SetButtonState(XboxButton.Back, actions.Select.state);
+        SetButtonState(XboxButton.LeftThumb, actions.StickLeftClick.state);
+        SetButtonState(XboxButton.RightThumb, actions.StickRightClick.state);
+        SetButtonState(XboxButton.LeftShoulder, actions.LB.state);
+        SetButtonState(XboxButton.RightShoulder, actions.RB.state);
+        SetButtonState(XboxButton.A, actions.A.state);
+        SetButtonState(XboxButton.B, actions.B.state);
+        SetButtonState(XboxButton.X, actions.X.state);
+        SetButtonState(XboxButton.Y, actions.Y.state);
+
+        XInputSetTriggerState(true, (byte) (actions.LT.axis * 255));
+        XInputSetTriggerState(false, (byte) (actions.RT.axis * 255));
+        
+        XInputSetThumbState(true, (short) (actions.StickLeft.axis.x * short.MaxValue), (short) (actions.StickLeft.axis.y * short.MaxValue));
+        XInputSetThumbState(false, (short) (actions.StickRight.axis.x * short.MaxValue), (short) (actions.StickRight.axis.y * short.MaxValue));
+        
+        SetButtonState(XboxButton.DpadUp, actions.A.state);
+        SetButtonState(XboxButton.DpadDown, actions.B.state);
+        SetButtonState(XboxButton.DpadLeft, Input.GetKey(KeyCode.H));
+        SetButtonState(XboxButton.DpadRight, Input.GetKeyDown(KeyCode.K));
+
     }
 }
