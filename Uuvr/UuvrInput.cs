@@ -61,11 +61,5 @@ public class UuvrInput: UuvrBehaviour
         
         XInputSetThumbState(true, (short) (actions.StickLeft.axis.x * short.MaxValue), (short) (actions.StickLeft.axis.y * short.MaxValue));
         XInputSetThumbState(false, (short) (actions.StickRight.axis.x * short.MaxValue), (short) (actions.StickRight.axis.y * short.MaxValue));
-        
-        SetButtonState(XboxButton.DpadUp, actions.A.state);
-        SetButtonState(XboxButton.DpadDown, actions.B.state);
-        SetButtonState(XboxButton.DpadLeft, Input.GetKey(KeyCode.H));
-        SetButtonState(XboxButton.DpadRight, Input.GetKeyDown(KeyCode.K));
-
     }
 }
