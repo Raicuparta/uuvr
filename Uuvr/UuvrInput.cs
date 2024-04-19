@@ -25,7 +25,12 @@
 //         X = 0x4000,
 //         Y = 0x8000,
 //     }
-//     
+//
+//     private void Awake()
+//     {
+//         SteamVR.Initialize();
+//     }
+//
 //     [DllImport("xinput1_4.dll", EntryPoint = "XInputSetButtonState")]
 //     private static extern void XInputSetButtonState(ushort wButton, bool bPressed);
 //     
