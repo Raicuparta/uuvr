@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uuvr.XR.Management", "Uuvr.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Uuvr.XInput", "Uuvr.XInput\Uuvr.XInput.vcxproj", "{189421C5-47DA-4948-999E-16CED2DE436D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uuvr.SteamVr", "Uuvr.SteamVr\Uuvr.SteamVr.csproj", "{DBC32AA0-BC31-4826-8B43-C57A2D1EA140}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uuvr.SteamVR", "Uuvr.SteamVR\Uuvr.SteamVR.csproj", "{DBC32AA0-BC31-4826-8B43-C57A2D1EA140}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

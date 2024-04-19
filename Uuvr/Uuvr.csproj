@@ -48,7 +48,7 @@
         <ProjectReference Include="..\Uuvr.XR.OpenXR\Uuvr.XR.OpenXR.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Uuvr.SteamVr\Uuvr.SteamVr.csproj" />
+      <ProjectReference Include="..\Uuvr.SteamVR\Uuvr.SteamVR.csproj" />
     </ItemGroup>
 
 </Project>
