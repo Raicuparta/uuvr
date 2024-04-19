@@ -33,7 +33,9 @@ public class UuvrCore: MonoBehaviour
         SteamVR.Initialize();
         DontDestroyOnLoad(gameObject);
         gameObject.AddComponent<VrCameraManager>();
-        UuvrBehaviour.Create<UuvrInput>(transform);
+        
+        // TODO: Emulate input.   
+        // UuvrBehaviour.Create<UuvrInput>(transform);
     }
 
     private void OnDestroy()

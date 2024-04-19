@@ -57,19 +57,13 @@ Global
 		{A5950B2D-7B9D-444F-B44D-1761950BC8A2}.modern-mono|Any CPU.ActiveCfg = modern-mono|Any CPU
 		{A5950B2D-7B9D-444F-B44D-1761950BC8A2}.modern-mono|Any CPU.Build.0 = modern-mono|Any CPU
 		{189421C5-47DA-4948-999E-16CED2DE436D}.modern-il2cpp|Any CPU.ActiveCfg = Debug|Win32
-		{189421C5-47DA-4948-999E-16CED2DE436D}.modern-il2cpp|Any CPU.Build.0 = Debug|Win32
 		{189421C5-47DA-4948-999E-16CED2DE436D}.legacy-il2cpp|Any CPU.ActiveCfg = Debug|Win32
-		{189421C5-47DA-4948-999E-16CED2DE436D}.legacy-il2cpp|Any CPU.Build.0 = Debug|Win32
 		{189421C5-47DA-4948-999E-16CED2DE436D}.modern-mono|Any CPU.ActiveCfg = Debug|Win32
-		{189421C5-47DA-4948-999E-16CED2DE436D}.modern-mono|Any CPU.Build.0 = Debug|Win32
 		{189421C5-47DA-4948-999E-16CED2DE436D}.legacy-mono|Any CPU.ActiveCfg = Release|x64
-		{189421C5-47DA-4948-999E-16CED2DE436D}.legacy-mono|Any CPU.Build.0 = Release|x64
 		{DBC32AA0-BC31-4826-8B43-C57A2D1EA140}.legacy-il2cpp|Any CPU.ActiveCfg = legacy-il2cpp|Any CPU
 		{DBC32AA0-BC31-4826-8B43-C57A2D1EA140}.legacy-mono|Any CPU.ActiveCfg = legacy-mono|Any CPU
-		{DBC32AA0-BC31-4826-8B43-C57A2D1EA140}.legacy-mono|Any CPU.Build.0 = legacy-mono|Any CPU
 		{DBC32AA0-BC31-4826-8B43-C57A2D1EA140}.modern-il2cpp|Any CPU.ActiveCfg = modern-il2cpp|Any CPU
 		{DBC32AA0-BC31-4826-8B43-C57A2D1EA140}.modern-mono|Any CPU.ActiveCfg = modern-mono|Any CPU
-		{DBC32AA0-BC31-4826-8B43-C57A2D1EA140}.modern-mono|Any CPU.Build.0 = modern-mono|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
