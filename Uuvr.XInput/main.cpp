@@ -162,7 +162,7 @@ DLLEXPORT DWORD WINAPI XInputSetState(_In_ DWORD dwUserIndex, _In_ XINPUT_VIBRAT
 DLLEXPORT DWORD WINAPI XInputGetCapabilities(_In_ DWORD dwUserIndex, _In_ DWORD dwFlags, _Out_ XINPUT_CAPABILITIES *pCapabilities)
 {
 	// Set some defaults for the virtual device
-	pCapabilities->Type = 0;
+	pCapabilities->Type = 1;
 	pCapabilities->SubType = 1; //customizable subtype
 	pCapabilities->Flags = 0; // we do not support sound
 	pCapabilities->Vibration.wLeftMotorSpeed = pCapabilities->Vibration.wRightMotorSpeed = 0xFF;

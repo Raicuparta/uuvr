@@ -17,19 +17,15 @@
         <Reference Include="..\lib\$(UnityBackend)\$(UnityGeneration)\*.dll">
             <Private>False</Private>
         </Reference>
-        <Content Include="Assets\**" >
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
+        <Reference Include="..\lib\Valve.Newtonsoft.Json.dll">
+            <Private>True</Private>
+        </Reference>
     </ItemGroup>
 
     <!--  Il2Cpp  -->
     <PropertyGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
         <TargetFramework>netstandard2.1</TargetFramework>
     </PropertyGroup>
-    <ItemGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
-        <PackageReference Include="BepInEx.IL2CPP" Version="6.0.0-pre.1" />
-        <PackageReference Include="BepInEx.Core" Version="6.0.0-pre.1" />
-    </ItemGroup>
 
     <!--  Mono  -->
     <PropertyGroup Condition=" '$(Configuration)' == 'legacy-mono' ">
@@ -38,17 +34,11 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'modern-mono' ">
         <TargetFramework>net48</TargetFramework>
     </PropertyGroup>
-    <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
-        <PackageReference Include="BepInEx.Core" Version="5.4.16" />
-    </ItemGroup>
 
     <!--  Modern  -->
     <ItemGroup Condition=" '$(UnityGeneration)' == 'modern' ">
         <ProjectReference Include="..\Uuvr.XR.OpenVR\Uuvr.XR.OpenVR.csproj" />
         <ProjectReference Include="..\Uuvr.XR.OpenXR\Uuvr.XR.OpenXR.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\Uuvr.SteamVr\Uuvr.SteamVr.csproj" />
     </ItemGroup>
 
 </Project>
