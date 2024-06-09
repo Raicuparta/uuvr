@@ -14,16 +14,14 @@ public class VrUiManager : UuvrBehaviour
     {
     }
 #endif
-
-    // Overlay camera that sees the UI quad where the captured UI is projected.
-    private Camera? _uiSceneCamera;
     
     private RenderTexture? _uiTexture;
     private GameObject? _vrUiQuad;
     private GameObject? _uiContainer;
-    private FollowTarget? _containerFollowTarget;
     private CanvasRedirectPatchMode? _canvasRedirectPatchMode;
     private ScreenMirrorPatchMode? _screenMirrorPatchMode;
+    private FollowTarget? _worldRenderModeFollowTarget;
+    private UiOverlayRenderMode? _uiOverlayRenderMode;
 
     private void Start()
     {
@@ -37,21 +35,11 @@ public class VrUiManager : UuvrBehaviour
         base.OnSettingChanged();
         var uiLayer = LayerHelper.GetVrUiLayer();
 
-        _uiSceneCamera.cullingMask = 1 << uiLayer;
         _vrUiQuad.layer = uiLayer;
-
-        switch(ModConfiguration.Instance.PreferredUiRenderMode.Value)
-        {
-            case ModConfiguration.UiRenderMode.InWorld:
-                _uiSceneCamera.gameObject.SetActive(false);
-                break;
-            case ModConfiguration.UiRenderMode.OverlayCamera:
-                _uiSceneCamera.gameObject.SetActive(true);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
         
+        _uiOverlayRenderMode.gameObject.SetActive(ModConfiguration.Instance.PreferredUiRenderMode.Value == ModConfiguration.UiRenderMode.OverlayCamera);
+        _worldRenderModeFollowTarget.enabled = ModConfiguration.Instance.PreferredUiRenderMode.Value == ModConfiguration.UiRenderMode.InWorld;
+
         _screenMirrorPatchMode.enabled = ModConfiguration.Instance.PreferredUiPatchMode.Value == ModConfiguration.UiPatchMode.Mirror;
         _canvasRedirectPatchMode.enabled = ModConfiguration.Instance.PreferredUiPatchMode.Value == ModConfiguration.UiPatchMode.CanvasRedirect;
 
@@ -71,7 +59,6 @@ public class VrUiManager : UuvrBehaviour
             }
         };
 
-        _containerFollowTarget = _uiContainer.AddComponent<FollowTarget>();
 
         _vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         Destroy(_vrUiQuad.GetComponent<Collider>());
@@ -89,16 +76,14 @@ public class VrUiManager : UuvrBehaviour
         renderer.material.mainTexture = _uiTexture;
         renderer.material.renderQueue = 5000;
 
-        _uiSceneCamera = Create<UuvrPoseDriver>(_uiContainer.transform).gameObject.AddComponent<Camera>();
-        VrCamera.VrCamera.IgnoredCameras.Add(_uiSceneCamera);
-        _uiSceneCamera.clearFlags = CameraClearFlags.Depth;
-        _uiSceneCamera.depth = 100;
-
         _canvasRedirectPatchMode = gameObject.AddComponent<CanvasRedirectPatchMode>();
         _canvasRedirectPatchMode.SetUpTargetTexture(_uiTexture);
 
         _screenMirrorPatchMode = gameObject.AddComponent<ScreenMirrorPatchMode>();
         _screenMirrorPatchMode.SetUpTargetTexture(_uiTexture);
+        
+        _uiOverlayRenderMode = Create<UiOverlayRenderMode>(transform);
+        _worldRenderModeFollowTarget = _uiContainer.AddComponent<FollowTarget>();
     }
 
     private void Update()
@@ -110,7 +95,7 @@ public class VrUiManager : UuvrBehaviour
             VrCamera.VrCamera.HighestDepthVrCamera.ParentCamera != null &&
             _uiContainer != null &&
             _uiContainer.transform.parent != VrCamera.VrCamera.HighestDepthVrCamera.ParentCamera.transform &&
-            _containerFollowTarget != null)
+            _worldRenderModeFollowTarget != null)
         {
             UpdateFollowTarget();
         }
@@ -118,7 +103,7 @@ public class VrUiManager : UuvrBehaviour
 
     private void UpdateFollowTarget()
     {
-        _containerFollowTarget.Target = ModConfiguration.Instance.PreferredUiRenderMode.Value == ModConfiguration.UiRenderMode.InWorld
+        _worldRenderModeFollowTarget.Target = ModConfiguration.Instance.PreferredUiRenderMode.Value == ModConfiguration.UiRenderMode.InWorld
             ? VrCamera.VrCamera.HighestDepthVrCamera.ParentCamera.transform
             : null;
     }
