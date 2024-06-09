@@ -2,40 +2,44 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
+
+#if MODERN
 using Uuvr.VrCamera;
+#endif
 
-namespace Uuvr.VrUi;
+namespace Uuvr.VrUi.PatchModes;
 
-public class FlatScreenView: MonoBehaviour
+public class ScreenMirrorPatchMode: VrUiPatchMode
 {
+#if CPP
+    public ScreenMirrorPatchMode(System.IntPtr pointer) : base(pointer)
+    {
+    }
+#endif
+
     private CommandBuffer? _commandBuffer;
-    private RenderTexture? _targetTexture;
-    private Material? _targetMaterial;
-    private GameObject? _quad;
     private Camera? _clearCamera;
     private float _scale = 2f;
+    private RenderTexture _targetTexture;
 
-    public static FlatScreenView Create(Transform parent)
+    protected override void OnEnable()
     {
-        return new GameObject(nameof(FlatScreenView))
-        {
-            transform =
-            {
-                parent = parent
-            }
-        }.AddComponent<FlatScreenView>();
+        base.OnEnable();
+        SetXrMirror(false);
+        StartCoroutine(EndOfFrameCoroutine());
     }
-    
-    private void Start()
+
+    protected override void OnDisable()
     {
-        _targetMaterial = new Material(Canvas.GetDefaultCanvasMaterial());
-        _quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        Destroy(_quad.GetComponent<Collider>());
-        _quad.transform.parent = transform;
-        _quad.transform.localPosition = Vector3.zero;
-        _quad.transform.localRotation = Quaternion.identity;
-        _quad.GetComponent<Renderer>().material = _targetMaterial;
-        
+        base.OnDisable();
+        SetXrMirror(true);
+        StopCoroutine(EndOfFrameCoroutine());
+        Reset();
+    }
+
+    private void Awake()
+    {
+        Debug.Log("mirror mode Start");
         // TODO: find a layer that's visible by the top camera.
         // _quad.layer = LayerHelper.GetVrUiLayer();
 
@@ -60,7 +64,27 @@ public class FlatScreenView: MonoBehaviour
             additionalData.SetAllowXrRendering(false);
         }
 #endif
-        
+    }
+
+    public override void SetUpTargetTexture(RenderTexture targetTexture)
+    {
+        _targetTexture = targetTexture;
+
+        if (!enabled) return;
+        _commandBuffer = new CommandBuffer();
+        _commandBuffer.name = "UUVR UI";
+        _commandBuffer.Blit(BuiltinRenderTextureType.CameraTarget, targetTexture);
+    }
+
+    private void Reset()
+    {
+        if (_commandBuffer == null) return;
+        _commandBuffer.Dispose();
+        _commandBuffer = null;
+    }
+
+    private void SetXrMirror(bool mirror)
+    {
         var xrSettingsType =
             Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.XRModule") ??
             Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.VRModule") ??
@@ -68,36 +92,23 @@ public class FlatScreenView: MonoBehaviour
         
         // This method of projecting the UI onto a texture basically just copies what's currently on the flat screen.
         // We don't want the game itself to show up there, only the UI. So we disable mirroring the VR view to the flat screen.
-        xrSettingsType.GetProperty("showDeviceView").SetValue(null, false, null);
-        
-        StartCoroutine(EndOfFrameCoroutine());
-    }
-
-    private void SetUp()
-    {
-        _targetTexture = new RenderTexture(Screen.width, Screen.height, 1);
-        _targetMaterial.mainTexture = _targetTexture;
-        _commandBuffer = new CommandBuffer();
-        _commandBuffer.name = "UUVR UI";
-        _commandBuffer.Blit(BuiltinRenderTextureType.CameraTarget, _targetTexture);
-        
-        
-        // TODO: I don't understand why I need to flip some of these values.
-        // When I tried in the Unity Editor, I had to flip the widgh.
-        // When I tried in Smushi, I had to flip the height.
-        _quad.transform.localScale = new Vector3(1, (float) -Screen.height / Screen.width, 1) * _scale;
+        xrSettingsType.GetProperty("showDeviceView").SetValue(null, mirror, null);
     }
 
     private IEnumerator EndOfFrameCoroutine()
     {
         while (true)
         {
-            if (_commandBuffer == null || Screen.width != _targetTexture.width || Screen.height != _targetTexture.height)
+            if (_targetTexture != null && (_commandBuffer == null || Screen.width != _targetTexture.width || Screen.height != _targetTexture.height))
             {
-                SetUp();
+                SetUpTargetTexture(_targetTexture);
             }
             yield return new WaitForEndOfFrame();
-            Graphics.ExecuteCommandBuffer(_commandBuffer);
+
+            if (_commandBuffer != null && _targetTexture != null)
+            {
+                Graphics.ExecuteCommandBuffer(_commandBuffer);
+            }
         }
     }
 }

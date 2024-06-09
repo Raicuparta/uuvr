@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Uuvr.VrUi;
+namespace Uuvr.VrUi.PatchModes;
 
-public class VrUiCanvas: UuvrBehaviour
+public class CanvasRedirect: UuvrBehaviour
 {
 #if CPP
     public VrUiCanvas(System.IntPtr pointer) : base(pointer)
@@ -21,7 +21,7 @@ public class VrUiCanvas: UuvrBehaviour
 
     public static void Create(Canvas _canvas, Camera uiCaptureCamera)
     {
-        var instance = _canvas.gameObject.AddComponent<VrUiCanvas>();
+        var instance = _canvas.gameObject.AddComponent<CanvasRedirect>();
         instance._canvas = _canvas;
         instance._uiCaptureCamera = uiCaptureCamera;
     }
@@ -33,7 +33,7 @@ public class VrUiCanvas: UuvrBehaviour
 
     protected override void OnSettingChanged()
     {
-        var shouldPatch = ShouldPatchScreenSpaceCanvas() && ModConfiguration.Instance.PatchUi.Value;
+        var shouldPatch = ShouldPatchCanvas();
         
         if (shouldPatch && !_isPatched)
         {
@@ -45,8 +45,13 @@ public class VrUiCanvas: UuvrBehaviour
         }
     }
 
-    private bool ShouldPatchScreenSpaceCanvas()
+    private bool ShouldPatchCanvas()
     {
+        if (ModConfiguration.Instance.PreferredUiPatchMode.Value != ModConfiguration.UiPatchMode.CanvasRedirect)
+        {
+            return false;
+        }
+
         var isScreenSpace = _originalRenderMode == RenderMode.ScreenSpaceCamera;
 
         return ModConfiguration.Instance.ScreenSpaceCanvasTypesToPatch.Value switch
