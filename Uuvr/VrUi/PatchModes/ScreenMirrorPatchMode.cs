@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-using Uuvr.VrCamera;
+using UnityEngine.Rendering;
 
 #if MODERN
-using UnityEngine.Rendering;
+using Uuvr.VrCamera;
 #endif
 
 namespace Uuvr.VrUi.PatchModes;

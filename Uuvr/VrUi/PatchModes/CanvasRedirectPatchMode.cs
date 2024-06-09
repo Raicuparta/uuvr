@@ -31,6 +31,18 @@ public class CanvasRedirectPatchMode : VrUiPatchMode
         _uiCaptureCamera.cullingMask = 1 << LayerHelper.GetVrUiLayer();
     }
 
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        _uiCaptureCamera.enabled = true;
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnEnable();
+        _uiCaptureCamera.enabled = false;
+    }
+
     private void Awake()
     {
         _uiCaptureCamera = new GameObject("VrUiCaptureCamera").AddComponent<Camera>();
