@@ -69,6 +69,8 @@ public class ScreenMirrorPatchMode: VrUiPatchMode
     public override void SetUpTargetTexture(RenderTexture targetTexture)
     {
         _targetTexture = targetTexture;
+
+        if (!enabled) return;
         _commandBuffer = new CommandBuffer();
         _commandBuffer.name = "UUVR UI";
         _commandBuffer.Blit(BuiltinRenderTextureType.CameraTarget, targetTexture);
@@ -103,7 +105,7 @@ public class ScreenMirrorPatchMode: VrUiPatchMode
             }
             yield return new WaitForEndOfFrame();
 
-            if (_targetTexture != null)
+            if (_commandBuffer != null && _targetTexture != null)
             {
                 Graphics.ExecuteCommandBuffer(_commandBuffer);
             }

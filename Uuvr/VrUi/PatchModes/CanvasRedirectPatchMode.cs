@@ -31,6 +31,11 @@ public class CanvasRedirectPatchMode : VrUiPatchMode
         _uiCaptureCamera.cullingMask = 1 << LayerHelper.GetVrUiLayer();
     }
 
+    private void Start()
+    {
+        OnSettingChanged();
+    }
+
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -66,6 +71,10 @@ public class CanvasRedirectPatchMode : VrUiPatchMode
         {
             PatchCanvas(canvas);
         }
+
+        // Cursed way of making the UI capture camera not capture the projected UI itself without having to use more layers.
+        // I don't know why it keeps getting reset so I'm just doing it every frame yahoo.
+        _uiCaptureCamera.transform.localPosition = Vector3.right * 10;
     }
 
     private void PatchCanvas(Canvas canvas)
