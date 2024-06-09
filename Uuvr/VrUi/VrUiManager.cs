@@ -39,6 +39,11 @@ public class VrUiManager : UuvrBehaviour
         
         _uiOverlayRenderMode.gameObject.SetActive(ModConfiguration.Instance.PreferredUiRenderMode.Value == ModConfiguration.UiRenderMode.OverlayCamera);
         _worldRenderModeFollowTarget.enabled = ModConfiguration.Instance.PreferredUiRenderMode.Value == ModConfiguration.UiRenderMode.InWorld;
+        if (ModConfiguration.Instance.PreferredUiRenderMode.Value != ModConfiguration.UiRenderMode.InWorld)
+        {
+            _worldRenderModeFollowTarget.transform.localPosition = Vector3.zero;
+            _worldRenderModeFollowTarget.transform.localRotation = Quaternion.identity;
+        }
 
         _screenMirrorPatchMode.enabled = ModConfiguration.Instance.PreferredUiPatchMode.Value == ModConfiguration.UiPatchMode.Mirror;
         _canvasRedirectPatchMode.enabled = ModConfiguration.Instance.PreferredUiPatchMode.Value == ModConfiguration.UiPatchMode.CanvasRedirect;
