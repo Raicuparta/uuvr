@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Uuvr.VrCamera;
 
@@ -15,6 +16,12 @@ public class VrCameraOffset: UuvrBehaviour
     {
         base.OnBeforeRender();
         UpdateTransform();
+    }
+
+    protected override void OnSettingChanged()
+    {
+        base.OnSettingChanged();
+        transform.localPosition = ModConfiguration.Instance.CameraPositionOffset.Value;
     }
 
     private void Update()
