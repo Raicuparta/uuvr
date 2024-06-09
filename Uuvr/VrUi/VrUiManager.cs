@@ -103,6 +103,8 @@ public class VrUiManager : UuvrBehaviour
 
     private void UpdateFollowTarget()
     {
+        if (VrCamera.VrCamera.HighestDepthVrCamera == null || VrCamera.VrCamera.HighestDepthVrCamera.ParentCamera == null) return;
+        
         _worldRenderModeFollowTarget.Target = ModConfiguration.Instance.PreferredUiRenderMode.Value == ModConfiguration.UiRenderMode.InWorld
             ? VrCamera.VrCamera.HighestDepthVrCamera.ParentCamera.transform
             : null;
