@@ -42,7 +42,15 @@ public class VrUiManager : UuvrBehaviour
 
         _screenMirrorPatchMode.enabled = ModConfiguration.Instance.PreferredUiPatchMode.Value == ModConfiguration.UiPatchMode.Mirror;
         _canvasRedirectPatchMode.enabled = ModConfiguration.Instance.PreferredUiPatchMode.Value == ModConfiguration.UiPatchMode.CanvasRedirect;
-
+        
+        // For some reason I need to flip the UI upside down when using mirror mode.
+        var yScale = Mathf.Abs(_vrUiQuad.transform.localScale.y);
+        if (ModConfiguration.Instance.PreferredUiPatchMode.Value == ModConfiguration.UiPatchMode.Mirror)
+        {
+            yScale *= -1;
+        }
+        _vrUiQuad.transform.localScale = new Vector3(_vrUiQuad.transform.localScale.x, yScale, _vrUiQuad.transform.localScale.z);
+        
         UpdateFollowTarget();
     }
 
