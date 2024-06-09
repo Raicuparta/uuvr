@@ -12,7 +12,7 @@ public class ModConfiguration
     {
         [Description("Absolute")]
         Absolute,
-        [Description("Relative Matrix")]
+        [Description("Relative matrix")]
         RelativeMatrix,
 #if MODERN
         // TODO: could add this for legacy too.
@@ -45,10 +45,20 @@ public class ModConfiguration
 
     public enum UiRenderMode
     {
-        [Description("Overlay Camera (draws on top of everything)")]
+        [Description("Overlay camera (draws on top of everything)")]
         OverlayCamera,
-        [Description("In World (can be occluded)")]
+        [Description("In world (can be occluded)")]
         InWorld,
+    }
+
+    public enum UiPatchMode
+    {
+        [Description("Don't touch UI")]
+        None,
+        [Description("Mirror flat screen (game not mirrored)")]
+        Mirror,
+        [Description("Patch Canvas objects")]
+        CanvasRedirect,
     }
 
     public readonly ConfigFile Config;
@@ -60,7 +70,7 @@ public class ModConfiguration
     public readonly ConfigEntry<Vector3> CameraPositionOffset;
     public readonly ConfigEntry<bool> OverrideDepth;
     public readonly ConfigEntry<bool> PhysicsMatchHeadsetRefreshRate;
-    public readonly ConfigEntry<bool> PatchUi;
+    public readonly ConfigEntry<UiPatchMode> PreferredUiPatchMode;
     public readonly ConfigEntry<UiRenderMode> PreferredUiRenderMode;
     public readonly ConfigEntry<ScreenSpaceCanvasType> ScreenSpaceCanvasTypesToPatch;
     
@@ -130,11 +140,11 @@ public class ModConfiguration
             false,
             "Can help fix jiterriness in games that rely a lot on physics. Might break a lot of games too.");
 
-        PatchUi = config.Bind(
+        PreferredUiPatchMode = config.Bind(
             "UI",
-            "Patch UI for VR",
-            true,
-            "Projects game UI on a plane in front of the VR camera");
+            "UI Patch Mode",
+            UiPatchMode.Mirror,
+            "Method to use for patching UI for VR.");
         
         VrUiLayerOverride = config.Bind(
             "UI",

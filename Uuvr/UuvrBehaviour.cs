@@ -62,7 +62,6 @@ public class UuvrBehaviour: MonoBehaviour
 #endif
 
         ModConfiguration.Instance.Config.SettingChanged += ConfigOnSettingChanged;
-        
     }
 
     protected virtual void OnDisable()
