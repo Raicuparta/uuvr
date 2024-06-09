@@ -47,4 +47,7 @@
         <ProjectReference Include="..\Uuvr.XR.OpenVR\Uuvr.XR.OpenVR.csproj" />
         <ProjectReference Include="..\Uuvr.XR.OpenXR\Uuvr.XR.OpenXR.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="VrUi\RenderModes\" />
+    </ItemGroup>
 </Project>
