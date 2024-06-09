@@ -14,9 +14,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Reference Include="lib\$(UnityBackend)\$(UnityGeneration)/*.dll">
+        <Reference Include="..\lib\$(UnityBackend)\$(UnityGeneration)\*.dll">
             <Private>False</Private>
         </Reference>
+        <Content Include="Assets\**" >
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <!--  Il2Cpp  -->
@@ -29,11 +32,19 @@
     </ItemGroup>
 
     <!--  Mono  -->
-    <PropertyGroup Condition=" '$(UnityBackend)' == 'mono' ">
+    <PropertyGroup Condition=" '$(Configuration)' == 'legacy-mono' ">
         <TargetFramework>net35</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'modern-mono' ">
+        <TargetFramework>net48</TargetFramework>
     </PropertyGroup>
     <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
         <PackageReference Include="BepInEx.Core" Version="5.4.16" />
     </ItemGroup>
 
+    <!--  Modern  -->
+    <ItemGroup Condition=" '$(UnityGeneration)' == 'modern' ">
+        <ProjectReference Include="..\Uuvr.XR.OpenVR\Uuvr.XR.OpenVR.csproj" />
+        <ProjectReference Include="..\Uuvr.XR.OpenXR\Uuvr.XR.OpenXR.csproj" />
+    </ItemGroup>
 </Project>

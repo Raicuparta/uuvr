@@ -1,164 +1,115 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.UI;
+using Uuvr.VrCamera;
+using Uuvr.VrTogglers;
+using Uuvr.VrUi;
 
 namespace Uuvr;
 
 public class UuvrCore: MonoBehaviour
 {
-    private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
-    private readonly KeyboardKey _reparentCameraKey = new (KeyboardKey.KeyCode.F4);
-    private readonly KeyboardKey _vrUiKey = new (KeyboardKey.KeyCode.F5);
-    
-    private Type _xrSettingsType;
-    private PropertyInfo _xrEnabledProperty;
-    private bool _shouldPatchUi;
-    private const string VR_UI_PARENT_NAME = "UUVR_UI_PARENT";
-    
 #if CPP
     public UuvrCore(IntPtr pointer) : base(pointer)
     {
     }
 #endif
 
+    private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
+    private float _originalFixedDeltaTime;
+    
+    private VrUiManager? _vrUi;
+    private PropertyInfo? _refreshRateProperty;
+    private VrTogglerManager? _vrTogglerManager;
+
+    public static void Create()
+    {
+        new GameObject("UUVR").AddComponent<UuvrCore>();
+    }
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+        gameObject.AddComponent<VrCameraManager>();
+        
+        // TODO: Emulate input.   
+        // UuvrBehaviour.Create<UuvrInput>(transform);
+    }
+
+    private void OnDestroy()
+    {
+        Debug.Log("UUVR has been destroyed. This shouldn't have happened. Recreating...");
+        
+        Create();
+    }
+
     private void Start()
     {
-        _xrSettingsType =
-            Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.XRModule") ??
-            Type.GetType("UnityEngine.XR.XRSettings, UnityEngine.VRModule") ??
-            Type.GetType("UnityEngine.VR.VRSettings, UnityEngine");
-        
-        _xrEnabledProperty = _xrSettingsType.GetProperty("enabled");
+        var xrDeviceType = Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.XRModule") ??
+                           Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.VRModule") ??
+                           Type.GetType("UnityEngine.VR.VRDevice, UnityEngine.VRModule") ??
+                           Type.GetType("UnityEngine.VR.VRDevice, UnityEngine");
 
-        SetXrEnabled(false);
+        _refreshRateProperty = xrDeviceType?.GetProperty("refreshRate");
+        
+        _vrUi = UuvrBehaviour.Create<VrUiManager>(transform);
+
+        _vrTogglerManager = new VrTogglerManager();
+
         SetPositionTrackingEnabled(false);
     }
 
     private void Update()
     {
-        if (_toggleVrKey.UpdateIsDown()) ToggleXr();
-        if (_reparentCameraKey.UpdateIsDown()) ReparentCamera();
-        if (_vrUiKey.UpdateIsDown()) ToggleXrUi();
-
-        UpdateXrUi();
+        if (_toggleVrKey.UpdateIsDown()) _vrTogglerManager?.ToggleVr();
+        UpdatePhysicsRate();
     }
-    
-    private void ToggleXrUi()
+
+    private void UpdatePhysicsRate()
     {
-        _shouldPatchUi = !_shouldPatchUi;
-    }
-
-    private void ToggleXr()
-    {
-        bool xrEnabled = (bool) _xrEnabledProperty.GetValue(null, null);
-        SetXrEnabled(!xrEnabled);
-    }
-    
-    private void ReparentCamera() {
-        Console.WriteLine("Reparenting Camera...");
-
-        Camera mainCamera = Camera.main ?? Camera.current;
-        mainCamera.enabled = false;
-
-        GameObject vrCameraObject = new("VrCamera");
-        Camera vrCamera = vrCameraObject.AddComponent<Camera>();
-        vrCamera.tag = "MainCamera";
-        vrCamera.transform.parent = mainCamera.transform;
-        vrCamera.transform.localPosition = Vector3.zero;
-    }
-
-    private void SetXrEnabled(bool enabled)
-    {
-        Console.WriteLine($"Setting XR enabled to {enabled}");
-
-        _xrEnabledProperty.SetValue(null, enabled, null);
-        
-        // TODO verify if exists etc.
-        try
+        if (_originalFixedDeltaTime == 0)
         {
+            _originalFixedDeltaTime = Time.fixedDeltaTime;
+        }
 
-            if (enabled)
-            {
-                Camera.main.gameObject.AddComponent<VrCamera>();
-            }
-            else
-            {
-                Destroy(Camera.main.gameObject.GetComponent<VrCamera>());
-            }
-        } catch
+        if (_refreshRateProperty == null) return;
+
+        var headsetRefreshRate = (float)_refreshRateProperty.GetValue(null, null);
+        if (headsetRefreshRate <= 0) return;
+
+        if (ModConfiguration.Instance.PhysicsMatchHeadsetRefreshRate.Value)
         {
-            
+            Time.fixedDeltaTime = 1f / (float) _refreshRateProperty.GetValue(null, null);
+        }
+        else
+        {
+            Time.fixedDeltaTime = _originalFixedDeltaTime;
         }
     }
 
-    private void SetPositionTrackingEnabled(bool enabled)
+    private static void SetPositionTrackingEnabled(bool positionTrackingEnabled)
     {
-        Type inputTrackingType = 
+        var inputTrackingType = 
             Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.XRModule") ??
-            Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.VRModule");
+            Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.VRModule") ??
+            Type.GetType("UnityEngine.VR.InputTracking, UnityEngine.VRModule") ??
+            Type.GetType("UnityEngine.VR.InputTracking, UnityEngine");
 
         if (inputTrackingType != null)
         {
-            PropertyInfo disablePositionalTrackingProperty = inputTrackingType.GetProperty("disablePositionalTracking");
+            var disablePositionalTrackingProperty = inputTrackingType.GetProperty("disablePositionalTracking");
             if (disablePositionalTrackingProperty != null)
             {
-                disablePositionalTrackingProperty.SetValue(null, !enabled, null);
+                disablePositionalTrackingProperty.SetValue(null, !positionTrackingEnabled, null);
             }
             else
             {
-                Console.WriteLine("Failed to get property disablePositionalTracking");
+                Debug.LogWarning("Failed to get property disablePositionalTracking");
             }
         }
         else
         {
-            Console.WriteLine("Failed to get type UnityEngine.XR.InputTracking");
-        }
-    }
-
-    private void UpdateXrUi()
-    {
-        if (!_shouldPatchUi) return;
-
-        List<Canvas> canvases = new();
-        foreach (Canvas canvas in GraphicRegistry.instance.m_Graphics.Keys)
-        {
-            if (!canvas) continue;
-            
-            // World space canvases probably already work as intended in VR.
-            if (canvas.renderMode == RenderMode.WorldSpace) continue;
-
-            // Screen space canvases being rendered to textures are probably already working as intended in VR.
-            if (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera?.targetTexture != null) continue;
-            
-            canvases.Add(canvas);
-        }
-        
-        foreach (Canvas canvas in canvases)
-        {
-            canvas.renderMode = RenderMode.ScreenSpaceCamera;
-            canvas.worldCamera = Camera.main ?? Camera.current;
-            canvas.planeDistance = 1;
-            canvas.sortingOrder = int.MaxValue;
-
-            Transform originalParent = canvas.transform.parent;
-            if (originalParent?.name == VR_UI_PARENT_NAME) continue;
-            
-            Transform vrUiParent = new GameObject(VR_UI_PARENT_NAME).transform;
-            vrUiParent.parent = originalParent;
-            vrUiParent.localPosition = Vector3.zero;
-            vrUiParent.localRotation = Quaternion.identity;
-            canvas.transform.parent = vrUiParent;
-
-            vrUiParent.transform.localScale = Vector3.one * 0.3f;
-
-            CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
-            if (scaler)
-            {
-                scaler.scaleFactor = 2;
-                scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
-            }
+            Debug.LogWarning("Failed to get type UnityEngine.XR.InputTracking");
         }
     }
 }

@@ -9,23 +9,25 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'legacy-il2cpp' Or '$(Configuration)' == 'modern-il2cpp' ">
     <UnityBackend>il2cpp</UnityBackend>
     <UnityBackendFolderName>Il2Cpp</UnityBackendFolderName>
-    <DefineConstants>CPP</DefineConstants>
+    <DefineConstants>$(DefineConstants);CPP</DefineConstants>
   </PropertyGroup>
 
   <!--  Mono  -->
   <PropertyGroup Condition=" '$(Configuration)' == 'legacy-mono' Or '$(Configuration)' == 'modern-mono' ">
     <UnityBackend>mono</UnityBackend>
     <UnityBackendFolderName>Mono</UnityBackendFolderName>
-    <DefineConstants>MONO</DefineConstants>
+    <DefineConstants>$(DefineConstants);MONO</DefineConstants>
   </PropertyGroup>
 
   <!--  Legacy (Unity 2019 or earlier)  -->
   <PropertyGroup Condition=" '$(Configuration)' == 'legacy-mono' Or '$(Configuration)' == 'legacy-il2cpp' ">
     <UnityGeneration>legacy</UnityGeneration>
+    <DefineConstants>$(DefineConstants);LEGACY</DefineConstants>
   </PropertyGroup>
 
   <!--  Modern (Unity 2020 or later)  -->
   <PropertyGroup Condition=" '$(Configuration)' == 'modern-mono' Or '$(Configuration)' == 'modern-il2cpp' ">
     <UnityGeneration>modern</UnityGeneration>
+    <DefineConstants>$(DefineConstants);MODERN</DefineConstants>
   </PropertyGroup>
 </Project>

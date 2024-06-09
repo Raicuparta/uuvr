@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net35</TargetFramework>
+        <Nullable>enable</Nullable>
+        <Configurations>legacy-il2cpp;modern-il2cpp;legacy-mono;modern-mono</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <LangVersion>10</LangVersion>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
+        <DebugType>none</DebugType>
+        <OutputPath>$(BepInExDir)\mods\$(UnityBackendFolderName)\uuvr-$(UnityBackend)-$(UnityGeneration)\patchers</OutputPath>
+        <RootNamespace>UuvrPatcher</RootNamespace>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="AssetsTools.NET" Version="2.0.9" />
+        <Reference Include="lib\$(UnityBackend)\$(UnityGeneration)/*.dll">
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="CopyToGame\**" >
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="classdata.tpk">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <!--  Il2Cpp  -->
+    <ItemGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
+        <PackageReference Include="BepInEx.Unity.Mono.Preloader" Version="6.0.0-be.674" IncludeAssets="compile"  />
+    </ItemGroup>
+
+    <!--  Mono  -->
+    <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
+        <PackageReference Include="Mono.Cecil" Version="0.10.4" IncludeAssets="compile" />
+    </ItemGroup>
+</Project>
