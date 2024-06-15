@@ -2,6 +2,8 @@
 using System.Reflection;
 using BepInEx;
 using HarmonyLib;
+using Uuvr.VrCamera;
+using Uuvr.VrUi;
 
 #if CPP
 using BepInEx.IL2CPP;
@@ -41,7 +43,7 @@ public class UuvrPlugin
         
 #if CPP
         ClassInjector.RegisterTypeInIl2Cpp<UuvrBehaviour>();
-        ClassInjector.RegisterTypeInIl2Cpp<VrCamera>();
+        ClassInjector.RegisterTypeInIl2Cpp<VrCamera.VrCamera>();
         ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
         ClassInjector.RegisterTypeInIl2Cpp<VrCameraOffset>();
         ClassInjector.RegisterTypeInIl2Cpp<VrCameraManager>();

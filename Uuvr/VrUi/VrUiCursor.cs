@@ -8,7 +8,7 @@ namespace Uuvr.VrUi;
 public class VrUiCursor: UuvrBehaviour
 {
 #if CPP
-    public VrUiCursor(IntPtr pointer) : base(pointer)
+    public VrUiCursor(System.IntPtr pointer) : base(pointer)
     {
     }
 #endif
