@@ -9,12 +9,12 @@ using Uuvr.VrCamera;
 #endif
 
 #if CPP
-using BepInEx.IL2CPP.Utils;
+using BepInEx.Unity.IL2CPP.Utils;
 #endif
 
 namespace Uuvr.VrUi.PatchModes;
 
-public class ScreenMirrorPatchMode: VrUiPatchMode
+public class ScreenMirrorPatchMode : UuvrBehaviour, VrUiPatchMode
 {
 #if CPP
     public ScreenMirrorPatchMode(System.IntPtr pointer) : base(pointer)
@@ -72,7 +72,7 @@ public class ScreenMirrorPatchMode: VrUiPatchMode
 #endif
     }
 
-    public override void SetUpTargetTexture(RenderTexture targetTexture)
+    public void SetUpTargetTexture(RenderTexture targetTexture)
     {
         _targetTexture = targetTexture;
 

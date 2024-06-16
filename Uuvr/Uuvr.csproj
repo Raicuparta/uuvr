@@ -24,11 +24,10 @@
 
     <!--  Il2Cpp  -->
     <PropertyGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
-        <PackageReference Include="BepInEx.IL2CPP" Version="6.0.0-pre.1" />
-        <PackageReference Include="BepInEx.Core" Version="6.0.0-pre.1" />
+        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.692" />
     </ItemGroup>
 
     <!--  Mono  -->

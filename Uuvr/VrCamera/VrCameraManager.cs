@@ -1,6 +1,6 @@
 ﻿#if CPP
 using System;
-using UnhollowerBaseLib;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 #endif
 using UnityEngine;
 

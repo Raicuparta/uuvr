@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Uuvr.VrUi.PatchModes;
 
-public class CanvasRedirectPatchMode : VrUiPatchMode
+public class CanvasRedirectPatchMode : UuvrBehaviour, VrUiPatchMode
 {
 #if CPP
     public CanvasRedirectPatchMode(System.IntPtr pointer) : base(pointer)
@@ -58,7 +58,7 @@ public class CanvasRedirectPatchMode : VrUiPatchMode
         _uiCaptureCamera.depth = 100;
     }
 
-    public override void SetUpTargetTexture(RenderTexture targetTexture)
+    public void SetUpTargetTexture(RenderTexture targetTexture)
     {
         _uiCaptureCamera.targetTexture = targetTexture;
     }
@@ -67,7 +67,15 @@ public class CanvasRedirectPatchMode : VrUiPatchMode
     {
         // TODO: handle finding canvases that aren't here because they don't have anything inside them.
         // Game example: Smushi.
-        foreach (var canvas in GraphicRegistry.instance.m_Graphics.Keys)
+
+        var keys =
+#if CPP
+            GraphicRegistry.instance.m_Graphics.keys;
+#else
+            GraphicRegistry.instance.m_Graphics.Keys;
+#endif
+        
+        foreach (var canvas in keys)
         {
             PatchCanvas(canvas);
         }

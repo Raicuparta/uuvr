@@ -7,9 +7,8 @@ using Uuvr.VrUi;
 using Uuvr.VrUi.PatchModes;
 
 #if CPP
-using BepInEx.IL2CPP;
-using UnhollowerRuntimeLib;
-using UnityEngine;
+using BepInEx.Unity.IL2CPP;
+using Il2CppInterop.Runtime.Injection;
 #endif
 
 namespace Uuvr;
@@ -58,7 +57,6 @@ public class UuvrPlugin
         ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
         // ClassInjector.RegisterTypeInIl2Cpp<AdditionalCameraData>();
        ClassInjector.RegisterTypeInIl2Cpp<VrCameraManager>();
-       ClassInjector.RegisterTypeInIl2Cpp<VrUiPatchMode>();
        ClassInjector.RegisterTypeInIl2Cpp<CanvasRedirectPatchMode>();
        ClassInjector.RegisterTypeInIl2Cpp<ScreenMirrorPatchMode>();
 #endif

@@ -2,13 +2,7 @@
 
 namespace Uuvr.VrUi.PatchModes;
 
-public abstract class VrUiPatchMode: UuvrBehaviour
+public interface VrUiPatchMode
 {
-#if CPP
-    protected VrUiPatchMode(System.IntPtr pointer) : base(pointer)
-    {
-    }
-#endif
-
-    public abstract void SetUpTargetTexture(RenderTexture targetTexture);
+    public void SetUpTargetTexture(RenderTexture targetTexture);
 }
