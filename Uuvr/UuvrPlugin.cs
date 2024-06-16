@@ -2,6 +2,9 @@
 using System.Reflection;
 using BepInEx;
 using HarmonyLib;
+using Uuvr.VrCamera;
+using Uuvr.VrUi;
+using Uuvr.VrUi.PatchModes;
 
 #if CPP
 using BepInEx.IL2CPP;
@@ -26,6 +29,7 @@ public class UuvrPlugin
 : BaseUnityPlugin
 #endif
 {
+    private static UuvrPlugin _instance;
     public static string ModFolderPath { get; private set; }
     
 #if CPP
@@ -34,23 +38,31 @@ public class UuvrPlugin
     private void Awake()
 #endif
     {
-        ModFolderPath = Path.GetDirectoryName(Info.Location);
+        _instance = this;
+        ModFolderPath = Path.GetDirectoryName(Assembly.GetAssembly(typeof(UuvrPlugin)).Location);
         
         new ModConfiguration(Config);
         Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
         
 #if CPP
-        ClassInjector.RegisterTypeInIl2Cpp<UuvrBehaviour>();
-        ClassInjector.RegisterTypeInIl2Cpp<VrCamera>();
-        ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
+        ClassInjector.RegisterTypeInIl2Cpp<VrCamera.VrCamera>();
         ClassInjector.RegisterTypeInIl2Cpp<VrCameraOffset>();
-        ClassInjector.RegisterTypeInIl2Cpp<VrCameraManager>();
+        ClassInjector.RegisterTypeInIl2Cpp<CanvasRedirect>();
+        ClassInjector.RegisterTypeInIl2Cpp<UiOverlayRenderMode>();
+        ClassInjector.RegisterTypeInIl2Cpp<VrUiCursor>();
         ClassInjector.RegisterTypeInIl2Cpp<VrUiManager>();
-        ClassInjector.RegisterTypeInIl2Cpp<VrUiCanvas>();
+        ClassInjector.RegisterTypeInIl2Cpp<FollowTarget>();
+        // ClassInjector.RegisterTypeInIl2Cpp<UuvrInput>();
         ClassInjector.RegisterTypeInIl2Cpp<UuvrPoseDriver>();
+        ClassInjector.RegisterTypeInIl2Cpp<UuvrBehaviour>();
+        ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
+        // ClassInjector.RegisterTypeInIl2Cpp<AdditionalCameraData>();
+       ClassInjector.RegisterTypeInIl2Cpp<VrCameraManager>();
+       ClassInjector.RegisterTypeInIl2Cpp<VrUiPatchMode>();
+       ClassInjector.RegisterTypeInIl2Cpp<CanvasRedirectPatchMode>();
+       ClassInjector.RegisterTypeInIl2Cpp<ScreenMirrorPatchMode>();
 #endif
 
         UuvrCore.Create();
-
     }
 }

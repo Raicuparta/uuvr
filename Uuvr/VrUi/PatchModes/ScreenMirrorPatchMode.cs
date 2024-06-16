@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 #if MODERN
 using Uuvr.VrCamera;
+#endif
+
+#if CPP
+using BepInEx.IL2CPP.Utils;
 #endif
 
 namespace Uuvr.VrUi.PatchModes;
@@ -21,19 +26,20 @@ public class ScreenMirrorPatchMode: VrUiPatchMode
     private Camera? _clearCamera;
     private float _scale = 2f;
     private RenderTexture _targetTexture;
+    private Coroutine _endOfFrameCoroutine;
 
     protected override void OnEnable()
     {
         base.OnEnable();
         SetXrMirror(false);
-        StartCoroutine(EndOfFrameCoroutine());
+        _endOfFrameCoroutine = this.StartCoroutine(EndOfFrameCoroutine());
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
         SetXrMirror(true);
-        StopCoroutine(EndOfFrameCoroutine());
+        StopCoroutine(_endOfFrameCoroutine);
         Reset();
     }
 
@@ -71,9 +77,16 @@ public class ScreenMirrorPatchMode: VrUiPatchMode
         _targetTexture = targetTexture;
 
         if (!enabled) return;
-        _commandBuffer = new CommandBuffer();
+        _commandBuffer = CreateCommandBuffer();
         _commandBuffer.name = "UUVR UI";
         _commandBuffer.Blit(BuiltinRenderTextureType.CameraTarget, targetTexture);
+    }
+    
+    private static CommandBuffer CreateCommandBuffer()
+    {
+        var commandBufferType = typeof(CommandBuffer);
+        var constructor = commandBufferType.GetConstructor(Type.EmptyTypes);
+        return (CommandBuffer)constructor.Invoke(null);
     }
 
     private void Reset()

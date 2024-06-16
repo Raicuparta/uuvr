@@ -173,13 +173,14 @@ public class VrCamera : UuvrBehaviour
         // TODO: reset camera matrices and everything else on disabling VR
     }
 
-    private void SetUpForwardLine()
-    {
-        _forwardLine = new GameObject("VrCameraForwardLine").AddComponent<LineRenderer>();
-        _forwardLine.transform.SetParent(transform, false);
-        _forwardLine.useWorldSpace = false;
-        _forwardLine.SetPositions(new []{ Vector3.forward * 2f, Vector3.forward * 10f });
-        _forwardLine.startWidth = 0.1f;
-        _forwardLine.endWidth = 0f;
-    }
+    // TODO: add option for rendering original camera forward line.
+    // private void SetUpForwardLine()
+    // {
+    //     _forwardLine = new GameObject("VrCameraForwardLine").AddComponent<LineRenderer>();
+    //     _forwardLine.transform.SetParent(transform, false);
+    //     _forwardLine.useWorldSpace = false;
+    //     _forwardLine.SetPositions(new []{ Vector3.forward * 2f, Vector3.forward * 10f });
+    //     _forwardLine.startWidth = 0.1f;
+    //     _forwardLine.endWidth = 0f;
+    // }
 }

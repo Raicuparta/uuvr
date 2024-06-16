@@ -4,6 +4,12 @@ namespace Uuvr.VrUi;
 
 public class UiOverlayRenderMode: UuvrBehaviour
 {
+#if CPP
+    public UiOverlayRenderMode(System.IntPtr pointer) : base(pointer)
+    {
+    }
+#endif
+
     // Overlay camera that sees the UI quad where the captured UI is projected.
     private Camera? _uiSceneCamera;
     

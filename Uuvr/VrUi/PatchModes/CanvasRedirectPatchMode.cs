@@ -8,7 +8,7 @@ namespace Uuvr.VrUi.PatchModes;
 public class CanvasRedirectPatchMode : VrUiPatchMode
 {
 #if CPP
-    public VrUiCanvasPatcher(System.IntPtr pointer) : base(pointer)
+    public CanvasRedirectPatchMode(System.IntPtr pointer) : base(pointer)
     {
     }
 #endif

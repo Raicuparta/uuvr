@@ -67,7 +67,9 @@ public class ModConfiguration
     public readonly ConfigEntry<int> VrCameraDepth;
     public readonly ConfigEntry<int> VrUiLayerOverride;
     public readonly ConfigEntry<bool> AlignCameraToHorizon;
-    public readonly ConfigEntry<Vector3> CameraPositionOffset;
+    public readonly ConfigEntry<float> CameraPositionOffsetX;
+    public readonly ConfigEntry<float> CameraPositionOffsetY;
+    public readonly ConfigEntry<float> CameraPositionOffsetZ;
     public readonly ConfigEntry<bool> OverrideDepth;
     public readonly ConfigEntry<bool> PhysicsMatchHeadsetRefreshRate;
     public readonly ConfigEntry<UiPatchMode> PreferredUiPatchMode;
@@ -114,10 +116,22 @@ public class ModConfiguration
             false,
             "Prevents pitch and roll changes on the camera, allowing only yaw changes.");
 
-        CameraPositionOffset = config.Bind(
+        CameraPositionOffsetX = config.Bind(
             "Camera",
-            "Camera Position Offset",
-            Vector3.zero,
+            "Camera Position Offset X",
+            0f,
+            "Changes position of tracked VR cameras");
+
+        CameraPositionOffsetY = config.Bind(
+            "Camera",
+            "Camera Position Offset Y",
+            0f,
+            "Changes position of tracked VR cameras");
+        
+        CameraPositionOffsetZ = config.Bind(
+            "Camera",
+            "Camera Position Offset Z",
+            0f,
             "Changes position of tracked VR cameras");
 
         OverrideDepth = config.Bind(
