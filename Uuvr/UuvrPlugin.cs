@@ -28,6 +28,7 @@ public class UuvrPlugin
 : BaseUnityPlugin
 #endif
 {
+    private static UuvrPlugin _instance;
     public static string ModFolderPath { get; private set; }
     
 #if CPP
@@ -36,7 +37,8 @@ public class UuvrPlugin
     private void Awake()
 #endif
     {
-        ModFolderPath = Path.GetDirectoryName(Info.Location);
+        _instance = this;
+        ModFolderPath = Path.GetDirectoryName(Assembly.GetAssembly(typeof(UuvrPlugin)).Location);
         
         new ModConfiguration(Config);
         Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
@@ -48,11 +50,11 @@ public class UuvrPlugin
         ClassInjector.RegisterTypeInIl2Cpp<VrCameraOffset>();
         ClassInjector.RegisterTypeInIl2Cpp<VrCameraManager>();
         ClassInjector.RegisterTypeInIl2Cpp<VrUiManager>();
-        ClassInjector.RegisterTypeInIl2Cpp<VrUiCanvas>();
+        // ClassInjector.RegisterTypeInIl2Cpp<VrUiCanvas>();
         ClassInjector.RegisterTypeInIl2Cpp<UuvrPoseDriver>();
 #endif
 
-        UuvrCore.Create();
+        // UuvrCore.Create();
 
     }
 }

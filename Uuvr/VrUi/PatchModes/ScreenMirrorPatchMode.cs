@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -26,14 +27,14 @@ public class ScreenMirrorPatchMode: VrUiPatchMode
     {
         base.OnEnable();
         SetXrMirror(false);
-        StartCoroutine(EndOfFrameCoroutine());
+        StartCoroutine(nameof(EndOfFrameCoroutine));
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
         SetXrMirror(true);
-        StopCoroutine(EndOfFrameCoroutine());
+        StopCoroutine(nameof(EndOfFrameCoroutine));
         Reset();
     }
 
@@ -71,9 +72,16 @@ public class ScreenMirrorPatchMode: VrUiPatchMode
         _targetTexture = targetTexture;
 
         if (!enabled) return;
-        _commandBuffer = new CommandBuffer();
+        _commandBuffer = CreateCommandBuffer();
         _commandBuffer.name = "UUVR UI";
         _commandBuffer.Blit(BuiltinRenderTextureType.CameraTarget, targetTexture);
+    }
+    
+    private static CommandBuffer CreateCommandBuffer()
+    {
+        var commandBufferType = typeof(CommandBuffer);
+        var constructor = commandBufferType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
+        return (CommandBuffer)constructor.Invoke(null);
     }
 
     private void Reset()

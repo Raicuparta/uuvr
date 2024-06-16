@@ -73,7 +73,7 @@ public class VrUiManager : UuvrBehaviour
 
 
         _vrUiQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        Destroy(_vrUiQuad.GetComponent<Collider>());
+        Destroy(_vrUiQuad.GetComponent("Collider"));
         _vrUiQuad.name = "VrUiQuad";
         _vrUiQuad.transform.parent = _uiContainer.transform;
         _vrUiQuad.transform.localPosition = Vector3.forward * 2f;
