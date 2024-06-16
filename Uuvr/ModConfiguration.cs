@@ -177,7 +177,13 @@ public class ModConfiguration
         PreferredUiRenderMode = config.Bind(
             "UI",
             "Preferred UI Plane Render Mode",
+#if MODERN
             UiRenderMode.InWorld,
-            "How to render the VR UI Plane. Overlay is usually better, but does't work in every game.");
+#else
+            // Ideally we'd do overlay in all games but that mode can cause a lot of issues.
+            // Most of the issues seem to be in more recent games, so at least for legacy we can default to overlay.
+            UiRenderMode.OverlayCamera,
+#endif
+            "How to render the VR UI Plane. Overlay is usually better, but doesn't work in every game.");
     }
 }
