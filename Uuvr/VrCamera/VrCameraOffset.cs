@@ -21,7 +21,7 @@ public class VrCameraOffset: UuvrBehaviour
     protected override void OnSettingChanged()
     {
         base.OnSettingChanged();
-        transform.localPosition = ModConfiguration.Instance.CameraPositionOffset.Value;
+        // transform.localPosition = ModConfiguration.Instance.CameraPositionOffset.Value;
     }
 
     private void Update()
