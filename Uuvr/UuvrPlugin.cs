@@ -20,7 +20,7 @@ namespace Uuvr;
     "raicuparta.uuvr-modern",
 #endif
     "UUVR",
-    "0.3.0")]
+    "0.3.1")]
 public class UuvrPlugin
 #if CPP
 : BasePlugin
