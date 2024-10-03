@@ -21,14 +21,36 @@ public class UuvrCore: MonoBehaviour
     private VrUiManager? _vrUi;
     private PropertyInfo? _refreshRateProperty;
     private VrTogglerManager? _vrTogglerManager;
+    private KeyboardKey key = new KeyboardKey(KeyboardKey.KeyCode.F3);
+    private KeyboardKey key2 = new KeyboardKey(KeyboardKey.KeyCode.F4);
 
     public static void Create()
     {
         new GameObject("UUVR").AddComponent<UuvrCore>();
     }
 
+    private void SetUp()
+    {
+        if (gameObject.GetComponent<SteamVRTest>() == null)
+        {
+            gameObject.AddComponent<SteamVRTest>();
+        }
+    }
+
+    private void OnDisable()
+    {
+        Create();
+    }
+
     private void Update()
     {
-        SteamVRTest.Update();
+        if (key.UpdateIsDown())
+        {
+            SetUp();
+        }
+        if (key2.UpdateIsDown())
+        {
+            Debug.Log("works");
+        }
     }
 }
