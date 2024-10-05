@@ -50,7 +50,6 @@ using Valve.VR;
 
         // store the tracked device poses
         private static TrackedDevicePose_t[] devicePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
-        private static TrackedDevicePose_t[] renderPoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
         private static TrackedDevicePose_t[] gamePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
 
         #endregion
@@ -97,7 +96,17 @@ using Valve.VR;
             }
             return value;
         }
-        
+
+        private void Update()
+        {
+            EVRCompositorError vrCompositorError = EVRCompositorError.None;
+            vrCompositorError = OpenVR.Compositor.WaitGetPoses(devicePoses, gamePoses);
+
+            if (vrCompositorError != EVRCompositorError.None) {
+                throw new Exception("WaitGetPoses failed: (" + (int)vrCompositorError + ") " + vrCompositorError.ToString());
+            }
+        }
+
         /// <summary>
         /// On LateUpdate, dispatch OpenVR events, run the main HMD loop code.
         /// </summary>
@@ -115,7 +124,6 @@ using Valve.VR;
 
             // perform regular updates if HMD is initialized
             if (HmdIsRunning) {
-                EVRCompositorError vrCompositorError = EVRCompositorError.None;
 
                 // we've just started VR
                 if (!hmdIsRunningPrev) {
@@ -124,18 +132,8 @@ using Valve.VR;
                 }
 
                 try {
-                    // get latest device poses, emit an event to indicate devices have been updated
-                    float secondsToPhotons = CalculatePredictedSecondsToPhotons();
-                    OpenVR.System.GetDeviceToAbsoluteTrackingPose(ETrackingUniverseOrigin.TrackingUniverseStanding, secondsToPhotons, devicePoses);
-                    // SteamVR_Events.NewPoses.Send(devicePoses); // todo
-
                     HmdMatrix34_t vrLeftEyeTransform = OpenVR.System.GetEyeToHeadTransform(EVREye.Eye_Left);
                     HmdMatrix34_t vrRightEyeTransform = OpenVR.System.GetEyeToHeadTransform(EVREye.Eye_Right);
-                    vrCompositorError = OpenVR.Compositor.WaitGetPoses(renderPoses, gamePoses);
-
-                    if (vrCompositorError != EVRCompositorError.None) {
-                        throw new Exception("WaitGetPoses failed: (" + (int)vrCompositorError + ") " + vrCompositorError.ToString());
-                    }
 
                     // convert SteamVR poses to Unity coordinates
                     var hmdTransform = new SteamVR_Utils.RigidTransform(devicePoses[OpenVR.k_unTrackedDeviceIndex_Hmd].mDeviceToAbsoluteTracking);
