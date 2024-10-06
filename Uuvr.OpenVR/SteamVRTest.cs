@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Uuvr.OpenVR;
 
 public class SteamVRTest : MonoBehaviour {
-    private static Camera ActiveCamera => Camera.main ?? Camera.current;
+    private Camera _activeCamera;
 
     // defines the bounds to texture bounds for rendering
     private VRTextureBounds_t _hmdTextureBounds;
@@ -16,10 +16,11 @@ public class SteamVRTest : MonoBehaviour {
     
     private readonly TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
     private readonly TrackedDevicePose_t[] _gamePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
-
-
+    
     private void Start()
     {
+        SetUpCamera();
+        
         // check if HMD is connected on the system
         if (!OpenVR.IsHmdPresent()) {
             throw new InvalidOperationException("HMD not found on this system");
@@ -76,6 +77,32 @@ public class SteamVRTest : MonoBehaviour {
         _hmdTextureBounds.vMax = 0.0f;
     }
 
+    private void SetUpCamera()
+    {
+        Debug.Log("Setting up camera...");
+        _activeCamera = new GameObject("VrCamera").AddComponent<Camera>();
+        _activeCamera.enabled = false;
+        var parentCamera = Camera.main;
+        if (parentCamera == null)
+        {
+            parentCamera = Camera.current;
+        }
+        else if (parentCamera == null)
+        {
+            parentCamera = FindObjectOfType<Camera>();
+        }
+
+        if (parentCamera != null)
+        {
+            Debug.Log($"Using parent camera: {parentCamera.name}");
+            _activeCamera.CopyFrom(parentCamera);
+        }
+
+        _activeCamera.transform.parent = parentCamera == null ? null : parentCamera.transform;
+        _activeCamera.transform.localPosition = Vector3.zero;
+        _activeCamera.transform.localRotation = Quaternion.identity;
+    }
+
     private void OnDestroy()
     {
         Debug.Log("VR shutting down...");
@@ -84,8 +111,8 @@ public class SteamVRTest : MonoBehaviour {
 
     private void Update()
     {
-        if (OpenVR.System == null) return;
-
+        if (OpenVR.Compositor == null) return;
+        
         var vrCompositorError = EVRCompositorError.None;
         vrCompositorError = OpenVR.Compositor.WaitGetPoses(_devicePoses, _gamePoses);
 
@@ -94,25 +121,20 @@ public class SteamVRTest : MonoBehaviour {
         }
     }
 
+    private static bool IsFocused()
+    {
+        return OpenVR.System != null && Environment.ProcessId == OpenVR.Compositor.GetCurrentSceneFocusProcess();
+    }
+
     private void LateUpdate()
     {
-        if (OpenVR.System == null) return;
+        if (!IsFocused()) return;
         
         try {
-            // render each eye
             Render(EVREye.Eye_Left);
             Render(EVREye.Eye_Right);
-
-            // [insert dark magic here]
-            // OpenVR.Compositor.PostPresentHandoff();
-
-            // render to the game screen
-            // if (RenderHmdToScreen) {
-            //     Graphics.Blit(_hmdEyeRenderTexture[0], null as RenderTexture);
-            // }
-
+            OpenVR.Compositor.PostPresentHandoff();
         } catch (Exception e) {
-            // shut off VR when an error occurs
             Debug.LogError($"steamvrtest error: {e}");
         }
     }
@@ -143,17 +165,17 @@ public class SteamVRTest : MonoBehaviour {
     /// </summary>
     private void Render(EVREye eye)
     {
-        var prevCameraPosition = ActiveCamera.transform.localPosition;
+        var prevCameraPosition = _activeCamera.transform.localPosition;
 
         // convert SteamVR poses to Unity coordinates
         var hmdTransform = new SteamVR_Utils.RigidTransform(_devicePoses[OpenVR.k_unTrackedDeviceIndex_Hmd].mDeviceToAbsoluteTracking);
         var hmdEyeTransform = new SteamVR_Utils.RigidTransform(OpenVR.System.GetEyeToHeadTransform(eye));
 
-        ActiveCamera.transform.localRotation = hmdTransform.rot * hmdEyeTransform.rot;
-        ActiveCamera.transform.localPosition = prevCameraPosition + hmdTransform.rot * hmdEyeTransform.pos;
+        _activeCamera.transform.localRotation = hmdTransform.rot * hmdEyeTransform.rot;
+        _activeCamera.transform.localPosition = prevCameraPosition + hmdTransform.rot * hmdEyeTransform.pos;
             
-        var projectionMatrix = OpenVR.System.GetProjectionMatrix(eye, ActiveCamera.nearClipPlane, ActiveCamera.farClipPlane);
-        ActiveCamera.projectionMatrix = Matrix4x4_OpenVr2UnityFormat(ref projectionMatrix);
+        var projectionMatrix = OpenVR.System.GetProjectionMatrix(eye, _activeCamera.nearClipPlane, _activeCamera.farClipPlane);
+        _activeCamera.projectionMatrix = Matrix4x4_OpenVr2UnityFormat(ref projectionMatrix);
         
         // set texture to render to, then render
         var hmdEyeRenderTexture = _hmdEyeRenderTexture[(int)eye];
@@ -166,10 +188,10 @@ public class SteamVRTest : MonoBehaviour {
             hmdEyeRenderTexture = _hmdEyeRenderTexture[(int)eye] = new RenderTexture((int)renderTextureWidth, (int)renderTextureHeight, 24, RenderTextureFormat.ARGB32);
         }
 
-        ActiveCamera.targetTexture = hmdEyeRenderTexture;
-        ActiveCamera.Render();
+        _activeCamera.targetTexture = hmdEyeRenderTexture;
+        _activeCamera.Render();
 
-        ActiveCamera.transform.localPosition = prevCameraPosition;
+        _activeCamera.transform.localPosition = prevCameraPosition;
 
         var hmdEyeTexture = _hmdEyeTextures[(int) eye];
         hmdEyeTexture.handle = hmdEyeRenderTexture.GetNativeTexturePtr();
