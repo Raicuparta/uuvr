@@ -14,7 +14,6 @@ public class SteamVRTest : MonoBehaviour {
         vMax = 0.0f
     };
     
-    private Texture_t _hmdEyeTexture;
     private RenderTexture _hmdEyeRenderTexture;
     
     private readonly TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
@@ -70,9 +69,6 @@ public class SteamVRTest : MonoBehaviour {
         
         _hmdEyeRenderTexture = new RenderTexture((int)renderTextureWidth, (int)renderTextureHeight, 24, RenderTextureFormat.ARGB32);
         _hmdEyeRenderTexture.Create();
-        _hmdEyeTexture.handle = _hmdEyeRenderTexture.GetNativeTexturePtr();
-        _hmdEyeTexture.eColorSpace = EColorSpace.Auto;
-        _hmdEyeTexture.eType = textureType;
     }
 
     private void SetUpCamera()
@@ -116,10 +112,16 @@ public class SteamVRTest : MonoBehaviour {
 
     private void Update()
     {
-        if (OpenVR.Compositor == null) return;
+        if (OpenVR.Compositor == null)
+        {
+            Debug.Log("No compositor, skipping");
+            return;
+        }
         
         var vrCompositorError = EVRCompositorError.None;
+        Debug.Log("WaitGetPoses...");
         vrCompositorError = OpenVR.Compositor.WaitGetPoses(_devicePoses, _gamePoses);
+        Debug.Log("Got poses!");
 
         if (vrCompositorError != EVRCompositorError.None) {
             throw new Exception("WaitGetPoses failed: (" + (int)vrCompositorError + ") " + vrCompositorError.ToString());
@@ -133,7 +135,10 @@ public class SteamVRTest : MonoBehaviour {
 
     private void LateUpdate()
     {
-        if (!IsFocused() || !OpenVR.Compositor.CanRenderScene()) return;
+        if (!IsFocused() || !OpenVR.Compositor.CanRenderScene())
+        {
+            Debug.Log("Can't render scene, skipping");
+        }
 
         if (_activeCamera == null)
         {
@@ -150,6 +155,7 @@ public class SteamVRTest : MonoBehaviour {
         try {
             Render(EVREye.Eye_Left);
             Render(EVREye.Eye_Right);
+            Debug.Log("Rendered both eyes");
             OpenVR.Compositor.PostPresentHandoff();
         } catch (Exception e) {
             Debug.LogError($"steamvrtest error: {e}");
@@ -207,13 +213,21 @@ public class SteamVRTest : MonoBehaviour {
 
         _activeCamera.transform.localPosition = prevCameraPosition;
 
-        _hmdEyeTexture.handle = _hmdEyeRenderTexture.GetNativeTexturePtr();
-
+        var hmdEyeTexture = new Texture_t()
+        {
+            handle = _hmdEyeRenderTexture.GetNativeTexturePtr(),
+            eType = ETextureType.DirectX,
+            eColorSpace = EColorSpace.Auto
+        };
+        
         // Submit frames to HMD
-        var vrCompositorError = OpenVR.Compositor.Submit(eye, ref _hmdEyeTexture, ref _hmdTextureBounds, EVRSubmitFlags.Submit_Default);
+        var vrCompositorError = OpenVR.Compositor.Submit(eye, ref hmdEyeTexture, ref _hmdTextureBounds, EVRSubmitFlags.Submit_Default);
         if (vrCompositorError != EVRCompositorError.None) {
             throw new Exception("Submit (" + eye + ") failed: (" + (int)vrCompositorError + ") " + vrCompositorError);
         }
+
+        // Hack to flush render event that was queued in Update (this ensures WaitGetPoses has returned before we grab the new values).
+        _hmdEyeRenderTexture.GetNativeTexturePtr();
         
         _hmdEyeRenderTexture.Release();
     }
