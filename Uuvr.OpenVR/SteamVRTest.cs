@@ -11,8 +11,8 @@ public class SteamVRTest : MonoBehaviour {
 
     // these arrays each hold one object for the corresponding eye, where
     // index 0 = Left_Eye, index 1 = Right_Eye
-    private readonly Texture_t[] _hmdEyeTextures = new Texture_t[2];
-    private readonly RenderTexture[] _hmdEyeRenderTexture = new RenderTexture[2];
+    private Texture_t _hmdEyeTexture = new();
+    private RenderTexture _hmdEyeRenderTexture;
     
     private readonly TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
     private readonly TrackedDevicePose_t[] _gamePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
@@ -38,11 +38,23 @@ public class SteamVRTest : MonoBehaviour {
             throw new Exception("OpenVR error: " + OpenVR.GetStringForHmdError(hmdInitErrorCode));
         }
 
+        // initialize render textures (for displaying on HMD)
+        SetUpRenderTexture();
+
+        // set rendering bounds on texture to render
+        _hmdTextureBounds.uMin = 0.0f;
+        _hmdTextureBounds.uMax = 1.0f;
+        _hmdTextureBounds.vMin = 1.0f; // flip the vertical coordinate for some reason
+        _hmdTextureBounds.vMax = 0.0f;
+    }
+
+    private void SetUpRenderTexture()
+    {
         // get HMD render target size
         uint renderTextureWidth = 0;
         uint renderTextureHeight = 0;
         OpenVR.System.GetRecommendedRenderTargetSize(ref renderTextureWidth, ref renderTextureHeight);
-
+        
         // at the moment, only Direct3D11 is working with Kerbal Space Program
         var textureType = ETextureType.DirectX;
         switch (SystemInfo.graphicsDeviceType) {
@@ -60,21 +72,12 @@ public class SteamVRTest : MonoBehaviour {
             default:
                 throw new InvalidOperationException(SystemInfo.graphicsDeviceType.ToString() + " not supported");
         }
-
-        // initialize render textures (for displaying on HMD)
-        for (var i = 0; i < 2; i++) {
-            _hmdEyeRenderTexture[i] = new RenderTexture((int)renderTextureWidth, (int)renderTextureHeight, 24, RenderTextureFormat.ARGB32);
-            _hmdEyeRenderTexture[i].Create();
-            _hmdEyeTextures[i].handle = _hmdEyeRenderTexture[i].GetNativeTexturePtr();
-            _hmdEyeTextures[i].eColorSpace = EColorSpace.Auto;
-            _hmdEyeTextures[i].eType = textureType;
-        }
-
-        // set rendering bounds on texture to render
-        _hmdTextureBounds.uMin = 0.0f;
-        _hmdTextureBounds.uMax = 1.0f;
-        _hmdTextureBounds.vMin = 1.0f; // flip the vertical coordinate for some reason
-        _hmdTextureBounds.vMax = 0.0f;
+        
+        _hmdEyeRenderTexture = new RenderTexture((int)renderTextureWidth, (int)renderTextureHeight, 24, RenderTextureFormat.ARGB32);
+        _hmdEyeRenderTexture.Create();
+        _hmdEyeTexture.handle = _hmdEyeRenderTexture.GetNativeTexturePtr();
+        _hmdEyeTexture.eColorSpace = EColorSpace.Auto;
+        _hmdEyeTexture.eType = textureType;
     }
 
     private void SetUpCamera()
@@ -135,7 +138,7 @@ public class SteamVRTest : MonoBehaviour {
 
     private void LateUpdate()
     {
-        if (!IsFocused()) return;
+        if (!IsFocused() || !OpenVR.Compositor.CanRenderScene()) return;
 
         if (_activeCamera == null)
         {
@@ -197,28 +200,25 @@ public class SteamVRTest : MonoBehaviour {
         _activeCamera.projectionMatrix = Matrix4x4_OpenVr2UnityFormat(ref projectionMatrix);
         
         // set texture to render to, then render
-        var hmdEyeRenderTexture = _hmdEyeRenderTexture[(int)eye];
-        if (!hmdEyeRenderTexture)
+        if (_hmdEyeRenderTexture == null)
         {
             Debug.Log("missing render texture, recreating");
-            uint renderTextureWidth = 0;
-            uint renderTextureHeight = 0;
-            OpenVR.System.GetRecommendedRenderTargetSize(ref renderTextureWidth, ref renderTextureHeight);
-            hmdEyeRenderTexture = _hmdEyeRenderTexture[(int)eye] = new RenderTexture((int)renderTextureWidth, (int)renderTextureHeight, 24, RenderTextureFormat.ARGB32);
+            SetUpRenderTexture();
         }
 
-        _activeCamera.targetTexture = hmdEyeRenderTexture;
+        _activeCamera.targetTexture = _hmdEyeRenderTexture;
         _activeCamera.Render();
 
         _activeCamera.transform.localPosition = prevCameraPosition;
 
-        var hmdEyeTexture = _hmdEyeTextures[(int) eye];
-        hmdEyeTexture.handle = hmdEyeRenderTexture.GetNativeTexturePtr();
+        _hmdEyeTexture.handle = _hmdEyeRenderTexture.GetNativeTexturePtr();
 
         // Submit frames to HMD
-        var vrCompositorError = OpenVR.Compositor.Submit(eye, ref hmdEyeTexture, ref _hmdTextureBounds, EVRSubmitFlags.Submit_Default);
+        var vrCompositorError = OpenVR.Compositor.Submit(eye, ref _hmdEyeTexture, ref _hmdTextureBounds, EVRSubmitFlags.Submit_Default);
         if (vrCompositorError != EVRCompositorError.None) {
             throw new Exception("Submit (" + eye + ") failed: (" + (int)vrCompositorError + ") " + vrCompositorError.ToString());
         }
+        
+        _hmdEyeRenderTexture.Release();
     }
 }
