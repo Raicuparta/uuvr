@@ -182,11 +182,15 @@ public class SteamVRTest : MonoBehaviour {
         var prevCameraPosition = _activeCamera.transform.localPosition;
 
         // convert SteamVR poses to Unity coordinates
-        var hmdTransform = new SteamVR_Utils.RigidTransform(_devicePoses[OpenVR.k_unTrackedDeviceIndex_Hmd].mDeviceToAbsoluteTracking);
-        var hmdEyeTransform = new SteamVR_Utils.RigidTransform(OpenVR.System.GetEyeToHeadTransform(eye));
+        var hmdMatrix = _devicePoses[OpenVR.k_unTrackedDeviceIndex_Hmd].mDeviceToAbsoluteTracking;
+        var eyeMatrix = OpenVR.System.GetEyeToHeadTransform(eye);
+
+        var hmdRotation = hmdMatrix.GetRotation();
+        var eyeRotation = eyeMatrix.GetRotation();
+        var eyePosition = eyeMatrix.GetPosition();
         
-        _activeCamera.transform.localRotation = hmdTransform.rot * hmdEyeTransform.rot;
-        _activeCamera.transform.localPosition = prevCameraPosition + hmdTransform.rot * hmdEyeTransform.pos;
+        _activeCamera.transform.localRotation = hmdRotation * eyeRotation;
+        _activeCamera.transform.localPosition = prevCameraPosition + hmdRotation * eyePosition;
             
         var projectionMatrix = OpenVR.System.GetProjectionMatrix(eye, _activeCamera.nearClipPlane, _activeCamera.farClipPlane);
         _activeCamera.projectionMatrix = Matrix4x4_OpenVr2UnityFormat(ref projectionMatrix);
