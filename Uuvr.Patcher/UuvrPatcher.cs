@@ -51,13 +51,9 @@ public class Patcher
         var installerPath = Assembly.GetExecutingAssembly().Location;
 
         var gameExePath = Process.GetCurrentProcess().MainModule.FileName;
-
-        var gamePath = Path.GetDirectoryName(gameExePath);
-        var gameName = Path.GetFileNameWithoutExtension(gameExePath);
-        var dataPath = Path.Combine(gamePath, $"{gameName}_Data/");
         var patcherPath = Path.GetDirectoryName(installerPath);
         
-        CopyFilesToGame(patcherPath, dataPath);
+        CopyFilesToGame(patcherPath, gameExePath);
 
 #if LEGACY
         string globalSettingsFilePath = GetGlobalSettingsFilePath(dataPath);
@@ -170,12 +166,18 @@ public class Patcher
         };
     }
 
-    private static void CopyFilesToGame(string patcherPath, string dataPath)
+    private static void CopyFilesToGame(string patcherPath, string gameExePath)
     {
         var copyToGameFolderPath = Path.Combine(patcherPath, "CopyToGame");
 
         Console.WriteLine($"Copying mod files to game... These files get overwritten every time the game starts. If you want to change them manually, replace them in the mod folder instead: {copyToGameFolderPath}");
 
+        var gamePath = Path.GetDirectoryName(gameExePath);
+        // TODO: currently copying only x64 open vr dll, need to handle x86.
+        CopyDirectory(Path.Combine(copyToGameFolderPath, "Root"), gamePath);
+        
+        var gameName = Path.GetFileNameWithoutExtension(gameExePath);
+        var dataPath = Path.Combine(gamePath, $"{gameName}_Data/");
         CopyDirectory(Path.Combine(copyToGameFolderPath, "Data"), dataPath);
 
         var gamePluginsPath = Path.Combine(dataPath, "Plugins");

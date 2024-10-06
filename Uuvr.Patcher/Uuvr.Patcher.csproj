@@ -39,4 +39,7 @@
     <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
         <PackageReference Include="Mono.Cecil" Version="0.10.4" IncludeAssets="compile" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="CopyToGame\Root\" />
+    </ItemGroup>
 </Project>
