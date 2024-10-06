@@ -6,12 +6,15 @@ namespace Uuvr.OpenVR;
 public class SteamVRTest : MonoBehaviour {
     private Camera _activeCamera;
 
-    // defines the bounds to texture bounds for rendering
-    private VRTextureBounds_t _hmdTextureBounds;
-
-    // these arrays each hold one object for the corresponding eye, where
-    // index 0 = Left_Eye, index 1 = Right_Eye
-    private Texture_t _hmdEyeTexture = new();
+    private VRTextureBounds_t _hmdTextureBounds = new()
+    {
+        uMin = 0.0f,
+        uMax = 1.0f,
+        vMin = 1.0f,
+        vMax = 0.0f
+    };
+    
+    private Texture_t _hmdEyeTexture;
     private RenderTexture _hmdEyeRenderTexture;
     
     private readonly TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
@@ -38,14 +41,7 @@ public class SteamVRTest : MonoBehaviour {
             throw new Exception("OpenVR error: " + OpenVR.GetStringForHmdError(hmdInitErrorCode));
         }
 
-        // initialize render textures (for displaying on HMD)
         SetUpRenderTexture();
-
-        // set rendering bounds on texture to render
-        _hmdTextureBounds.uMin = 0.0f;
-        _hmdTextureBounds.uMax = 1.0f;
-        _hmdTextureBounds.vMin = 1.0f; // flip the vertical coordinate for some reason
-        _hmdTextureBounds.vMax = 0.0f;
     }
 
     private void SetUpRenderTexture()
@@ -55,14 +51,13 @@ public class SteamVRTest : MonoBehaviour {
         uint renderTextureHeight = 0;
         OpenVR.System.GetRecommendedRenderTargetSize(ref renderTextureWidth, ref renderTextureHeight);
         
-        // at the moment, only Direct3D11 is working with Kerbal Space Program
         var textureType = ETextureType.DirectX;
         switch (SystemInfo.graphicsDeviceType) {
             case UnityEngine.Rendering.GraphicsDeviceType.OpenGLCore:
             case UnityEngine.Rendering.GraphicsDeviceType.OpenGLES2:
             case UnityEngine.Rendering.GraphicsDeviceType.OpenGLES3:
                 textureType = ETextureType.OpenGL;
-                throw new InvalidOperationException(SystemInfo.graphicsDeviceType.ToString() + " does not support VR. You must use -force-d3d11");
+                throw new InvalidOperationException(SystemInfo.graphicsDeviceType + " does not support VR. You must use -force-d3d11");
             case UnityEngine.Rendering.GraphicsDeviceType.Direct3D11:
                 textureType = ETextureType.DirectX;
                 break;
@@ -70,7 +65,7 @@ public class SteamVRTest : MonoBehaviour {
                 textureType = ETextureType.DirectX;
                 break;
             default:
-                throw new InvalidOperationException(SystemInfo.graphicsDeviceType.ToString() + " not supported");
+                throw new InvalidOperationException(SystemInfo.graphicsDeviceType + " not supported");
         }
         
         _hmdEyeRenderTexture = new RenderTexture((int)renderTextureWidth, (int)renderTextureHeight, 24, RenderTextureFormat.ARGB32);
@@ -160,8 +155,8 @@ public class SteamVRTest : MonoBehaviour {
             Debug.LogError($"steamvrtest error: {e}");
         }
     }
-        
-    public static Matrix4x4 Matrix4x4_OpenVr2UnityFormat(ref HmdMatrix44_t mat44Openvr) {
+
+    private static Matrix4x4 Matrix4x4_OpenVr2UnityFormat(ref HmdMatrix44_t mat44Openvr) {
         var mat44Unity = Matrix4x4.identity;
         mat44Unity.m00 = mat44Openvr.m0;
         mat44Unity.m01 = mat44Openvr.m1;
@@ -181,10 +176,7 @@ public class SteamVRTest : MonoBehaviour {
         mat44Unity.m33 = mat44Openvr.m15;
         return mat44Unity;
     }
-        
-    /// <summary>
-    /// Renders a set of cameras onto a RenderTexture, and submit the frame to the HMD.
-    /// </summary>
+    
     private void Render(EVREye eye)
     {
         var prevCameraPosition = _activeCamera.transform.localPosition;
@@ -216,7 +208,7 @@ public class SteamVRTest : MonoBehaviour {
         // Submit frames to HMD
         var vrCompositorError = OpenVR.Compositor.Submit(eye, ref _hmdEyeTexture, ref _hmdTextureBounds, EVRSubmitFlags.Submit_Default);
         if (vrCompositorError != EVRCompositorError.None) {
-            throw new Exception("Submit (" + eye + ") failed: (" + (int)vrCompositorError + ") " + vrCompositorError.ToString());
+            throw new Exception("Submit (" + eye + ") failed: (" + (int)vrCompositorError + ") " + vrCompositorError);
         }
         
         _hmdEyeRenderTexture.Release();
