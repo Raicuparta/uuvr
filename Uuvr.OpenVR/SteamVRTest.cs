@@ -79,6 +79,11 @@ public class SteamVRTest : MonoBehaviour {
 
     private void SetUpCamera()
     {
+        if (_activeCamera != null)
+        {
+            Destroy(_activeCamera.gameObject);
+        }
+        
         Debug.Log("Setting up camera...");
         _activeCamera = new GameObject("VrCamera").AddComponent<Camera>();
         _activeCamera.enabled = false;
@@ -96,6 +101,7 @@ public class SteamVRTest : MonoBehaviour {
         {
             Debug.Log($"Using parent camera: {parentCamera.name}");
             _activeCamera.CopyFrom(parentCamera);
+            _activeCamera.enabled = false;
         }
 
         _activeCamera.transform.parent = parentCamera == null ? null : parentCamera.transform;
@@ -106,7 +112,8 @@ public class SteamVRTest : MonoBehaviour {
     private void OnDestroy()
     {
         Debug.Log("VR shutting down...");
-        OpenVR.Shutdown();
+        Destroy(_activeCamera.gameObject);
+        // OpenVR.Shutdown();
     }
 
     private void Update()
@@ -129,6 +136,18 @@ public class SteamVRTest : MonoBehaviour {
     private void LateUpdate()
     {
         if (!IsFocused()) return;
+
+        if (_activeCamera == null)
+        {
+            Debug.Log("Active camera was destroyed, recreating");
+            SetUpCamera();
+        }
+
+        if (_activeCamera == null)
+        {
+            Debug.Log("Active camera couldn't be created, skipping");
+            return;
+        }
         
         try {
             Render(EVREye.Eye_Left);
@@ -170,7 +189,7 @@ public class SteamVRTest : MonoBehaviour {
         // convert SteamVR poses to Unity coordinates
         var hmdTransform = new SteamVR_Utils.RigidTransform(_devicePoses[OpenVR.k_unTrackedDeviceIndex_Hmd].mDeviceToAbsoluteTracking);
         var hmdEyeTransform = new SteamVR_Utils.RigidTransform(OpenVR.System.GetEyeToHeadTransform(eye));
-
+        
         _activeCamera.transform.localRotation = hmdTransform.rot * hmdEyeTransform.rot;
         _activeCamera.transform.localPosition = prevCameraPosition + hmdTransform.rot * hmdEyeTransform.pos;
             
