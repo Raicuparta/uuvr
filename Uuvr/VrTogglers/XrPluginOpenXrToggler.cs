@@ -1,4 +1,4 @@
-﻿#if MODERN
+﻿#if MODERN && MONO
 using UnityEngine;
 using UnityEngine.XR.Management;
 using UnityEngine.XR.OpenXR;

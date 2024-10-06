@@ -20,7 +20,7 @@ public class VrTogglerManager
             _toggler.SetVrEnabled(false);
         }
         
-#if MODERN
+#if MODERN && MONO
         // TODO: should never pick OpenXR on x86, since it no worky.
         switch(ModConfiguration.Instance.PreferredVrApi.Value)
         {

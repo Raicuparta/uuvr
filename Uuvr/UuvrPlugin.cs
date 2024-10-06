@@ -2,6 +2,7 @@
 using System.Reflection;
 using BepInEx;
 using HarmonyLib;
+using Uuvr.OpenVR;
 using Uuvr.VrCamera;
 using Uuvr.VrUi;
 using Uuvr.VrUi.PatchModes;

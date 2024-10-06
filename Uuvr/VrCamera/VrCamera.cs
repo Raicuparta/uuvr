@@ -43,7 +43,7 @@ public class VrCamera : UuvrBehaviour
         VrCameras.Add(ParentCamera);
     }
 
-#if MODERN
+#if MODERN && MONO
     protected override void OnBeginFrameRendering()
     {
         base.OnBeginFrameRendering();

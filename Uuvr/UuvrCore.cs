@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using UnityEngine;
+using Uuvr.OpenVR;
 using Uuvr.VrCamera;
 using Uuvr.VrTogglers;
 using Uuvr.VrUi;
