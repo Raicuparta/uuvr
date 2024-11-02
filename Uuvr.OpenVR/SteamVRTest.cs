@@ -138,9 +138,10 @@ public class SteamVRTest : MonoBehaviour {
         SteamVR_Utils.RigidTransform hmdEyeTransform)
     {
         var cameraTransform = vrCamera.transform;
+        var prevCameraRotation = cameraTransform.localRotation;
         var prevCameraPosition = cameraTransform.localPosition;
+        cameraTransform.localPosition = prevCameraPosition + hmdTransform.rot * hmdEyeTransform.pos;
         cameraTransform.localRotation = hmdTransform.rot * hmdEyeTransform.rot;
-        cameraTransform.localPosition = prevCameraPosition + hmdTransform.pos + hmdTransform.rot * hmdEyeTransform.pos;
 
         var projectionMatrix =
             OpenVR.System.GetProjectionMatrix(eye, vrCamera.nearClipPlane, vrCamera.farClipPlane,
@@ -150,8 +151,8 @@ public class SteamVRTest : MonoBehaviour {
         vrCamera.targetTexture = _hmdEyeRenderTexture;
         vrCamera.Render();
 
+        cameraTransform.localRotation = prevCameraRotation;
         cameraTransform.localPosition = prevCameraPosition;
-
 
         int eventID;
         if (eye == EVREye.Eye_Left)
