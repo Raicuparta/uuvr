@@ -41,7 +41,7 @@ public class UuvrCore: MonoBehaviour
     private void OnDisable()
     {
         Debug.Log("UUVRCore Disabled, recreating");
-        DestroyImmediate(gameObject);
+        Destroy(gameObject);
         Create();
     }
 
