@@ -5,12 +5,15 @@
 //
 //=============================================================================
 
+// Ignore all warnings since I didn't write this excepts for the parts I edited even though that header told me not to.
+// ReSharper disable All
+#pragma warning disable
+
 using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace Uuvr.OpenVR;
-
 
 [StructLayout(LayoutKind.Sequential)]
 public struct IVRSystem

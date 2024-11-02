@@ -41,7 +41,7 @@ public class UuvrPlugin
         _instance = this;
 
         ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
-        ClassInjector.RegisterTypeInIl2Cpp<SteamVRTest>();
+        ClassInjector.RegisterTypeInIl2Cpp<OpenVrManager>();
         UuvrCore.Create();
         return;
         

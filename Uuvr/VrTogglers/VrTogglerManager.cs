@@ -37,8 +37,10 @@ public class VrTogglerManager
             default:
                 throw new ArgumentOutOfRangeException();
         }
+#elif LEGACY && MONO
+        _toggler = new NativeOpenVrToggler();
 #else
-        _toggler = new LegacyOpenVrToggler();
+        _toggler = new ManualOpenVrToggler();
 #endif
     }
 

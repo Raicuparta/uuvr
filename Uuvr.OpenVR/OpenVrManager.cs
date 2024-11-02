@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Uuvr.OpenVR;
 
-public class SteamVRTest : MonoBehaviour {
+public class OpenVrManager : MonoBehaviour {
     public Camera vrCamera;
     public bool renderHmdToScreen = false;
 
@@ -16,6 +16,11 @@ public class SteamVRTest : MonoBehaviour {
     private float _aspect;
     private float _fieldOfView;
 
+    public static OpenVrManager Create()
+    {
+        return new GameObject(nameof(OpenVrManager)).AddComponent<OpenVrManager>();
+    }
+    
     private void OnEnable()
     {
         vrCamera = Camera.main;
@@ -39,7 +44,7 @@ public class SteamVRTest : MonoBehaviour {
 
     private void Update()
     {
-        SteamVR_Utils.QueueEventOnRenderThread(OpenVrApiExtra.k_nRenderEventID_PostPresentHandoff);
+        OpenVrUnityHooks.PostPresentHandoff();
 
         Application.targetFrameRate = -1;
         Application.runInBackground = true; // don't require companion window focus
@@ -51,12 +56,12 @@ public class SteamVRTest : MonoBehaviour {
     private void FixedUpdate()
     {
         // We want to call this as soon after Present as possible.
-        SteamVR_Utils.QueueEventOnRenderThread(OpenVrApiExtra.k_nRenderEventID_PostPresentHandoff);
+        OpenVrUnityHooks.PostPresentHandoff();
     }
 
     private void UpdatePoses()
     {
-        SteamVR_Utils.QueueEventOnRenderThread(OpenVrApiExtra.k_nRenderEventID_WaitGetPoses);
+        OpenVrUnityHooks.WaitGetPoses();
 
         // Hack to flush render event that was queued in Update (this ensures WaitGetPoses has returned before we grab the new values).
         _hmdEyeRenderTexture.GetNativeTexturePtr();
@@ -82,11 +87,11 @@ public class SteamVRTest : MonoBehaviour {
 
                 // convert SteamVR poses to Unity coordinates
                 var hmdTransform =
-                    new SteamVR_Utils.RigidTransform(_devicePoses[OpenVR.k_unTrackedDeviceIndex_Hmd]
+                    new Utils.RigidTransform(_devicePoses[OpenVR.k_unTrackedDeviceIndex_Hmd]
                         .mDeviceToAbsoluteTracking);
-                var hmdEyeTransform = new SteamVR_Utils.RigidTransform[2];
-                hmdEyeTransform[0] = new SteamVR_Utils.RigidTransform(vrLeftEyeTransform);
-                hmdEyeTransform[1] = new SteamVR_Utils.RigidTransform(vrRightEyeTransform);
+                var hmdEyeTransform = new Utils.RigidTransform[2];
+                hmdEyeTransform[0] = new Utils.RigidTransform(vrLeftEyeTransform);
+                hmdEyeTransform[1] = new Utils.RigidTransform(vrRightEyeTransform);
 
                 // render each eye
                 for (var i = 0; i < 2; i++)
@@ -134,8 +139,8 @@ public class SteamVRTest : MonoBehaviour {
 
     private void RenderEye(
         EVREye eye,
-        SteamVR_Utils.RigidTransform hmdTransform,
-        SteamVR_Utils.RigidTransform hmdEyeTransform)
+        Utils.RigidTransform hmdTransform,
+        Utils.RigidTransform hmdEyeTransform)
     {
         var cameraTransform = vrCamera.transform;
         var prevCameraRotation = cameraTransform.localRotation;
@@ -153,22 +158,18 @@ public class SteamVRTest : MonoBehaviour {
 
         cameraTransform.localRotation = prevCameraRotation;
         cameraTransform.localPosition = prevCameraPosition;
-
-        int eventID;
+        
         if (eye == EVREye.Eye_Left)
         {
             // Get gpu started on work early to avoid bubbles at the top of the frame.
-            SteamVR_Utils.QueueEventOnRenderThread(OpenVrApiExtra.k_nRenderEventID_Flush);
+            OpenVrUnityHooks.Flush();
 
-            eventID = OpenVrApiExtra.k_nRenderEventID_SubmitL;
+            OpenVrUnityHooks.SubmitLeftEye();
         }
         else
         {
-            eventID = OpenVrApiExtra.k_nRenderEventID_SubmitR;
+            OpenVrUnityHooks.SubmitRightEye();
         }
-
-        // Queue up a call on the render thread to Submit our render target to the compositor.
-        SteamVR_Utils.QueueEventOnRenderThread(eventID);
     }
 
     private void InitializeOpenVR()
@@ -212,7 +213,7 @@ public class SteamVRTest : MonoBehaviour {
             vMax = 0.0f
         };
 
-        OpenVrApiExtra.SetSubmitParams(hmdTextureBounds, hmdTextureBounds, EVRSubmitFlags.Submit_Default);
+        OpenVrUnityHooks.SetSubmitParams(hmdTextureBounds, hmdTextureBounds, EVRSubmitFlags.Submit_Default);
 
         var hdr = vrCamera.allowHDR;
         var aa = QualitySettings.antiAliasing == 0 ? 1 : QualitySettings.antiAliasing;
@@ -229,6 +230,6 @@ public class SteamVRTest : MonoBehaviour {
         var colorSpace = hdr && QualitySettings.activeColorSpace == ColorSpace.Gamma
             ? EColorSpace.Gamma
             : EColorSpace.Auto;
-        OpenVrApiExtra.SetColorSpace(colorSpace);
+        OpenVrUnityHooks.SetColorSpace(colorSpace);
     }
 }

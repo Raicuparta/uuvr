@@ -32,9 +32,9 @@ public class UuvrCore: MonoBehaviour
 
     private void SetUp()
     {
-        if (gameObject.GetComponent<SteamVRTest>() == null)
+        if (gameObject.GetComponent<OpenVrManager>() == null)
         {
-            gameObject.AddComponent<SteamVRTest>();
+            gameObject.AddComponent<OpenVrManager>();
         }
     }
 
