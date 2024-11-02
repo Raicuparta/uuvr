@@ -1,168 +1,117 @@
 ﻿using System;
+using System.Collections;
+using BepInEx.Unity.IL2CPP.Utils;
 using UnityEngine;
 
 namespace Uuvr.OpenVR;
 
 public class SteamVRTest : MonoBehaviour {
-    private Camera _activeCamera;
+    public Camera vrCamera;
+    public bool renderHmdToScreen = false;
 
-    private VRTextureBounds_t _hmdTextureBounds = new()
-    {
-        uMin = 0.0f,
-        uMax = 1.0f,
-        vMin = 1.0f,
-        vMax = 0.0f
-    };
-    
-    private RenderTexture _hmdEyeRenderTexture;
-    
     private readonly TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
     private readonly TrackedDevicePose_t[] _gamePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
-    
-    private void Start()
+
+    private RenderTexture _hmdEyeRenderTexture;
+    private float _aspect;
+    private float _fieldOfView;
+
+    private void OnEnable()
     {
-        SetUpCamera();
-        
-        // check if HMD is connected on the system
-        if (!OpenVR.IsHmdPresent()) {
-            throw new InvalidOperationException("HMD not found on this system");
-        }
-
-        // check if SteamVR runtime is installed
-        if (!OpenVR.IsRuntimeInstalled()) {
-            throw new InvalidOperationException("SteamVR runtime not found on this system");
-        }
-
-        // initialize HMD
-        var hmdInitErrorCode = EVRInitError.None;
-        OpenVR.Init(ref hmdInitErrorCode, EVRApplicationType.VRApplication_Scene);
-        if (hmdInitErrorCode != EVRInitError.None) {
-            throw new Exception("OpenVR error: " + OpenVR.GetStringForHmdError(hmdInitErrorCode));
-        }
-
-        SetUpRenderTexture();
+        vrCamera = Camera.main;
+        if (vrCamera == null) vrCamera = Camera.current;
+        vrCamera.fieldOfView = _fieldOfView;
+        vrCamera.aspect = _aspect;
+        vrCamera.enabled = false;
+        InitializeOpenVR();
+        this.StartCoroutine(RenderLoop());
     }
 
-    private void SetUpRenderTexture()
+    private void OnDisable()
     {
-        // get HMD render target size
-        uint renderTextureWidth = 0;
-        uint renderTextureHeight = 0;
-        OpenVR.System.GetRecommendedRenderTargetSize(ref renderTextureWidth, ref renderTextureHeight);
-        
-        var textureType = ETextureType.DirectX;
-        switch (SystemInfo.graphicsDeviceType) {
-            case UnityEngine.Rendering.GraphicsDeviceType.OpenGLCore:
-            case UnityEngine.Rendering.GraphicsDeviceType.OpenGLES2:
-            case UnityEngine.Rendering.GraphicsDeviceType.OpenGLES3:
-                textureType = ETextureType.OpenGL;
-                throw new InvalidOperationException(SystemInfo.graphicsDeviceType + " does not support VR. You must use -force-d3d11");
-            case UnityEngine.Rendering.GraphicsDeviceType.Direct3D11:
-                textureType = ETextureType.DirectX;
-                break;
-            case UnityEngine.Rendering.GraphicsDeviceType.Direct3D12:
-                textureType = ETextureType.DirectX;
-                break;
-            default:
-                throw new InvalidOperationException(SystemInfo.graphicsDeviceType + " not supported");
-        }
-        
-        _hmdEyeRenderTexture = new RenderTexture((int)renderTextureWidth, (int)renderTextureHeight, 24, RenderTextureFormat.ARGB32);
-        _hmdEyeRenderTexture.Create();
-    }
-
-    private void SetUpCamera()
-    {
-        if (_activeCamera != null)
-        {
-            Destroy(_activeCamera.gameObject);
-        }
-        
-        Debug.Log("Setting up camera...");
-        _activeCamera = new GameObject("VrCamera").AddComponent<Camera>();
-        _activeCamera.enabled = false;
-        var parentCamera = Camera.main;
-        if (parentCamera == null)
-        {
-            parentCamera = Camera.current;
-        }
-        else if (parentCamera == null)
-        {
-            parentCamera = FindObjectOfType<Camera>();
-        }
-
-        if (parentCamera != null)
-        {
-            Debug.Log($"Using parent camera: {parentCamera.name}");
-            _activeCamera.CopyFrom(parentCamera);
-            _activeCamera.enabled = false;
-        }
-
-        _activeCamera.transform.parent = parentCamera == null ? null : parentCamera.transform;
-        _activeCamera.transform.localPosition = Vector3.zero;
-        _activeCamera.transform.localRotation = Quaternion.identity;
+        StopAllCoroutines();
     }
 
     private void OnDestroy()
     {
-        Debug.Log("VR shutting down...");
-        Destroy(_activeCamera.gameObject);
-        // OpenVR.Shutdown();
+        OpenVR.Shutdown();
     }
 
     private void Update()
     {
-        if (OpenVR.Compositor == null)
-        {
-            Debug.Log("No compositor, skipping");
-            return;
-        }
-        
-        var vrCompositorError = EVRCompositorError.None;
-        Debug.Log("WaitGetPoses...");
-        vrCompositorError = OpenVR.Compositor.WaitGetPoses(_devicePoses, _gamePoses);
-        Debug.Log("Got poses!");
+        SteamVR_Utils.QueueEventOnRenderThread(OpenVrApiExtra.k_nRenderEventID_PostPresentHandoff);
 
-        if (vrCompositorError != EVRCompositorError.None) {
-            throw new Exception("WaitGetPoses failed: (" + (int)vrCompositorError + ") " + vrCompositorError.ToString());
-        }
+        Application.targetFrameRate = -1;
+        Application.runInBackground = true; // don't require companion window focus
+        QualitySettings.maxQueuedFrames = -1;
+        QualitySettings.vSyncCount = 0; // this applies to the companion window
+        // UpdatePoses();
     }
 
-    private static bool IsFocused()
+    private void FixedUpdate()
     {
-        return OpenVR.System != null && Environment.ProcessId == OpenVR.Compositor.GetCurrentSceneFocusProcess();
+        // We want to call this as soon after Present as possible.
+        SteamVR_Utils.QueueEventOnRenderThread(OpenVrApiExtra.k_nRenderEventID_PostPresentHandoff);
     }
 
-    private void LateUpdate()
+    private void UpdatePoses()
     {
-        if (!IsFocused() || !OpenVR.Compositor.CanRenderScene())
-        {
-            Debug.Log("Can't render scene, skipping");
-        }
+        SteamVR_Utils.QueueEventOnRenderThread(OpenVrApiExtra.k_nRenderEventID_WaitGetPoses);
 
-        if (_activeCamera == null)
-        {
-            Debug.Log("Active camera was destroyed, recreating");
-            SetUpCamera();
-        }
+        // Hack to flush render event that was queued in Update (this ensures WaitGetPoses has returned before we grab the new values).
+        _hmdEyeRenderTexture.GetNativeTexturePtr();
 
-        if (_activeCamera == null)
+        OpenVR.Compositor.GetLastPoses(_devicePoses, _gamePoses);
+    }
+
+    private readonly WaitForEndOfFrame _waitingForEndOfFrame = new();
+
+    private IEnumerator RenderLoop()
+    {
+        while (enabled)
         {
-            Debug.Log("Active camera couldn't be created, skipping");
-            return;
-        }
-        
-        try {
-            Render(EVREye.Eye_Left);
-            Render(EVREye.Eye_Right);
-            Debug.Log("Rendered both eyes");
-            OpenVR.Compositor.PostPresentHandoff();
-        } catch (Exception e) {
-            Debug.LogError($"steamvrtest error: {e}");
+            yield return _waitingForEndOfFrame;
+            
+            try
+            {
+                Graphics.SetRenderTarget(_hmdEyeRenderTexture);
+
+                var vrLeftEyeTransform = OpenVR.System.GetEyeToHeadTransform(EVREye.Eye_Left);
+                var vrRightEyeTransform = OpenVR.System.GetEyeToHeadTransform(EVREye.Eye_Right);
+                UpdatePoses();
+
+                // convert SteamVR poses to Unity coordinates
+                var hmdTransform =
+                    new SteamVR_Utils.RigidTransform(_devicePoses[OpenVR.k_unTrackedDeviceIndex_Hmd]
+                        .mDeviceToAbsoluteTracking);
+                var hmdEyeTransform = new SteamVR_Utils.RigidTransform[2];
+                hmdEyeTransform[0] = new SteamVR_Utils.RigidTransform(vrLeftEyeTransform);
+                hmdEyeTransform[1] = new SteamVR_Utils.RigidTransform(vrRightEyeTransform);
+
+                // render each eye
+                for (var i = 0; i < 2; i++)
+                    RenderEye(
+                        (EVREye) i,
+                        hmdTransform,
+                        hmdEyeTransform[i]);
+
+                // render to the game screen
+                if (renderHmdToScreen) Graphics.Blit(_hmdEyeRenderTexture, null as RenderTexture);
+
+                Graphics.SetRenderTarget(null);
+            }
+            catch (Exception e)
+            {
+                // shut off VR when an error occurs
+                Debug.LogError(e.Message);
+                OpenVR.Shutdown();
+                break;
+            }
         }
     }
 
-    private static Matrix4x4 Matrix4x4_OpenVr2UnityFormat(ref HmdMatrix44_t mat44Openvr) {
+    private static Matrix4x4 Matrix4x4_OpenVr2UnityFormat(ref HmdMatrix44_t mat44Openvr)
+    {
         var mat44Unity = Matrix4x4.identity;
         mat44Unity.m00 = mat44Openvr.m0;
         mat44Unity.m01 = mat44Openvr.m1;
@@ -182,53 +131,103 @@ public class SteamVRTest : MonoBehaviour {
         mat44Unity.m33 = mat44Openvr.m15;
         return mat44Unity;
     }
-    
-    private void Render(EVREye eye)
+
+    private void RenderEye(
+        EVREye eye,
+        SteamVR_Utils.RigidTransform hmdTransform,
+        SteamVR_Utils.RigidTransform hmdEyeTransform)
     {
-        var prevCameraPosition = _activeCamera.transform.localPosition;
+        var cameraTransform = vrCamera.transform;
+        var prevCameraPosition = cameraTransform.localPosition;
+        cameraTransform.localRotation = hmdTransform.rot * hmdEyeTransform.rot;
+        cameraTransform.localPosition = prevCameraPosition + hmdTransform.pos + hmdTransform.rot * hmdEyeTransform.pos;
 
-        // convert SteamVR poses to Unity coordinates
-        var hmdMatrix = _devicePoses[OpenVR.k_unTrackedDeviceIndex_Hmd].mDeviceToAbsoluteTracking;
-        var eyeMatrix = OpenVR.System.GetEyeToHeadTransform(eye);
+        var projectionMatrix =
+            OpenVR.System.GetProjectionMatrix(eye, vrCamera.nearClipPlane, vrCamera.farClipPlane,
+                EGraphicsAPIConvention.API_DirectX);
+        vrCamera.projectionMatrix = Matrix4x4_OpenVr2UnityFormat(ref projectionMatrix);
 
-        var hmdRotation = hmdMatrix.GetRotation();
-        var eyeRotation = eyeMatrix.GetRotation();
-        var eyePosition = eyeMatrix.GetPosition();
-        
-        _activeCamera.transform.localRotation = hmdRotation * eyeRotation;
-        _activeCamera.transform.localPosition = prevCameraPosition + hmdRotation * eyePosition;
-            
-        var projectionMatrix = OpenVR.System.GetProjectionMatrix(eye, _activeCamera.nearClipPlane, _activeCamera.farClipPlane);
-        _activeCamera.projectionMatrix = Matrix4x4_OpenVr2UnityFormat(ref projectionMatrix);
-        
-        // set texture to render to, then render
-        if (_hmdEyeRenderTexture == null)
+        vrCamera.targetTexture = _hmdEyeRenderTexture;
+        vrCamera.Render();
+
+        cameraTransform.localPosition = prevCameraPosition;
+
+
+        int eventID;
+        if (eye == EVREye.Eye_Left)
         {
-            Debug.Log("missing render texture, recreating");
-            SetUpRenderTexture();
+            // Get gpu started on work early to avoid bubbles at the top of the frame.
+            SteamVR_Utils.QueueEventOnRenderThread(OpenVrApiExtra.k_nRenderEventID_Flush);
+
+            eventID = OpenVrApiExtra.k_nRenderEventID_SubmitL;
+        }
+        else
+        {
+            eventID = OpenVrApiExtra.k_nRenderEventID_SubmitR;
         }
 
-        _activeCamera.targetTexture = _hmdEyeRenderTexture;
-        _activeCamera.Render();
+        // Queue up a call on the render thread to Submit our render target to the compositor.
+        SteamVR_Utils.QueueEventOnRenderThread(eventID);
+    }
 
-        _activeCamera.transform.localPosition = prevCameraPosition;
+    private void InitializeOpenVR()
+    {
+        // check if HMD is connected on the system
+        if (!OpenVR.IsHmdPresent()) throw new InvalidOperationException("HMD not found on this system");
 
-        var hmdEyeTexture = new Texture_t()
+        // check if SteamVR runtime is installed
+        if (!OpenVR.IsRuntimeInstalled())
+            throw new InvalidOperationException("SteamVR runtime not found on this system");
+
+        // initialize HMD
+        var hmdInitErrorCode = EVRInitError.None;
+        OpenVR.Init(ref hmdInitErrorCode);
+        if (hmdInitErrorCode != EVRInitError.None)
+            throw new Exception("OpenVR error: " + OpenVR.GetStringForHmdError(hmdInitErrorCode));
+
+        SetUp();
+    }
+
+    private void SetUp()
+    {
+        uint w = 0, h = 0;
+        OpenVR.System.GetRecommendedRenderTargetSize(ref w, ref h);
+
+        float lLeft = 0.0f, lRight = 0.0f, lTop = 0.0f, lBottom = 0.0f;
+        OpenVR.System.GetProjectionRaw(EVREye.Eye_Left, ref lLeft, ref lRight, ref lTop, ref lBottom);
+
+        float rLeft = 0.0f, rRight = 0.0f, rTop = 0.0f, rBottom = 0.0f;
+        OpenVR.System.GetProjectionRaw(EVREye.Eye_Right, ref rLeft, ref rRight, ref rTop, ref rBottom);
+
+        var tanHalfFov = new Vector2(
+            Mathf.Max(-lLeft, lRight, -rLeft, rRight),
+            Mathf.Max(-lTop, lBottom, -rTop, rBottom));
+
+        var hmdTextureBounds = new VRTextureBounds_t
         {
-            handle = _hmdEyeRenderTexture.GetNativeTexturePtr(),
-            eType = ETextureType.DirectX,
-            eColorSpace = EColorSpace.Auto
+            uMin = 0.0f,
+            uMax = 1.0f,
+            vMin = 1.0f, // flip the vertical coordinate (should only be needed in DirectX)
+            vMax = 0.0f
         };
-        
-        // Submit frames to HMD
-        var vrCompositorError = OpenVR.Compositor.Submit(eye, ref hmdEyeTexture, ref _hmdTextureBounds, EVRSubmitFlags.Submit_Default);
-        if (vrCompositorError != EVRCompositorError.None) {
-            throw new Exception("Submit (" + eye + ") failed: (" + (int)vrCompositorError + ") " + vrCompositorError);
-        }
 
-        // Hack to flush render event that was queued in Update (this ensures WaitGetPoses has returned before we grab the new values).
-        _hmdEyeRenderTexture.GetNativeTexturePtr();
-        
-        _hmdEyeRenderTexture.Release();
+        OpenVrApiExtra.SetSubmitParams(hmdTextureBounds, hmdTextureBounds, EVRSubmitFlags.Submit_Default);
+
+        var hdr = vrCamera.allowHDR;
+        var aa = QualitySettings.antiAliasing == 0 ? 1 : QualitySettings.antiAliasing;
+        var format = hdr ? RenderTextureFormat.ARGBHalf : RenderTextureFormat.ARGB32;
+        _aspect = tanHalfFov.x / tanHalfFov.y;
+        _fieldOfView = 2.0f * Mathf.Atan(tanHalfFov.y) * Mathf.Rad2Deg;
+
+        // initialize render texture (for displaying on HMD)
+        _hmdEyeRenderTexture = new RenderTexture((int) w, (int) h, 0, format)
+        {
+            antiAliasing = aa
+        };
+
+        var colorSpace = hdr && QualitySettings.activeColorSpace == ColorSpace.Gamma
+            ? EColorSpace.Gamma
+            : EColorSpace.Auto;
+        OpenVrApiExtra.SetColorSpace(colorSpace);
     }
 }
