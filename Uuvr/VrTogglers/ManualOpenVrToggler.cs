@@ -20,7 +20,7 @@ public class ManualOpenVrToggler: VrToggler
     protected override bool EnableVr()
     {
         _openVrManager = OpenVrManager.Create();
-        return true;
+        return _openVrManager != null;
     }
 
     protected override bool DisableVr()

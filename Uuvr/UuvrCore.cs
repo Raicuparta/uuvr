@@ -22,38 +22,100 @@ public class UuvrCore: MonoBehaviour
     private VrUiManager? _vrUi;
     private PropertyInfo? _refreshRateProperty;
     private VrTogglerManager? _vrTogglerManager;
-    private KeyboardKey key = new KeyboardKey(KeyboardKey.KeyCode.F3);
-    private KeyboardKey key2 = new KeyboardKey(KeyboardKey.KeyCode.F4);
 
     public static void Create()
     {
-        new GameObject("UUVR").AddComponent<UuvrCore>();
+        new GameObject(nameof(UuvrCore)).AddComponent<UuvrCore>();
     }
 
-    private void SetUp()
+    private void Awake()
     {
-        if (gameObject.GetComponent<OpenVrManager>() == null)
-        {
-            gameObject.AddComponent<OpenVrManager>();
-        }
+        DontDestroyOnLoad(gameObject);
+        gameObject.AddComponent<VrCameraManager>();
+        
+        // TODO: Emulate input.   
+        // UuvrBehaviour.Create<UuvrInput>(transform);
+    }
+    
+    private void Start()
+    {
+        var xrDeviceType = Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.XRModule") ??
+                           Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.VRModule") ??
+                           Type.GetType("UnityEngine.VR.VRDevice, UnityEngine.VRModule") ??
+                           Type.GetType("UnityEngine.VR.VRDevice, UnityEngine");
+
+        _refreshRateProperty = xrDeviceType?.GetProperty("refreshRate");
+
+        _vrUi = UuvrBehaviour.Create<VrUiManager>(transform);
+
+        _vrTogglerManager = new VrTogglerManager();
+
+        SetPositionTrackingEnabled(false);
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
-        Debug.Log("UUVRCore Disabled, recreating");
-        Destroy(gameObject);
+        Debug.Log("UUVR has been destroyed. This shouldn't have happened. Recreating...");
         Create();
     }
-
+    
     private void Update()
     {
-        if (key.UpdateIsDown())
+        if (_toggleVrKey.UpdateIsDown()) _vrTogglerManager?.ToggleVr();
+        UpdatePhysicsRate();
+    }
+    
+    private void UpdatePhysicsRate()
+    {
+        if (_originalFixedDeltaTime == 0)
         {
-            SetUp();
+            _originalFixedDeltaTime = Time.fixedDeltaTime;
         }
-        if (key2.UpdateIsDown())
+
+        if (_refreshRateProperty == null) return;
+
+        var headsetRefreshRate = (float)_refreshRateProperty.GetValue(null, null);
+        if (headsetRefreshRate <= 0) return;
+
+        if (ModConfiguration.Instance.PhysicsMatchHeadsetRefreshRate.Value)
         {
-            Debug.Log("works");
+            Time.fixedDeltaTime = 1f / (float) _refreshRateProperty.GetValue(null, null);
+        }
+        else
+        {
+            Time.fixedDeltaTime = _originalFixedDeltaTime;
+        }
+    }
+
+    private static void SetPositionTrackingEnabled(bool positionTrackingEnabled)
+    {
+        try
+        {
+            var inputTrackingType =
+                Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.XRModule") ??
+                Type.GetType("UnityEngine.XR.InputTracking, UnityEngine.VRModule") ??
+                Type.GetType("UnityEngine.VR.InputTracking, UnityEngine.VRModule") ??
+                Type.GetType("UnityEngine.VR.InputTracking, UnityEngine");
+
+            if (inputTrackingType != null)
+            {
+                var disablePositionalTrackingProperty = inputTrackingType.GetProperty("disablePositionalTracking");
+                if (disablePositionalTrackingProperty != null)
+                {
+                    disablePositionalTrackingProperty.SetValue(null, !positionTrackingEnabled, null);
+                }
+                else
+                {
+                    Debug.LogWarning("Failed to get property disablePositionalTracking");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Failed to get type UnityEngine.XR.InputTracking");
+            }
+        } catch (Exception e)
+        {
+            Debug.LogWarning($"Failed to change position tacking mode via native Unity settings: {e}");
         }
     }
 }

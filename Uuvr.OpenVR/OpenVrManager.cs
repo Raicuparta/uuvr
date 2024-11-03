@@ -18,16 +18,25 @@ public class OpenVrManager : MonoBehaviour {
 
     public static OpenVrManager Create()
     {
-        return new GameObject(nameof(OpenVrManager)).AddComponent<OpenVrManager>();
+        var camera = Camera.main;
+        if (camera == null) camera = Camera.current;
+        if (camera == null)
+        {
+            Debug.LogWarning("Failed to find suitable camera for OpenVR, can't initialize.");
+            return null;
+        }
+        var instanceObject = new GameObject(nameof(OpenVrManager));
+        instanceObject.SetActive(false);
+        var instance = instanceObject.AddComponent<OpenVrManager>();
+        instance.vrCamera = camera;
+        instanceObject.SetActive(true);
+
+        return instance;
     }
     
     private void OnEnable()
     {
-        vrCamera = Camera.main;
-        if (vrCamera == null) vrCamera = Camera.current;
-        vrCamera.fieldOfView = _fieldOfView;
-        vrCamera.aspect = _aspect;
-        vrCamera.enabled = false;
+        SetUpCamera();
         InitializeOpenVR();
         this.StartCoroutine(RenderLoop());
     }
@@ -115,6 +124,13 @@ public class OpenVrManager : MonoBehaviour {
         }
     }
 
+    private void SetUpCamera()
+    {
+        vrCamera.fieldOfView = _fieldOfView;
+        vrCamera.aspect = _aspect;
+        vrCamera.enabled = false;
+    }
+
     private static Matrix4x4 Matrix4x4_OpenVr2UnityFormat(ref HmdMatrix44_t mat44Openvr)
     {
         var mat44Unity = Matrix4x4.identity;
@@ -142,6 +158,8 @@ public class OpenVrManager : MonoBehaviour {
         Utils.RigidTransform hmdTransform,
         Utils.RigidTransform hmdEyeTransform)
     {
+        if (vrCamera == null) return;
+        
         var cameraTransform = vrCamera.transform;
         var prevCameraRotation = cameraTransform.localRotation;
         var prevCameraPosition = cameraTransform.localPosition;

@@ -301,9 +301,4 @@ internal static class Utils
             rot = Slerp(rot, to.rot, t);
         }
     }
-
-    public static void QueueEventOnRenderThread(int eventID)
-    {
-        GL.IssuePluginEvent(OpenVrApiExtra.GetRenderEventFunc(), eventID);
-    }
 }

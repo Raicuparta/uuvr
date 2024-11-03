@@ -39,11 +39,6 @@ public class UuvrPlugin
 #endif
     {
         _instance = this;
-
-        ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
-        ClassInjector.RegisterTypeInIl2Cpp<OpenVrManager>();
-        UuvrCore.Create();
-        return;
         
         ModFolderPath = Path.GetDirectoryName(Assembly.GetAssembly(typeof(UuvrPlugin)).Location);
         
@@ -61,11 +56,14 @@ public class UuvrPlugin
         // ClassInjector.RegisterTypeInIl2Cpp<UuvrInput>();
         ClassInjector.RegisterTypeInIl2Cpp<UuvrPoseDriver>();
         ClassInjector.RegisterTypeInIl2Cpp<UuvrBehaviour>();
+        ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
         // ClassInjector.RegisterTypeInIl2Cpp<AdditionalCameraData>();
        ClassInjector.RegisterTypeInIl2Cpp<VrCameraManager>();
        ClassInjector.RegisterTypeInIl2Cpp<CanvasRedirectPatchMode>();
        ClassInjector.RegisterTypeInIl2Cpp<ScreenMirrorPatchMode>();
+        ClassInjector.RegisterTypeInIl2Cpp<OpenVrManager>();
 #endif
 
+        UuvrCore.Create();
     }
 }
