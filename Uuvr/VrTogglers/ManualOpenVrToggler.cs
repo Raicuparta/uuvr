@@ -25,7 +25,10 @@ public class ManualOpenVrToggler: VrToggler
 
     protected override bool DisableVr()
     {
-        GameObject.Destroy(_openVrManager.gameObject);
+        if (_openVrManager != null)
+        {
+            GameObject.Destroy(_openVrManager.gameObject);
+        }
         return true;
     }
 }
