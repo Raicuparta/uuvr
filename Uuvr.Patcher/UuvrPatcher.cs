@@ -169,16 +169,7 @@ public class Patcher
         buildSettingsBase.Write(writer);
 
         ggmFile.Write(writer);
-    }
-
-    private static AssetTypeValueField StringField(string str, AssetTypeTemplateField template)
-    {
-        return new AssetTypeValueField()
-        {
-            Children = null,
-            TemplateField = template,
-            Value = new AssetTypeValue(AssetValueType.String, str),
-        };
+        writer.Close();
     }
 
     private static void CopyFilesToGame(string patcherPath, string gameExePath)
