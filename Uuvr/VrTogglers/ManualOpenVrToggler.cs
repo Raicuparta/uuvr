@@ -23,7 +23,11 @@ public class ManualOpenVrToggler: VrToggler
 
     private static void OnConfigChanged(object? _, SettingChangedEventArgs __)
     {
-        if (_openVrManager == null) return;
+        OnConfigChanged();
+    }
+
+    private static void OnConfigChanged()
+    {
 
         // Smaller eye distance makes the world looks bigger.
         _openVrManager.eyeDistanceMultiplier = 1f / ModConfiguration.Instance.WorldScale.Value;
@@ -37,7 +41,7 @@ public class ManualOpenVrToggler: VrToggler
     protected override bool EnableVr()
     {
         _openVrManager = OpenVrManager.Create();
-        OnConfigChanged(null, null);
+        OnConfigChanged();
         return _openVrManager != null;
     }
 
@@ -50,7 +54,7 @@ public class ManualOpenVrToggler: VrToggler
         // }
         
         // Calling config changed here just to make it easier to test for now.
-        OnConfigChanged(null, null);
+        OnConfigChanged();
         return false;
     }
 }
