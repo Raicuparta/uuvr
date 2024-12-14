@@ -7,7 +7,8 @@ namespace Uuvr.OpenVR;
 
 public class OpenVrManager : MonoBehaviour {
     public Camera vrCamera;
-    public bool renderHmdToScreen = false;
+    public bool renderHmdToScreen;
+    public float eyeDistanceMultiplier = 1.0f;
 
     private readonly TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
     private readonly TrackedDevicePose_t[] _gamePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
@@ -163,7 +164,7 @@ public class OpenVrManager : MonoBehaviour {
         var cameraTransform = vrCamera.transform;
         var prevCameraRotation = cameraTransform.localRotation;
         var prevCameraPosition = cameraTransform.localPosition;
-        cameraTransform.localPosition = prevCameraPosition + hmdTransform.rot * hmdEyeTransform.pos;
+        cameraTransform.localPosition = prevCameraPosition + hmdTransform.rot * hmdEyeTransform.pos * eyeDistanceMultiplier;
         cameraTransform.localRotation = hmdTransform.rot * hmdEyeTransform.rot;
 
         var projectionMatrix =

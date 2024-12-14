@@ -70,6 +70,7 @@ public class ModConfiguration
     public readonly ConfigEntry<float> CameraPositionOffsetX;
     public readonly ConfigEntry<float> CameraPositionOffsetY;
     public readonly ConfigEntry<float> CameraPositionOffsetZ;
+    public readonly ConfigEntry<float> WorldScale;
     public readonly ConfigEntry<bool> OverrideDepth;
     public readonly ConfigEntry<bool> PhysicsMatchHeadsetRefreshRate;
     public readonly ConfigEntry<UiPatchMode> PreferredUiPatchMode;
@@ -133,6 +134,14 @@ public class ModConfiguration
             "Camera Position Offset Z",
             0f,
             "Changes position of tracked VR cameras");
+        
+        WorldScale = config.Bind(
+            "Camera",
+            "World scale",
+            1f,
+            new ConfigDescription(
+                "How big should the world look like. Basically changes the distance between the eyes.",
+                new AcceptableValueRange<float>(0.01f, 10f)));
 
         OverrideDepth = config.Bind(
             "Camera",
@@ -152,7 +161,7 @@ public class ModConfiguration
             "General",
             "Force physics rate to match headset refresh rate",
             false,
-            "Can help fix jiterriness in games that rely a lot on physics. Might break a lot of games too.");
+            "Can help fix jitteriness in games that rely a lot on physics. Might break a lot of games too.");
 
         PreferredUiPatchMode = config.Bind(
             "UI",

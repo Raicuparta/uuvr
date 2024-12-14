@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using BepInEx.Configuration;
+using UnityEngine;
 using Uuvr.OpenVR;
 
 namespace Uuvr.VrTogglers;
@@ -10,6 +11,24 @@ public class ManualOpenVrToggler: VrToggler
 {
     private static OpenVrManager? _openVrManager;
 
+    public ManualOpenVrToggler()
+    {
+        ModConfiguration.Instance.Config.SettingChanged += OnConfigChanged;
+    }
+    
+    ~ManualOpenVrToggler()
+    {
+        ModConfiguration.Instance.Config.SettingChanged -= OnConfigChanged;
+    }
+
+    private static void OnConfigChanged(object? _, SettingChangedEventArgs __)
+    {
+        if (_openVrManager == null) return;
+
+        // Smaller eye distance makes the world looks bigger.
+        _openVrManager.eyeDistanceMultiplier = 1f / ModConfiguration.Instance.WorldScale.Value;
+    }
+
     protected override bool SetUp()
     {
         return true;
@@ -18,6 +37,7 @@ public class ManualOpenVrToggler: VrToggler
     protected override bool EnableVr()
     {
         _openVrManager = OpenVrManager.Create();
+        OnConfigChanged(null, null);
         return _openVrManager != null;
     }
 
@@ -28,6 +48,9 @@ public class ManualOpenVrToggler: VrToggler
         // {
         //     GameObject.Destroy(_openVrManager.gameObject);
         // }
+        
+        // Calling config changed here just to make it easier to test for now.
+        OnConfigChanged(null, null);
         return false;
     }
 }
