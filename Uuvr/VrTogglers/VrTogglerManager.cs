@@ -10,7 +10,6 @@ public class VrTogglerManager
     public VrTogglerManager()
     {
         SetUpToggler();
-        _toggler?.SetVrEnabled(true);
     }
 
     private void SetUpToggler()

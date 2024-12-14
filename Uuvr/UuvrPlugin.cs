@@ -1,15 +1,17 @@
 ﻿using System.IO;
 using System.Reflection;
 using BepInEx;
-using HarmonyLib;
+
+#if CPP
 using Uuvr.OpenVR;
+using BepInEx.Unity.IL2CPP;
+using Il2CppInterop.Runtime.Injection;
+#if LEGACY
+using HarmonyLib;
 using Uuvr.VrCamera;
 using Uuvr.VrUi;
 using Uuvr.VrUi.PatchModes;
-
-#if CPP
-using BepInEx.Unity.IL2CPP;
-using Il2CppInterop.Runtime.Injection;
+#endif
 #endif
 
 namespace Uuvr;
@@ -43,9 +45,11 @@ public class UuvrPlugin
         ModFolderPath = Path.GetDirectoryName(Assembly.GetAssembly(typeof(UuvrPlugin)).Location);
         
         new ModConfiguration(Config);
-        Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
         
 #if CPP
+#if LEGACY
+        Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
+
         ClassInjector.RegisterTypeInIl2Cpp<VrCamera.VrCamera>();
         ClassInjector.RegisterTypeInIl2Cpp<VrCameraOffset>();
         ClassInjector.RegisterTypeInIl2Cpp<CanvasRedirect>();
@@ -56,12 +60,14 @@ public class UuvrPlugin
         // ClassInjector.RegisterTypeInIl2Cpp<UuvrInput>();
         ClassInjector.RegisterTypeInIl2Cpp<UuvrPoseDriver>();
         ClassInjector.RegisterTypeInIl2Cpp<UuvrBehaviour>();
-        ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
         // ClassInjector.RegisterTypeInIl2Cpp<AdditionalCameraData>();
        ClassInjector.RegisterTypeInIl2Cpp<VrCameraManager>();
        ClassInjector.RegisterTypeInIl2Cpp<CanvasRedirectPatchMode>();
        ClassInjector.RegisterTypeInIl2Cpp<ScreenMirrorPatchMode>();
+#else
         ClassInjector.RegisterTypeInIl2Cpp<OpenVrManager>();
+#endif
+        ClassInjector.RegisterTypeInIl2Cpp<UuvrCore>();
 #endif
 
         UuvrCore.Create();

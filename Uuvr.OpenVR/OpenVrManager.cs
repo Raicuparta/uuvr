@@ -55,10 +55,10 @@ public class OpenVrManager : MonoBehaviour {
     {
         OpenVrUnityHooks.PostPresentHandoff();
 
-        Application.targetFrameRate = -1;
-        Application.runInBackground = true; // don't require companion window focus
+        // Application.targetFrameRate = -1; // disabling for now since caused log spam in sons of the forest.
+        Application.runInBackground = true; // don't require companion window focus.
         QualitySettings.maxQueuedFrames = -1;
-        QualitySettings.vSyncCount = 0; // this applies to the companion window
+        QualitySettings.vSyncCount = 0; // this applies to the companion window.
         // UpdatePoses();
     }
 

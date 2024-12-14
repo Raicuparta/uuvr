@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Reflection;
 using UnityEngine;
-using Uuvr.OpenVR;
-using Uuvr.VrCamera;
 using Uuvr.VrTogglers;
+
+#if MONO || LEGACY
+using Uuvr.VrCamera;
 using Uuvr.VrUi;
+#endif
 
 namespace Uuvr;
 
@@ -18,10 +20,12 @@ public class UuvrCore: MonoBehaviour
 
     private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
     private float _originalFixedDeltaTime;
-    
-    private VrUiManager? _vrUi;
-    private PropertyInfo? _refreshRateProperty;
     private VrTogglerManager? _vrTogglerManager;
+    private PropertyInfo? _refreshRateProperty;
+
+#if MONO || LEGACY
+    private VrUiManager? _vrUi;
+#endif
 
     public static void Create()
     {
@@ -31,14 +35,17 @@ public class UuvrCore: MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
+
+#if MONO || LEGACY
         gameObject.AddComponent<VrCameraManager>();
-        
         // TODO: Emulate input.   
         // UuvrBehaviour.Create<UuvrInput>(transform);
+#endif
     }
-    
+
     private void Start()
     {
+#if MONO || LEGACY
         var xrDeviceType = Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.XRModule") ??
                            Type.GetType("UnityEngine.XR.XRDevice, UnityEngine.VRModule") ??
                            Type.GetType("UnityEngine.VR.VRDevice, UnityEngine.VRModule") ??
@@ -48,9 +55,9 @@ public class UuvrCore: MonoBehaviour
 
         _vrUi = UuvrBehaviour.Create<VrUiManager>(transform);
 
-        _vrTogglerManager = new VrTogglerManager();
-
         SetPositionTrackingEnabled(false);
+#endif
+        _vrTogglerManager = new VrTogglerManager();
     }
 
     private void OnDestroy()
@@ -61,7 +68,10 @@ public class UuvrCore: MonoBehaviour
     
     private void Update()
     {
-        if (_toggleVrKey.UpdateIsDown()) _vrTogglerManager?.ToggleVr();
+        if (_toggleVrKey.UpdateIsDown())
+        {
+            _vrTogglerManager?.ToggleVr();
+        }
         UpdatePhysicsRate();
     }
     
@@ -87,6 +97,7 @@ public class UuvrCore: MonoBehaviour
         }
     }
 
+#if MONO || LEGACY
     private static void SetPositionTrackingEnabled(bool positionTrackingEnabled)
     {
         try
@@ -118,4 +129,5 @@ public class UuvrCore: MonoBehaviour
             Debug.LogWarning($"Failed to change position tacking mode via native Unity settings: {e}");
         }
     }
+#endif
 }

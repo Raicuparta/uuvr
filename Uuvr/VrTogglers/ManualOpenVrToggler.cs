@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using UnityEngine;
+﻿using UnityEngine;
 using Uuvr.OpenVR;
 
 namespace Uuvr.VrTogglers;
@@ -25,10 +23,11 @@ public class ManualOpenVrToggler: VrToggler
 
     protected override bool DisableVr()
     {
-        if (_openVrManager != null)
-        {
-            GameObject.Destroy(_openVrManager.gameObject);
-        }
-        return true;
+        // Disabling VR needs extra work, so for now once you enable it you can't go back (as God intended).
+        // if (_openVrManager != null)
+        // {
+        //     GameObject.Destroy(_openVrManager.gameObject);
+        // }
+        return false;
     }
 }
