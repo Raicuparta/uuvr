@@ -4,7 +4,9 @@ using System;
 
 using BepInEx.Configuration;
 using UnityEngine;
+#if MODERN && MONO
 using UnityEngine.Rendering;
+#endif
 
 namespace Uuvr;
 
@@ -56,7 +58,7 @@ public class UuvrBehaviour: MonoBehaviour
         Application.onBeforeRender += OnBeforeRender;
 #endif
 
-#if MODERN
+#if MODERN && MONO
         RenderPipelineManager.beginFrameRendering += OnBeginFrameRendering;
         RenderPipelineManager.endFrameRendering += OnEndFrameRendering;
 #endif
@@ -80,7 +82,7 @@ public class UuvrBehaviour: MonoBehaviour
         Application.onBeforeRender -= OnBeforeRender;
 #endif
         
-#if MODERN
+#if MODERN && MONO
         // TODO: This might not exist? maybe ok for modern though.
         RenderPipelineManager.beginFrameRendering -= OnBeginFrameRendering;
         RenderPipelineManager.endFrameRendering -= OnEndFrameRendering;
@@ -89,7 +91,7 @@ public class UuvrBehaviour: MonoBehaviour
         ModConfiguration.Instance.Config.SettingChanged -= ConfigOnSettingChanged;
     }
 
-    private void ConfigOnSettingChanged(object sender, SettingChangedEventArgs e)
+    private void ConfigOnSettingChanged(object? sender, SettingChangedEventArgs e)
     {
         OnSettingChanged();
     }
@@ -98,7 +100,7 @@ public class UuvrBehaviour: MonoBehaviour
 
     protected virtual void OnSettingChanged() {}
 
-#if MODERN
+#if MODERN && MONO
     private void OnBeginFrameRendering(ScriptableRenderContext arg1, Camera[] arg2)
     {
         OnBeginFrameRendering();

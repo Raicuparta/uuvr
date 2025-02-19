@@ -1,4 +1,4 @@
-﻿#if MODERN
+﻿#if MODERN && MONO
 using System;
 using System.Collections.Generic;
 using System.Reflection;

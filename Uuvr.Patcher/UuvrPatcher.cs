@@ -51,30 +51,29 @@ public class Patcher
         var installerPath = Assembly.GetExecutingAssembly().Location;
 
         var gameExePath = Process.GetCurrentProcess().MainModule.FileName;
-
-        var gamePath = Path.GetDirectoryName(gameExePath);
-        var gameName = Path.GetFileNameWithoutExtension(gameExePath);
-        var dataPath = Path.Combine(gamePath, $"{gameName}_Data/");
         var patcherPath = Path.GetDirectoryName(installerPath);
         
-        CopyFilesToGame(patcherPath, dataPath);
-
-#if LEGACY
-        string globalSettingsFilePath = GetGlobalSettingsFilePath(dataPath);
+        CopyFilesToGame(patcherPath, gameExePath);
+        
+        string globalSettingsFilePath = GetGlobalSettingsFilePath(gameExePath);
         string globalSettingsBackupPath = CreateGlobalSettingsBackup(globalSettingsFilePath);
         string classDataPath = Path.Combine(patcherPath, "classdata.tpk");
         PatchVR(globalSettingsBackupPath, globalSettingsFilePath, classDataPath);
-#endif
 
         Console.WriteLine("");
         Console.WriteLine("Installed successfully, probably.");
     }
 
-    private static string GetGlobalSettingsFilePath(string dataPath)
+    private static string GetGlobalSettingsFilePath(string gameExePath)
     {
-        foreach (var globalSettingsFielName in GlobalSettingsFileNames)
+        var gameName = Path.GetFileNameWithoutExtension(gameExePath);
+        var gamePath = Path.GetDirectoryName(gameExePath);
+        var dataPath = Path.Combine(gamePath, $"{gameName}_Data/");
+        Console.WriteLine($"Looking for game data path: '{dataPath}'");
+        
+        foreach (var globalSettingsFileName in GlobalSettingsFileNames)
         {
-            var path = Path.Combine(dataPath, globalSettingsFielName);
+            var path = Path.Combine(dataPath, globalSettingsFileName);
             if (File.Exists(path))
             {
                 return path;
@@ -107,10 +106,11 @@ public class Patcher
         am.LoadClassPackage(classDataPath);
         var ggm = am.LoadAssetsFile(globalSettingsBackupPath, false);
         var ggmFile = ggm.file;
-        var ggmTable = ggm.table;
-        am.LoadClassDatabaseFromPackage(ggmFile.typeTree.unityVersion);
-
-        List<AssetsReplacer> replacers = new();
+        var classFile = am.LoadClassDatabaseFromPackage(ggmFile.Metadata.UnityVersion);
+        if (classFile == null)
+        {
+            Console.WriteLine($"Uh oh, class file is null. Not good!");
+        }
         
         // TODO: Read inputs from globalgamemanagers, store map somewhere, patch in-game?
         // AssetFileInfoEx inputManager = ggmTable.GetAssetInfo(2);
@@ -141,41 +141,49 @@ public class Patcher
         //     Console.WriteLine($"name:{name} | positiveButton:{positiveButton} ");
         // }
         
-        var buildSettings = ggmTable.GetAssetInfo(11);
+        var buildSettings = ggmFile.GetAssetInfo(11);
         #pragma warning disable CS0618 // Type or member is obsolete
-        var buildSettingsBase = am.GetATI(ggmFile, buildSettings).GetBaseField();
+        var buildSettingsBase = am.GetBaseField(ggm, buildSettings);
         #pragma warning restore CS0618 // Type or member is obsolete
-        var enabledVRDevices = buildSettingsBase.Get("enabledVRDevices").Get("Array");
-        var stringTemplate = enabledVRDevices.templateField.children[1];
-        
-        // AssetTypeValueField[] vrDevicesList = { StringField("None", stringTemplate), StringField("OpenVR", stringTemplate), StringField("Oculus", stringTemplate) };
-        AssetTypeValueField[] vrDevicesList = { StringField("OpenVR", stringTemplate), StringField("Oculus", stringTemplate) };
-        enabledVRDevices.SetChildrenList(vrDevicesList);
-
-        replacers.Add(new AssetsReplacerFromMemory(0, buildSettings.index, (int)buildSettings.curFileType, 0xffff,
-            buildSettingsBase.WriteToByteArray()));
-
-        using AssetsFileWriter writer = new(File.OpenWrite(globalSettingsFilePath));
-        ggmFile.Write(writer, 0, replacers, 0);
-    }
-
-    private static AssetTypeValueField StringField(string str, AssetTypeTemplateField template)
-    {
-        return new AssetTypeValueField()
+        var enabledVRDevices = buildSettingsBase["enabledVRDevices.Array"];
+        var openVr = ValueBuilder.DefaultValueFieldFromArrayTemplate(enabledVRDevices);
+        openVr.AsString = "OpenVR";
+        if (enabledVRDevices.Children.All(value => value.Value.AsString != "OpenVR"))
         {
-            children = null,
-            childrenCount = 0,
-            templateField = template,
-            value = new AssetTypeValue(EnumValueTypes.ValueType_String, str)
-        };
+            enabledVRDevices.Children.Add(openVr);
+        }
+
+        var preloadedPlugins = buildSettingsBase["preloadedPlugins.Array"];
+        var openVrApi = ValueBuilder.DefaultValueFieldFromArrayTemplate(preloadedPlugins);
+        openVrApi.AsString = "openvr_api";
+        if (preloadedPlugins.Children.All(value => value.Value.AsString != "openvr_api"))
+        {
+            preloadedPlugins.Children.Add(openVrApi);
+        }
+        
+        Console.WriteLine("Writing!...");
+        buildSettings.SetNewData(buildSettingsBase);
+        
+        using AssetsFileWriter writer = new(globalSettingsFilePath);
+        
+        buildSettingsBase.Write(writer);
+
+        ggmFile.Write(writer);
+        writer.Close();
     }
 
-    private static void CopyFilesToGame(string patcherPath, string dataPath)
+    private static void CopyFilesToGame(string patcherPath, string gameExePath)
     {
         var copyToGameFolderPath = Path.Combine(patcherPath, "CopyToGame");
 
         Console.WriteLine($"Copying mod files to game... These files get overwritten every time the game starts. If you want to change them manually, replace them in the mod folder instead: {copyToGameFolderPath}");
 
+        var gamePath = Path.GetDirectoryName(gameExePath);
+        // TODO: currently copying only x64 open vr dll, need to handle x86.
+        CopyDirectory(Path.Combine(copyToGameFolderPath, "Root"), gamePath);
+        
+        var gameName = Path.GetFileNameWithoutExtension(gameExePath);
+        var dataPath = Path.Combine(gamePath, $"{gameName}_Data/");
         CopyDirectory(Path.Combine(copyToGameFolderPath, "Data"), dataPath);
 
         var gamePluginsPath = Path.Combine(dataPath, "Plugins");

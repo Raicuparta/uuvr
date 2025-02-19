@@ -4,7 +4,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-#if MODERN
+#if MODERN && MONO
 using Uuvr.VrCamera;
 #endif
 
@@ -63,7 +63,7 @@ public class ScreenMirrorPatchMode : UuvrBehaviour, VrUiPatchMode
         // This I'm not sure if it helps but since the HDR thing was a problem, might as well.
         _clearCamera.allowMSAA = false;
 
-#if MODERN
+#if MODERN && MONO
         var additionalData = AdditionalCameraData.Create(_clearCamera);
         if (additionalData != null)
         {

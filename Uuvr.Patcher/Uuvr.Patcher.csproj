@@ -15,7 +15,7 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="AssetsTools.NET" Version="2.0.9" />
+        <PackageReference Include="AssetsTools.NET" Version="3.0.0" />
         <Reference Include="lib\$(UnityBackend)\$(UnityGeneration)/*.dll">
             <Private>False</Private>
         </Reference>
@@ -38,5 +38,8 @@
     <!--  Mono  -->
     <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
         <PackageReference Include="Mono.Cecil" Version="0.10.4" IncludeAssets="compile" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="CopyToGame\Root\" />
     </ItemGroup>
 </Project>

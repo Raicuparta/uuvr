@@ -21,16 +21,14 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
-
-    <!--  Il2Cpp  -->
+    
     <PropertyGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
         <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup Condition=" '$(UnityBackend)' == 'il2cpp' ">
         <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.692" />
     </ItemGroup>
-
-    <!--  Mono  -->
+    
     <PropertyGroup Condition=" '$(Configuration)' == 'legacy-mono' ">
         <TargetFramework>net35</TargetFramework>
     </PropertyGroup>
@@ -40,10 +38,13 @@
     <ItemGroup Condition=" '$(UnityBackend)' == 'mono' ">
         <PackageReference Include="BepInEx.Core" Version="5.4.16" />
     </ItemGroup>
-
-    <!--  Modern  -->
-    <ItemGroup Condition=" '$(UnityGeneration)' == 'modern' ">
+    
+    <ItemGroup Condition=" '$(Configuration)' == 'modern-mono' ">
         <ProjectReference Include="..\Uuvr.XR.OpenVR\Uuvr.XR.OpenVR.csproj" />
         <ProjectReference Include="..\Uuvr.XR.OpenXR\Uuvr.XR.OpenXR.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(Configuration)' == 'modern-il2cpp' ">
+        <ProjectReference Include="..\Uuvr.OpenVR\Uuvr.OpenVR.csproj" />
     </ItemGroup>
 </Project>

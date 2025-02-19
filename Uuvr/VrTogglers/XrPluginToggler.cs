@@ -1,4 +1,4 @@
-﻿#if MODERN
+﻿#if MODERN && MONO
 using System;
 using Unity.XR.OpenVR;
 using UnityEngine;
