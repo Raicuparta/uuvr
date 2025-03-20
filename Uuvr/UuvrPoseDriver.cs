@@ -3,6 +3,8 @@ using System.Reflection;
 using UnityEngine;
 using Uuvr.UnityTypesHelper;
 
+using static Uuvr.ModConfiguration;
+
 namespace Uuvr;
 
 public class UuvrPoseDriver: UuvrBehaviour
@@ -14,6 +16,9 @@ public class UuvrPoseDriver: UuvrBehaviour
 #endif
 
     private MethodInfo? _trackingRotationMethod;
+
+    private MethodInfo? _trackingPositionMethod;
+
     private readonly object[] _trackingRotationMethodArgs = {
         2 // Enum value for XRNode.CenterEye
     };
@@ -27,6 +32,7 @@ public class UuvrPoseDriver: UuvrBehaviour
                                 Type.GetType("UnityEngine.VR.InputTracking, UnityEngine");
 
         _trackingRotationMethod = inputTrackingType?.GetMethod("GetLocalRotation");
+        
 
         if (_trackingRotationMethod == null)
         {
@@ -35,7 +41,14 @@ public class UuvrPoseDriver: UuvrBehaviour
             return;
         }
 
+        _trackingPositionMethod = inputTrackingType?.GetMethod("GetLocalPosition");
+        if (_trackingPositionMethod == null)
+        {
+            Debug.LogWarning("Failed to find InputTracking.GetLocalPosition. Position tracking will be disabled.");
+        }
+
         DisableCameraAutoTracking();
+        RecenterView();
     }
 
     protected override void OnBeforeRender()
@@ -54,11 +67,40 @@ public class UuvrPoseDriver: UuvrBehaviour
         UpdateTransform();
     }
 
+    /// <summary>
+    /// This vector is used to recenter the view position.  (its static so that all VRCamera's share the same offset.
+    /// </summary>
+    private static Vector3? _positionOffset;
+    
+
+    public static void RecenterView()
+    {
+        _positionOffset = null;
+    }
+
+    
     private void UpdateTransform()
     {
         if (_trackingRotationMethod != null)
         {
             transform.localRotation = (Quaternion)_trackingRotationMethod.Invoke(null, _trackingRotationMethodArgs);
+        }
+
+        if (_trackingPositionMethod != null && ModConfiguration.Instance.HeadsetDOF.Value == DegreesOfFreedom.Six)
+        {            
+            var pos = (Vector3)_trackingPositionMethod.Invoke(null, _trackingRotationMethodArgs);
+            if (_positionOffset == null)
+            {
+                _positionOffset = -pos;  // First time we get the position, we store the reverse as the offset.
+            }
+            // add the offset to the position.
+            pos += _positionOffset.Value;
+            
+            transform.localPosition = pos;
+        }
+        else
+        {
+            transform.localPosition = Vector3.zero;
         }
     }
 

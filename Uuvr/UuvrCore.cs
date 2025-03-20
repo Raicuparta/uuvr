@@ -15,6 +15,7 @@ public class UuvrCore: MonoBehaviour
     }
 #endif
 
+    private readonly KeyboardKey _recenterKey = new (KeyboardKey.KeyCode.F2);
     private readonly KeyboardKey _toggleVrKey = new (KeyboardKey.KeyCode.F3);
     private float _originalFixedDeltaTime;
     
@@ -56,12 +57,19 @@ public class UuvrCore: MonoBehaviour
 
         _vrTogglerManager = new VrTogglerManager();
 
-        SetPositionTrackingEnabled(false);
+        SetPositionTrackingEnabled(true);
     }
 
     private void Update()
     {
-        if (_toggleVrKey.UpdateIsDown()) _vrTogglerManager?.ToggleVr();
+        if (_toggleVrKey.UpdateIsDown()) 
+            _vrTogglerManager?.ToggleVr();
+
+        if (_recenterKey.UpdateIsDown())
+        {
+            UuvrPoseDriver.RecenterView();
+        }
+
         UpdatePhysicsRate();
     }
 
