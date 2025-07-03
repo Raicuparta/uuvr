@@ -14,8 +14,7 @@ public class ModConfiguration
         [Description("Relative matrix")] RelativeMatrix,
 #if MODERN
         // TODO: could add this for legacy too.
-        [Description("Relative Transform")]
-        RelativeTransform,
+        [Description("Relative Transform")] RelativeTransform,
 #endif
         [Description("Child")] Child,
     }
@@ -23,10 +22,8 @@ public class ModConfiguration
 #if MODERN
     public enum VrApi
     {
-        [Description("OpenVR")]
-        OpenVr,
-        [Description("OpenXR")]
-        OpenXr,
+        [Description("OpenVR")] OpenVr,
+        [Description("OpenXR")] OpenXr,
     }
 #endif
 
@@ -64,6 +61,8 @@ public class ModConfiguration
     public readonly ConfigEntry<int> VrUiLayerOverride;
     public readonly ConfigEntry<Vector3> VrUiPosition;
     public readonly ConfigEntry<float> VrUiScale;
+    public readonly ConfigEntry<string> VrUiShader;
+    public readonly ConfigEntry<int> VrUiRenderQueue;
     public readonly ConfigEntry<bool> AlignCameraToHorizon;
     public readonly ConfigEntry<float> CameraPositionOffsetX;
     public readonly ConfigEntry<float> CameraPositionOffsetY;
@@ -179,6 +178,20 @@ public class ModConfiguration
             1f,
             new ConfigDescription(
                 "Scale of the VR UI projection."));
+
+        VrUiShader = config.Bind(
+            "UI",
+            "VR UI Shader",
+            "",
+            "Name of shader to use for the VR UI projection (passed to Unity's Shader.Find). Leave empty to let UUVR pick for you.");
+
+        VrUiRenderQueue = config.Bind(
+            "UI",
+            "VR UI Render Queue",
+            5000,
+            new ConfigDescription(
+                "Render queue to use for the VR UI projection. Default is 5000, which is the same as Unity's default canvas material.",
+                new AcceptableValueRange<int>(0, 5000)));
 
         ScreenSpaceCanvasTypesToPatch = config.Bind(
             "UI",
