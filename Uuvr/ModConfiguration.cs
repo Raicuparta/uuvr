@@ -141,7 +141,7 @@ public class ModConfiguration
             "In some games, the VR camera won't display anything unless we override the camera depth value.");
         
         VrCameraDepth = config.Bind(
-            "Camera Depth",
+            "Camera",
             "Depth Value",
             1,
             new ConfigDescription(
