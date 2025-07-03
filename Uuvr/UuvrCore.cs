@@ -19,6 +19,7 @@ public class UuvrCore: MonoBehaviour
     private float _originalFixedDeltaTime;
     
     private VrUiManager? _vrUi;
+    private ThingDisabler? _thingDisabler;
     private PropertyInfo? _refreshRateProperty;
     private VrTogglerManager? _vrTogglerManager;
 
@@ -53,6 +54,7 @@ public class UuvrCore: MonoBehaviour
         _refreshRateProperty = xrDeviceType?.GetProperty("refreshRate");
         
         _vrUi = UuvrBehaviour.Create<VrUiManager>(transform);
+        _thingDisabler = UuvrBehaviour.Create<ThingDisabler>(transform);
 
         _vrTogglerManager = new VrTogglerManager();
 

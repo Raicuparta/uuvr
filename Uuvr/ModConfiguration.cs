@@ -72,6 +72,9 @@ public class ModConfiguration
     public readonly ConfigEntry<UiPatchMode> PreferredUiPatchMode;
     public readonly ConfigEntry<UiRenderMode> PreferredUiRenderMode;
     public readonly ConfigEntry<ScreenSpaceCanvasType> ScreenSpaceCanvasTypesToPatch;
+    public readonly ConfigEntry<string> ObjectsToDeactivateByComponent;
+    public readonly ConfigEntry<string> ComponentsToDisable;
+    public readonly ConfigEntry<float> ComponentSearchInterval;
 
 #if MODERN
     public readonly ConfigEntry<VrApi> PreferredVrApi;
@@ -169,15 +172,13 @@ public class ModConfiguration
             "UI",
             "VR UI Position",
             Vector3.forward * 1f,
-            new ConfigDescription(
-                "Position of the VR UI projection relative to the camera."));
+            "Position of the VR UI projection relative to the camera.");
 
         VrUiScale = config.Bind(
             "UI",
             "VR UI Scale",
             1f,
-            new ConfigDescription(
-                "Scale of the VR UI projection."));
+            "Scale of the VR UI projection.");
 
         VrUiShader = config.Bind(
             "UI",
@@ -195,7 +196,7 @@ public class ModConfiguration
 
         ScreenSpaceCanvasTypesToPatch = config.Bind(
             "UI",
-            "Screen-space UI elements to patch",
+            "Screen-space UI Elements to Patch",
             ScreenSpaceCanvasType.NotToTexture,
             "Screen-space UI elements are already visible in VR with no patches. But in some games, they are difficult to see in VR. So you can choose to patch some (or all) of them to be rendered in the VR UI screen.");
 
@@ -210,5 +211,24 @@ public class ModConfiguration
             UiRenderMode.OverlayCamera,
 #endif
             "How to render the VR UI Plane. Overlay is usually better, but doesn't work in every game.");
+
+        ObjectsToDeactivateByComponent = config.Bind(
+            "Fixes",
+            "Objects to Deactivate by Component",
+            "",
+            "Any objects that contains one of these components gets deactivated. List of fully qualified C# type names, separated by /. Example: 'Canvas, UnityEngine/HUD, Assembly-CSharp'");
+
+        ComponentsToDisable = config.Bind(
+            "Fixes",
+            "Components to Disable.",
+            "",
+            "Names of components to disable. List of fully qualified C# type names, separated by /. Example: 'Canvas, UnityEngine/HUD, Assembly-CSharp'");
+
+        ComponentSearchInterval = config.Bind(
+            "Fixes",
+            "Component Search Interval",
+            1f,
+            new ConfigDescription("Value in seconds, the interval between searches for components to disable.",
+                new AcceptableValueRange<float>(0.5f, 30f)));
     }
 }
