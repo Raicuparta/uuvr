@@ -47,6 +47,11 @@ public class VrUiManager : UuvrBehaviour
         _screenMirrorPatchMode.enabled = ModConfiguration.Instance.PreferredUiPatchMode.Value == ModConfiguration.UiPatchMode.Mirror;
         _canvasRedirectPatchMode.enabled = ModConfiguration.Instance.PreferredUiPatchMode.Value == ModConfiguration.UiPatchMode.CanvasRedirect;
         
+        var uiTextureAspectRatio = (float)_uiTexture.height / _uiTexture.width;
+        var quadWidth = 1.8f * ModConfiguration.Instance.VrUiScale.Value;
+        var quadHeight = quadWidth * uiTextureAspectRatio;
+        _vrUiQuad.transform.localScale = new Vector3(quadWidth, quadHeight, 1f);
+        
         // For some reason I need to flip the UI upside down when using mirror mode.
         var yScale = Mathf.Abs(_vrUiQuad.transform.localScale.y);
         if (ModConfiguration.Instance.PreferredUiPatchMode.Value == ModConfiguration.UiPatchMode.Mirror)
@@ -54,6 +59,7 @@ public class VrUiManager : UuvrBehaviour
             yScale *= -1;
         }
         _vrUiQuad.transform.localScale = new Vector3(_vrUiQuad.transform.localScale.x, yScale, _vrUiQuad.transform.localScale.z);
+        _vrUiQuad.transform.localPosition = ModConfiguration.Instance.VrUiPosition.Value;
         
         UpdateFollowTarget();
     }
@@ -61,7 +67,6 @@ public class VrUiManager : UuvrBehaviour
     private void SetUpUi()
     {
         _uiTexture = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.ARGB32);
-        var uiTextureAspectRatio = (float)_uiTexture.height / _uiTexture.width;
 
         _uiContainer = new GameObject("VrUiContainer")
         {
@@ -76,10 +81,6 @@ public class VrUiManager : UuvrBehaviour
         Destroy(_vrUiQuad.GetComponent("Collider"));
         _vrUiQuad.name = "VrUiQuad";
         _vrUiQuad.transform.parent = _uiContainer.transform;
-        _vrUiQuad.transform.localPosition = Vector3.forward * 2f;
-        var quadWidth = 1.8f;
-        var quadHeight = quadWidth * uiTextureAspectRatio;
-        _vrUiQuad.transform.localScale = new Vector3(quadWidth, quadHeight, 1f);
 
         var renderer = _vrUiQuad.GetComponent<Renderer>();
 
